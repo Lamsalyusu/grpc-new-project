@@ -1,0 +1,66 @@
+syntax = "proto3";
+package taskcollaborator;
+
+message User {
+    string id = 1;
+    string name = 2;
+    string email = 3;
+}
+
+
+message Task {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string status = 4;
+  string priority = 5;
+  string owner_id = 6;
+}
+
+service taskCollaborator {
+
+    rpc createCollaborator(createCollaboratorReq) returns (createCollaboratorRes);
+    rpc getcollaborator(getCollaboratorReq) returns (getCollaboratorRes);
+    rpc delCollaborators(delCollaboratorsReq) returns (delCollaboratorRes);
+    rpc getSharedTasks(getSharedTaskReq) returns (getSharesTaskRes);
+
+}
+
+
+message createCollaboratorReq {
+    string task_id = 1;
+    string email = 2;
+}
+
+message createCollaboratorRes {
+    string user_id = 1;
+    string task_id = 2;
+    string created_at =3;
+    string message =4;
+}
+
+message getCollaboratorReq {
+    string task_id = 1;
+}
+
+message getCollaboratorRes {
+    string task_id =1;
+    repeated User collaborators = 2;
+}
+
+message delCollaboratorsReq{
+    string task_id = 1;
+    string user_id = 2;
+}
+
+message delCollaboratorRes {
+    string message = 1;
+}
+
+message getSharedTaskReq{
+    
+}
+
+message getSharesTaskRes{
+    repeated Task tasks = 1;
+}

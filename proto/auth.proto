@@ -1,0 +1,39 @@
+syntax = "proto3";
+package authPackage;
+
+service auth{
+    rpc Register (registerRequest) returns (registerRes);
+    rpc Login (loginRequest) returns (loginRes);
+    rpc me (voidnoparam) returns (userResponse);
+}
+
+message registerRequest{
+  string name = 1;
+  string email = 2;
+  string password = 3; 
+}
+
+message loginRequest {
+    string email = 1;
+    string password =2;
+}
+
+message voidnoparam {
+
+}
+
+message userResponse {
+    string id = 1;
+    string name = 2;
+    string email =3;
+    string role =4;
+}
+
+message registerRes{
+    userResponse user = 1;
+}
+
+message loginRes {
+    userResponse user =1;
+    string token = 2;
+}

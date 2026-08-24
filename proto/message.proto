@@ -1,0 +1,38 @@
+syntax = "proto3";
+package messagePackage;
+
+service messageService {
+    rpc getMessage(getMessageReq) returns (getMessageRes);
+    rpc sendMessage(sendMessageReq) returns (sendMessageRes);
+
+}
+
+message Message {
+  string id = 1;
+  string task_id = 2;
+  string sender_id = 3;
+  string sender_name = 4;
+  string body = 5;
+  string created_at = 6;
+}
+
+message getMessageReq {
+string task_id = 1;
+  int32 page = 2;
+  int32 limit = 3;
+}
+
+message getMessageRes {
+    int32 count = 1;
+    repeated Message message =2;
+
+}
+
+message sendMessageReq {
+  string task_id = 1;
+  string body = 2;
+}
+
+message sendMessageRes {
+    Message message = 1;
+}

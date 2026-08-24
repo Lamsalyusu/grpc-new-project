@@ -1,0 +1,43 @@
+syntax = "proto3";
+package notificationPackage;
+
+service NotificationService {
+  rpc GetNotifications (getNotificationsReq) returns (getNotificationsRes);
+  rpc MarkAsRead (markAsReadReq) returns (markAsReadRes);
+  rpc GetUnreadCount (getUnreadCountReq) returns (getUnreadCountRes);
+}
+
+message Notification {
+  string id = 1;
+  string user_id = 2;
+  string type = 3;
+  string payload = 4;
+  string read_at = 5;
+  string created_at = 6;
+}
+
+message getNotificationsReq {
+  int32 page = 1;
+  int32 limit = 2;
+  bool unread_only = 3;
+}
+
+message getNotificationsRes {
+  int32 count = 1;
+  repeated Notification notifications = 2;
+}
+
+message markAsReadReq {
+  string id = 1;
+}
+
+message markAsReadRes {
+  string message = 1;
+}
+
+message getUnreadCountReq {
+}
+
+message getUnreadCountRes {
+  int32 count = 1;
+}
