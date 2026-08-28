@@ -1,0 +1,22 @@
+syntax = "proto3";
+package reminderpackage;
+
+
+service reminder {
+  rpc CheckDueReminders (CheckRemindersReq) returns (CheckRemindersRes);
+}
+
+message CheckRemindersReq {
+}
+
+message FiredReminder {
+  string owner_id = 1;
+  string task_id = 2;
+  string title = 3;
+  string description = 4;
+  string due_date = 5;
+}
+
+message CheckRemindersRes {
+  repeated FiredReminder reminders = 1;
+}

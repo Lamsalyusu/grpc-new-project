@@ -1,5 +1,5 @@
 import { Model,DataTypes } from "sequelize";
-import sequelize from '../config/db';
+import sequelize from '../connection';
 
 class taskCollaborator extends Model{
   declare task_id:string;

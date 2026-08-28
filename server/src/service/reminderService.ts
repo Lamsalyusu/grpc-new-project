@@ -1,45 +1,82 @@
-import {findDueReminders,markReminderAsSent} from "../repositories/reminderRepository";
-import { findAllByTask } from "../repositories/taskCollaboratorRepository";
-import { createNotification } from "../services/notificationService";
-import  {getIO}  from '../sockets/index';
+// import {findDueReminders,markReminderAsSent} from "../repositories/reminderRepository";
+// import { findAllByTask } from "../repositories/taskCollaboratorRepository";
+// import { createNotification } from "../service/notificationService";
+// import  {getIO}  from '../sockets/index';
 
-async function processReminder(){
-    //find due reminder 
-    const dueReminders = await findDueReminders();
-    if(!dueReminders || dueReminders.length === 0){
-        // console.log("No due reminders found");
-        return;
-    }
-    const io = getIO();
-    //loop through each reminder
-    for(const reminder of dueReminders){
-        const payload ={
-                task_id:reminder.id,
-                title:reminder.title,
-                description:reminder.description,
-                due_date:reminder.due_date
-            }
-        //create notification
-        await createNotification(
-            reminder.owner_id,'reminder',
-            payload
-        );
+// async function processReminder(){
+//     //find due reminder r
+//     const dueReminders = await findDueReminders();
+//     if(!dueReminders || dueReminders.length === 0){
+//         // console.log("No due reminders found");
+//         return;
+//     }
+//     const io = getIO();
+//     //loop through each reminder
+//     for(const reminder of dueReminders){
+//         const payload ={
+//                 task_id:reminder.id,
+//                 title:reminder.title,
+//                 description:reminder.description,
+//                 due_date:reminder.due_date
+//             }
+//         //create notification
+//         await createNotification(
+//             reminder.owner_id,'reminder',
+//             payload
+//         );
 
-        const collaborators = await findAllByTask(reminder.id);
-            for (const collab of collaborators) {
-            await createNotification(
-                collab.user_id,
-                'reminder',
-                payload
-            );
-            }
-        //emit socket.io event
-        // const io = getIO();
-        io.to(reminder.owner_id).emit('reminder', 
-            payload);
-        //mark reminder as sent
-        await markReminderAsSent(reminder.id);
-    }
+//         const collaborators = await findAllByTask(reminder.id);
+//             for (const collab of collaborators) {
+//             await createNotification(
+//                 collab.user_id,
+//                 'reminder',
+//                 payload
+//             );
+//             }
+//         //emit socket.io event
+//         // const io = getIO();
+//         io.to(reminder.owner_id).emit('reminder', 
+//             payload);
+//         //mark reminder as sent
+//         await markReminderAsSent(reminder.id);
+//     }
     
+// }
+// export default processReminder;
+
+import { findDueReminders, markReminderAsSent } from "../repositories/reminderRepository";
+import { findAllByTask } from "../repositories/taskCollaboratorRepository";
+import { createNotification } from "../service/notificationService";
+
+async function processReminder() {
+  const dueReminders = await findDueReminders();
+  if (!dueReminders || dueReminders.length === 0) {
+    return [];
+  }
+
+  const firedReminders = [];
+
+  for (const reminder of dueReminders) {
+    const payload = {
+      task_id: reminder.id,
+      title: reminder.title,
+      description: reminder.description,
+      due_date: reminder.due_date,
+    };
+
+    await createNotification(reminder.owner_id, 'reminder', payload);
+
+    const collaborators = await findAllByTask(reminder.id);
+    for (const collab of collaborators) {
+      await createNotification(collab.user_id, 'reminder', payload);
+    }
+
+    await markReminderAsSent(reminder.id);
+
+    firedReminders.push({ owner_id: reminder.owner_id, payload });
+  }
+
+  return firedReminders;
 }
+
 export default processReminder;

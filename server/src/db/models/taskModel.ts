@@ -1,6 +1,5 @@
-
 import { Model,DataTypes } from "sequelize";
-import sequelize from "../config/db";
+import sequelize from "../connection";
 class task extends Model{
   declare id: string;
   declare owner_id: string;

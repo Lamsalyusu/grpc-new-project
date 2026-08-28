@@ -12,7 +12,7 @@ async function createTask(data:Taskrequire,owner_id:string){
         due_date:data.due_date,
         reminder_at:data.reminder_at,
         owner_id
-    });
+    })
     return Tasks;
 }
 
