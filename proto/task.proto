@@ -24,9 +24,8 @@ service task{
 message createReq {
     string title = 1;
     string description = 2;
-    Status status =3;
-    Priority priority =4;
-    string due_date = 5;
+    Priority priority =3;
+    string due_date = 4;
 }
 
 message createRes{
