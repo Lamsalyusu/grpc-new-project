@@ -14,11 +14,11 @@ enum Priority {
 }
 
 service task{
-    rpc createTask (createReq) returns (createRes);
-    rpc getAllTask (getAllReq) returns (getAllRes);
-    rpc getOne (getOneReq) returns (getOneRes);
-    rpc update (updateReq) returns (updateRes);
-    rpc remove (removeReq) returns (removeRes);
+    rpc CreateTask (createReq) returns (createRes);
+    rpc GetAllTask (getAllReq) returns (getAllRes);
+    rpc GetOne (getOneReq) returns (getOneRes);
+    rpc Update (updateReq) returns (updateRes);
+    rpc Remove (removeReq) returns (removeRes);
 }
 
 message createReq {
