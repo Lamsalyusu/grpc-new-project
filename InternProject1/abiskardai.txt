@@ -1,0 +1,26 @@
+1.errormiddleware --> create "errormiddleware" for error handling instead of writing same code again and again.
+2. hashrounding --> 16 bytes string called salt + 2^(hash rounding) 
+3. parse + safe parse --> parse run time error(program crash) + safeparse (no error no program crash ) 
+4. source map --> When you enable source maps, the TypeScript compiler (tsc) generates a companion .js.map file for every compiled .js file. This file contains a structural data map that tells debugging tools exactly which line of JavaScript corresponds to which line of your original TypeScript.
+5. declaration --> The "declaration": true option in tsconfig.json tells the TypeScript compiler to automatically generate .d.ts definition files alongside your compiled .js files.These definition files contain only type information (interfaces, types, and function signatures). They contain absolutely no executable JavaScript code.import {createServer} from 'http';
+6. .husky --> git hook manager its main job is to automatically run checks on your code before git operations like git commit or git push.
+7. maile scripts haru pani rakhe .scripts haru ko main kaam bhaneko chai long commands haru ko satta simple commands haru and memorable commands haru use garne like
+npm run dev
+npm run build
+npm run migrate
+npm run lint
+npm run build
+instead of using 
+npx ts-node src/server.ts
+8.Helemt --> used for security purposes
+---> Without Helmet: Your server announces to the world, "Hi! I am running Express version 4.17. I allow any website to put my pages in an iframe, and I let the browser run any script it finds." Attackers use this information to hack you.
+---> With Helmet: Your server stays completely silent about what technology it uses, and strictly tells the browser, "Only run code that I explicitly approve, and never let anyone copy my pages."
+
+
+while commiting if using .husky
+feat: new features
+fix :bug fix 
+refractor:code restructuring,no behavior change
+chore:config,tooling,dependencies
+docs:Documentation
+test:Tests

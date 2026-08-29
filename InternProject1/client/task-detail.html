@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Task Detail</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <script src = 'js/redirect.js'></script>
+  <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <h2><a href="dashboard.html" style="text-decoration:none;color:inherit;">← Back</a></h2>
+    <div>
+      <a href="profile.html">👤 Profile</a>
+      <a href="notifications.html">🔔 Notifications</a>
+      <button id="btnLogout">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div id="taskInfo"></div>
+
+    <!-- Collaborators section — hidden for non-owners via JS -->
+    <div id="collabSection">
+      <h3 style="margin-top:24px;">Collaborators</h3>
+      <div id="collaborators"></div>
+      <form id="addCollabForm" style="display:flex;gap:8px;margin-top:8px;">
+        <input type="email" id="collabEmail" placeholder="Add by email" required style="flex:1;" />
+        <button type="submit">Add</button>
+      </form>
+    </div>
+
+    <h3 style="margin-top:24px;">Chat</h3>
+    <div class="chat-box">
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-input">
+        <input type="text" id="chatInput" placeholder="Type a message..." />
+        <button id="btnSendChat">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/task-details.js"></script>
+  <script src="js/chat.js"></script>
+  <script>redirectIfNotAuth(); initTaskDetail();</script>
+</body>
+</html>
