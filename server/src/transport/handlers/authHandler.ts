@@ -10,7 +10,7 @@ const authHandlers = {
             callback(null,result);
         }catch(err:any){
             callback({
-                code: grpc.status.INTERNAL, 
+                // code: grpc.status.INTERNAL, 
                 message: err.message || "Internal server error during registration."
             })
         }
