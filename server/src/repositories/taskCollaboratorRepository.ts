@@ -32,7 +32,13 @@ async function remove(task_id:string,user_id:string){
 async function findTasksForUser(user_id: string) {
   return TaskCollaborator.findAll({
     where: { user_id },
-    include: [{ model: Task }],   // requires the Task↔TaskCollaborator association
+    include: [
+      { 
+      model: Task ,
+      as :'task',
+      attributes:['id','title','description','status','priority','owner_id'],
+    },
+  ],   // requires the ser,Task↔TaskCollaborator association
   });
 }
 export {findOne,findAllByTask,add,remove,findTasksForUser};

@@ -3,7 +3,7 @@ import { findById } from "../repositories/taskRepository";
 import { findByEmail } from "../repositories/userRepository";
 import { findTasksForUser } from "../repositories/taskCollaboratorRepository";
 
-// ---- Add a collaborator to a task ----
+// Add a colaborator to a task 
 async function createTaskCollaborator(task_id:string,reqid:string,email:string){
     //confirm if a task actually exists
     const task = await findById(task_id);
@@ -19,7 +19,7 @@ async function createTaskCollaborator(task_id:string,reqid:string,email:string){
     //find the collaborator to add via email
     const usertoadd = await findByEmail(email);
     if(!usertoadd){
-        throw{status:404,message:'no user foubd with that email'};
+        throw{status:404,message:'no user found with that email'};
     }
     //prevent adding the owner as their own collaborator
     if (usertoadd.id === task.owner_id){

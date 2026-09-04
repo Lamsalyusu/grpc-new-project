@@ -5,7 +5,7 @@ import { taskqueryschema,Taskrequire } from "../validators/taskValidator";
 
 async function createTask(data:Taskrequire,owner_id:string){
     const Tasks = await create({
-        priority : data.priority,
+        priority : data.priority || 'medium',
         description:data.description,
         status:data.status,
         title :data.title,

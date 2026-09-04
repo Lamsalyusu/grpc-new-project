@@ -14,7 +14,7 @@ async function registerUser(data: RegisterInput) {
     email: data.email,
     password_hash,
   }) as any;
-  const token = signInToken({ id: user.id, email: user.email });
+  // const token = signInToken({ id: user.id, email: user.email });
   return {
     user: { id: user.id, name: user.name, email: user.email, role: user.role }
     // token,

@@ -8,6 +8,6 @@ import Notification from "./notificationModel";
 User.hasMany(Message, { foreignKey: "sender_id", as: "sentMessages" });
 Message.belongsTo(User, { foreignKey: "sender_id", as: "sender" });
 Task.hasMany(TaskCollaborator, { foreignKey: "task_id" });
-TaskCollaborator.belongsTo(Task, { foreignKey: "task_id" });
+TaskCollaborator.belongsTo(Task, { foreignKey: "task_id" ,as: "task" });
 TaskCollaborator.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 export {sequelize,User,Task,TaskCollaborator,Notification,Message};

@@ -1,14 +1,20 @@
-import { Model,DataTypes } from "sequelize";
-import  sequelize  from "../connection";
-class messages extends Model{
+import { Model, DataTypes } from "sequelize";
+import sequelize from "../connection";
+import { User } from ".";
+
+class messages extends Model {
   declare id: string;
   declare task_id: string;
   declare sender_id: string;
   declare body: string;
+  declare sender?: User;
+  declare created_at: Date;
+  declare updated_at: Date;
 }
+
 messages.init(
-    {
-      id: {
+  {
+    id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       allowNull: false,
@@ -27,19 +33,16 @@ messages.init(
       allowNull: false,
     },
     created_at: DataTypes.DATE,
-    updated_at:DataTypes.DATE
+    updated_at: DataTypes.DATE,
   },
-  
   {
     sequelize,
     modelName: "Message",
     tableName: "messages",
-    timestamps:true,
-    createdAt:"created_at",
-    updatedAt:'updated_at',
-    underscored:true
-
-
-    }
+    timestamps: true,
+    createdAt: "created_at",
+    updatedAt: 'updated_at',
+    underscored: true,
+  }
 )
 export default messages;

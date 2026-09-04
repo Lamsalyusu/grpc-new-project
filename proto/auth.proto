@@ -4,7 +4,7 @@ package authPackage;
 service auth{
     rpc Register (registerRequest) returns (registerRes);
     rpc Login (loginRequest) returns (loginRes);
-    rpc me (voidnoparam) returns (userResponse);
+    rpc Me (userRequest) returns (userResponse);
 }
 
 message registerRequest{
@@ -18,15 +18,15 @@ message loginRequest {
     string password =2;
 }
 
-message voidnoparam {
-
+message userRequest {
+    string user_id = 1;
 }
 
 message userResponse {
     string id = 1;
     string name = 2;
     string email =3;
-    string role =4;
+    string role =4; 
 }
 
 message registerRes{
