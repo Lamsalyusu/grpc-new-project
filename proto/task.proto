@@ -24,11 +24,16 @@ service task{
 message createReq {
     string title = 1;
     string description = 2;
+<<<<<<< HEAD
     string status =3;
     string priority =4;
     string due_date = 5;
     string reminder_at = 6;
     string owner_id = 7; 
+=======
+    Priority priority =3;
+    string due_date = 4;
+>>>>>>> 8bc3c7c4d31a6f818a306fd2e36922678cff2dfc
 }
 
 message createRes{
