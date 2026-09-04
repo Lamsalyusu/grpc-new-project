@@ -7,7 +7,7 @@ dotenv.config();
 const jwtSecret = process.env.JWT_SECRET as string;
 
 function signInToken(payload: object): string {
-  return jwt.sign(payload, jwtSecret, { expiresIn: '10m' });
+  return jwt.sign(payload, jwtSecret, { expiresIn: '1d' });
 }
 
 function verifyToken(token: string) {

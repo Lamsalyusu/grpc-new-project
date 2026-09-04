@@ -19,10 +19,10 @@ message Task {
 
 service taskCollaborator {
 
-    rpc createCollaborator(createCollaboratorReq) returns (createCollaboratorRes);
-    rpc getcollaborator(getCollaboratorReq) returns (getCollaboratorRes);
-    rpc delCollaborators(delCollaboratorsReq) returns (delCollaboratorRes);
-    rpc getSharedTasks(getSharedTaskReq) returns (getSharesTaskRes);
+    rpc CreateCollaborator(createCollaboratorReq) returns (createCollaboratorRes);
+    rpc GetCollaborators(getCollaboratorReq) returns (getCollaboratorRes);
+    rpc DeleteCollaborator(delCollaboratorsReq) returns (delCollaboratorRes);
+    rpc GetSharedTasks(getSharedTaskReq) returns (getSharesTaskRes);
 
 }
 

@@ -2,8 +2,9 @@ syntax = "proto3";
 package messagePackage;
 
 service messageService {
-    rpc getMessage(getMessageReq) returns (getMessageRes);
-    rpc sendMessage(sendMessageReq) returns (sendMessageRes);
+  rpc SendMessage(sendMessageReq) returns (sendMessageRes);
+  rpc GetMessage(getMessageReq) returns (getMessageRes);
+  rpc checkAccess(checkAccessReq) returns (checkAccessRes);
 
 }
 
@@ -17,7 +18,7 @@ message Message {
 }
 
 message getMessageReq {
-string task_id = 1;
+  string task_id = 1;
   int32 page = 2;
   int32 limit = 3;
 }
@@ -35,4 +36,13 @@ message sendMessageReq {
 
 message sendMessageRes {
     Message message = 1;
+}
+
+message checkAccessReq {
+  string task_id = 1;
+  string user_id = 2;
+}
+
+message checkAccessRes {
+  bool has_access = 1;
 }

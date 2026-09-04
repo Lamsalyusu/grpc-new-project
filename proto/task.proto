@@ -1,17 +1,17 @@
 syntax = "proto3";
 package taskPackage;
 
-enum Status {
-    STATUS_PENDING = 0;
-    STATUS_IN_PROGRESS = 1;
-    STATUS_COMPLETED = 2;
-}
+// enum Status {
+//     Pending = 0;
+//     InProgress = 1;
+//     Completed = 2;
+// }
 
-enum Priority {
-    PRIORITY_LOW =0;
-    PRIORITY_MEDIUM =1;
-    PRIORITY_HIGH =2;
-}
+// enum Priority {
+//     Medium =0;
+//     Low =1;
+//     High =2;
+// }
 
 service task{
     rpc CreateTask (createReq) returns (createRes);
@@ -24,8 +24,16 @@ service task{
 message createReq {
     string title = 1;
     string description = 2;
+<<<<<<< HEAD
+    string status =3;
+    string priority =4;
+    string due_date = 5;
+    string reminder_at = 6;
+    string owner_id = 7; 
+=======
     Priority priority =3;
     string due_date = 4;
+>>>>>>> 8bc3c7c4d31a6f818a306fd2e36922678cff2dfc
 }
 
 message createRes{
@@ -33,8 +41,8 @@ message createRes{
     string owner_id = 2;
     string title = 3;
     string description =4;
-    Status status = 5;
-    Priority priority =6;
+    string status = 5;
+    string priority =6;
     string due_date =7;
     string reminder_at = 8;
     string reminder_status =9;
@@ -44,12 +52,13 @@ message createRes{
 }
 
 message getAllReq {
-    Status status = 1;     
-    Priority priority = 2; 
-    int32 page = 3;
-    int32 limit = 4;
-    string sort_by = 5;
-    string order = 6;
+    string owner_id = 1;
+    string status = 2;     
+    string priority = 3; 
+    int32 page = 4;
+    int32 limit = 5;
+    string sort_by = 6;
+    string order = 7;
 }
 
 message getAllRes{
@@ -59,21 +68,24 @@ message getAllRes{
 
 message getOneReq {
     string id =1;
+    string user_id =2;
 
 }
 
 message getOneRes {
-    createRes tasks = 1;
+    createRes task = 1;
 }
 
 message updateReq {
   string id = 1;
-  string title = 2;
-  string description = 3;
-  Status status = 4;
-  Priority priority = 5;
-  string due_date = 6;
-  string reminder_at = 7;
+  string user_id =2;
+  string title = 3;
+  string description = 4;
+  string status = 5;
+  string priority = 6;
+  string due_date = 7;
+  string reminder_at = 8;
+  
 
 }
 
@@ -83,6 +95,7 @@ message updateRes{
 
 message removeReq {
     string id = 1;
+    string user_id =2;
 }
 
 message removeRes {
