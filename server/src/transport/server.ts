@@ -1,12 +1,12 @@
 import dotenv from 'dotenv';
 dotenv.config();
-import { ReflectionService } from '@grpc/reflection';
+// import { ReflectionService } from '@grpc/reflection';
 import authHandlers from "./handlers/authHandler";
 import taskHandlers from "./handlers/taskHandler";
 import taskCollaboratorHandlers from "./handlers/taskCollaboratorHandler";
 import messageHandlers from "./handlers/messageHandler";
 import notificationHandlers from "./handlers/notificationHandler";
-import reminderHandlers from "./handlers/reminderHandler";
+// import reminderHandlers from "./handlers/reminderHandler";
 import ENV from "../config/env";
 import authInterceptor from '../interceptors/authInterceptors';
 
@@ -37,7 +37,7 @@ server.addService(protoDescriptor.taskPackage.task.service,taskHandlers)
 server.addService(protoDescriptor.taskcollaborator.taskCollaborator.service,taskCollaboratorHandlers)
 server.addService(protoDescriptor.messagePackage.messageService.service, messageHandlers)
 server.addService(protoDescriptor.notificationPackage.NotificationService.service,notificationHandlers)
-server.addService(protoDescriptor.reminderpackage.reminder.service,reminderHandlers)
+// server.addService(protoDescriptor.reminderpackage.reminder.service,reminderHandlers)
 
 // const reflection = new ReflectionService(packageDefinition);
 // reflection.addToServer(server);
