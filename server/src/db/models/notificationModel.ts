@@ -7,6 +7,8 @@ class notification extends Model {
   declare type: string;
   declare payload: object
   declare read_at: Date | null;
+  declare created_at: Date;
+  declare updated_at: Date;
 }
 
 notification.init(

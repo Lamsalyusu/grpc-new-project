@@ -10,9 +10,11 @@ function notifvisible(n){
   async function loadNotifications() {
   try {
     const res = await api('/notifications?page=1&limit=20');
-    console.log('Notifications:', res);
+    // console.log('Notifications:', res);
     const list = document.getElementById('notificationsList');
-    const notifs = res.data || [];
+    const notifs = res.data;
+  
+    console.log('All Notifications:', notifs);
     const notification = notifs.filter(notifvisible);
     if (notifs.length === 0) {
       list.innerHTML = '<p>No notifications.</p>';
@@ -20,7 +22,15 @@ function notifvisible(n){
     }
 
     list.innerHTML = notifs.map(n => {
-      const payload = n.payload || {};
+      let payload = {};
+
+      try {
+        payload = typeof n.payload === 'string'
+          ? JSON.parse(n.payload)
+          : (n.payload || {});
+      } catch (err) {
+        console.error('Invalid notification payload:', n.payload);
+      }
       const isRead = !!n.read_at;
 
       

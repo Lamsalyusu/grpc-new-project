@@ -10,8 +10,8 @@ const taskHandlers = {
   CreateTask: async (call: any, callback: any) => {
     try {
       const user = getUserFromCall(call);
-      const { title, description, priority, due_date } = call.request;
-      const task = await createTask({ title, description, priority, due_date }, user.id);
+      const { title, description, priority, due_date,reminder_at } = call.request;
+      const task = await createTask({ title, description, priority, due_date,reminder_at}, user.id);
       callback(null, task);
     } catch (err: any) {
       callback({ 
