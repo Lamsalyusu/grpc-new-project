@@ -1,0 +1,109 @@
+┌─────────────────────────────────────────────────────────────────┐
+│  1. FRONTEND (dashboard.js / task-details.js / chat.js)         │
+│     Builds the request, attaches the token                       │
+│                                                                    │
+│     REST features:  fetch(url, {headers: {Authorization}})      │
+│     Chat feature:    socket.emit('event', data) — over a         │
+│                       connection that sent the token ONCE         │
+│                       at connect time (socketMiddleware.ts)      │
+└──────────────────────────────┬────────────────────────────────┘
+                               ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  2. VALIDATOR (Gateway) — Zod schemas                           │
+│     taskValidator.ts / taskCollaboratorValidator.ts /           │
+│     messageValidators.ts                                        │
+│     Checks shape/limits BEFORE any controller logic runs        │
+│     e.g. title 1–20 chars, priority is low/medium/high, etc.    │
+└──────────────────────────────┬────────────────────────────────┘
+                               ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  3. CONTROLLER (Gateway) — one per resource                     │
+│     authController.ts / taskController.ts /                     │
+│     taskCollaboratorController.ts                               │
+│     (chat has no controller — socketHandler.ts plays this role) │
+│                                                                 │
+│     Job: take validated data → build the gRPC request object    │
+│          build grpc.Metadata with the Bearer token              │
+│          (token does NOT travel automatically — must be         │
+│           manually re-attached here, every single call)         │
+└──────────────────────────────┬────────────────────────────────┘
+                                ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  4. CLIENT (Gateway) — one per service, thin wrapper            │
+│     authClient.ts / taskClient.ts / taskCollaboratorClient.ts / │
+│     messageClient.ts                                            │
+│     Loads the matching .proto file, exposes methods NAMED       │
+│     exactly like the proto's RPCs (case-sensitive)              │
+│     Does NOT transform data — just sends it over the network    │
+└──────────────────────────────┬────────────────────────────────┘
+                                ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  5. PROTO FILE — the contract both sides must obey              │
+│     auth.proto / task.proto / taskcollaborator.proto /          │
+│     message.proto                                               │
+│                                                                 │
+│     Declares: RPC names, request message fields,                │
+│               response message fields — EXACT names required    │
+│     If anything on either side doesn't match this file          │
+│     EXACTLY → that piece silently disappears, no error          │
+└──────────────────────────────┬────────────────────────────────┘
+                     (network call, port 50051)
+                                ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  6. INTERCEPTOR (Server) — runs automatically, EVERY call         │
+│     authInterceptor.ts                                            │
+│     Reads token from metadata (not the request body)             │
+│     Verifies it, decodes it, re-attaches decoded user via         │
+│     metadata.set('user', ...)                                     │
+│     Skips this entirely for EXEMPT_PATHS (Register, Login)       │
+└──────────────────────────────┬────────────────────────────────┘
+                                ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  7. HANDLER (Server) — one per service, the entry point           │
+│     authHandler.ts / taskHandler.ts /                            │
+│     taskCollaboratorHandler.ts / messageHandler.ts                │
+│                                                                    │
+│     Function names here must match the proto's RPC names          │
+│     EXACTLY (e.g. "CreateTask", not "createTask")                 │
+│     Pulls real identity via getUserFromCall(call) —               │
+│     NEVER trusts call.request for "who is this"                   │
+│     Packages the final response — field names must match           │
+│     the proto's response message EXACTLY                          │
+└──────────────────────────────┬────────────────────────────────┘
+                                ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  8. SERVICE (Server) — business rules live here                   │
+│     authService.ts / taskService.ts / messageService.ts          │
+│     (taskCollaborator logic sits inline near its handler)         │
+│                                                                    │
+│     e.g. status always starts 'pending' / priority defaults      │
+│     to 'medium' / only owner or collaborator can access chat     │
+│     (checkAccess) / only the owner can add/remove collaborators  │
+└──────────────────────────────┬────────────────────────────────┘
+                                ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  9. REPOSITORY (Server) — the only layer that talks to Sequelize │
+│     userRepository.ts / taskRepository.ts /                     │
+│     taskCollaboratorRepository.ts / messageRepository.ts         │
+│                                                                    │
+│     Returns data in the DB's natural shape — including nested   │
+│     includes (e.g. message.sender.name) — NOT flattened here     │
+└──────────────────────────────┬────────────────────────────────┘
+                                ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  10. POSTGRES — the actual data lives here                      │
+└──────────────────────────────┬────────────────────────────────┘
+                                ↓
+              (response flows back UP through the same
+               chain: repository → service → handler)
+                                ↓
+        handler flattens/reshapes anything nested (e.g. Sequelize's
+        message.sender.name → proto's flat sender_name field) —
+        protobuf has no auto-flatten like JSON does, this step
+        must be done by hand, here, every time
+                                ↓
+                     (network response, back to gateway)
+                                ↓
+              client → controller → res.json({data, message})
+                                ↓
+                        FRONTEND renders it

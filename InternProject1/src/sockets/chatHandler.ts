@@ -1,34 +1,38 @@
 //chat handling garda express ko req ,res, next function use nagarne
 
 import { Namespace,Socket } from "socket.io";
-import { sendMessage } from "../services/messageService";
+import MessageClient from "../grpc-client/messageClient";
 import { messageValidationSchema } from "../validators/messageValidators";
-import { checkAccess } from "../services/messageService";
+import * as grpc from '@grpc/grpc-js';
 
-function registerChatHandler(io:Namespace,socket:Socket){
-    socket.on('join_task',async(data)=>{
-        const userid = socket.data.user.id;
-        const taskid = data.task_id;
-        try{
-            //join garna milxa ki nai bhanera check just 
-        const hasaccess = await checkAccess(taskid,userid);
-        if(!hasaccess){
-            socket.emit('error',{message:"cannot join the task"});
-            return;
-        }
-        //tyo chat ma join bhayo user 
-        socket.join(`task:${taskid}`);
-        socket.emit('joined_task',{task_id:taskid,message:'chat joined successfully'})
-        }
-        catch(error:any){
-            socket.emit('error',{message:error.message || 'Failed to joined the Task'})
-        }
+function buildSocketMetadata(socket: Socket): grpc.Metadata {
+  const md = new grpc.Metadata();
+  const token = socket.data.token; 
+  if (token) {
+    md.set('authorization', `Bearer ${token}`);
+  }
+  return md;
+}
+
+
+function registerChatHandler(io: Namespace, socket: Socket) {
+  socket.on('join_task', (data) => {
+    const taskid = data.task_id;
+    const md = buildSocketMetadata(socket);
+
+    MessageClient.checkAccess({ task_id: taskid }, md, (err: any, result: any) => {
+      if (err || !result?.has_access) {
+        socket.emit('error', { message: err?.message || "cannot join the task" });
+        return;
+      }
+      socket.join(`task:${taskid}`);
+      socket.emit('joined_task', { task_id: taskid, message: 'chat joined successfully' });
     });
+  });
 
     socket.on('send_message',async(data)=>{
         const taskid = data.task_id;
-        const userid = socket.data.user.id;
-        try{
+        // const userid = socket.data.user.id;
         //yesma chai user bata aako message ko validation gareko (safe parse use gareko) jun data bata message ko body aauxa tei lai msg linxa 
         const parsed = messageValidationSchema.safeParse({ body: data.body });
         if (!parsed.success) {
@@ -36,15 +40,15 @@ function registerChatHandler(io:Namespace,socket:Socket){
         return;
         }
         const { body } = parsed.data;
-        const result = await sendMessage(taskid,userid,body);
-        //yo task id ma msg pathaune 
-        io.to(`task:${taskid}`).emit('receive_message',result);
-
-    }
-    catch(error:any)
-    {
-        socket.emit('error',{message:error.message || 'failed to send the message'});
-    }
+        const md = buildSocketMetadata(socket);
+        MessageClient.SendMessage({task_id:taskid,body},md, (err: any, result: any) => {
+            if (err) {
+                socket.emit('error', { message: err.message || 'Failed to send the message' });
+                return;
+            }
+            //yo task id ma msg pathaune 
+            io.to(`task:${taskid}`).emit('receive_message', result.message);
+        });
     });
 
     socket.on('leave_task',(data)=>{

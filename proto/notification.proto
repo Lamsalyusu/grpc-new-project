@@ -5,6 +5,7 @@ service NotificationService {
   rpc GetNotifications (getNotificationsReq) returns (getNotificationsRes);
   rpc MarkAsRead (markAsReadReq) returns (markAsReadRes);
   rpc GetUnreadCount (getUnreadCountReq) returns (getUnreadCountRes);
+  rpc GetNotificationByUser (getNotificationByUserReq) returns (getNotificationByUserRes);
 }
 
 message Notification {
@@ -40,4 +41,11 @@ message getUnreadCountReq {
 
 message getUnreadCountRes {
   int32 count = 1;
+}
+
+message getNotificationByUserReq {
+  string user_id = 1;
+}
+message getNotificationByUserRes {
+  repeated Notification notifications = 1;
 }

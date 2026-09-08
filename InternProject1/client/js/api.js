@@ -50,7 +50,7 @@ async function api(endpoint, options = {}) {
 }
 
 function redirectIfNotAuth() {
-  console.log("hello")
+  // console.log("hello")
   if (!getToken()||isTokenExpired()) {
     // window.location.href = 'index.html';
     logout();

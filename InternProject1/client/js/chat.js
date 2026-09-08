@@ -1,13 +1,10 @@
-
-
-
 let currentTaskId = null;
 let socket = null;
 
 function initChat(taskId) {
   currentTaskId = taskId;  // ← store it
   
-  socket = io('http://127.0.0.1:3000/chat', {  // ← use 127.0.0.1, not localhost
+  socket = io('http://127.0.0.1:3000/chat', {  
     auth: { token: getToken() }
   });
 
@@ -30,6 +27,8 @@ function initChat(taskId) {
 function sendChat() {
   const input = document.getElementById('chatInput');
   const body = input.value.trim();
+  console.log("currentTaskId", currentTaskId);
+  console.log(body);
   if (!body || !socket || !currentTaskId) return;
 
   socket.emit('send_message', { task_id: currentTaskId, body });  // ← use stored ID

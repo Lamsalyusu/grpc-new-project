@@ -9,6 +9,6 @@ import { registerSchema,loginSchema } from '../validators/authValidator';
 // import { registerSchema, loginSchema } from '../validators/authValidator';
 router.post('/register',validation(registerSchema),authController.register);
 router.post('/login',validation(loginSchema),authController.login);
-// router.get('/me',authMiddleware,authController.me)
+router.get('/me',authMiddleware,authController.me)
 
 export default router;

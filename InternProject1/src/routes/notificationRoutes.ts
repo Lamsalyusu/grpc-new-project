@@ -7,8 +7,8 @@ import { notificationValidationSchema } from '../validators/notificationValidato
 import { notificationIdSchema } from '../validators/notificationIdSchema';
 
 // notifroutes.post('/', authMiddleware, validation(notificationValidationSchema), notificationController.create);
-notifroutes.put('/:id/read', authMiddleware, validateParams(notificationIdSchema), notificationController.markAsRead);
+notifroutes.put('/:id/read', authMiddleware, validateParams(notificationIdSchema), notificationController.MarkAsRead);
 notifroutes.get('/', authMiddleware, validateQuery(notificationValidationSchema), notificationController.getByUser);
-notifroutes.get('/unread/count', authMiddleware, notificationController.countUnread);
+notifroutes.get('/unread/count', authMiddleware, notificationController.GetUnreadCount);
 
 export default notifroutes;
