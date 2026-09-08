@@ -1,51 +1,140 @@
+// syntax = "proto3";
+// package notificationPackage;
+
+// service NotificationService {
+//   rpc CreateNotification (getNotificationsReq) returns (getNotificationsRes);
+//   rpc MarkAsRead (markAsReadReq) returns (markAsReadRes);
+//   rpc GetUnreadCount (getUnreadCountReq) returns (getUnreadCountRes);
+//   rpc GetNotificationByUser (getNotificationByUserReq) returns (getNotificationByUserRes);
+// }
+
+// message Notification {
+//   string id = 1;
+//   string user_id = 2;
+//   string type = 3;
+//   string payload = 4;
+//   string read_at = 5;
+//   string created_at = 6;
+// }
+
+// message getNotificationsReq {
+//   int32 page = 1;
+//   int32 limit = 2;
+//   bool unread_only = 3;
+// }
+
+// message getNotificationsRes {
+//   int32 count = 1;
+//   repeated Notification notifications = 2;
+// }
+
+// message markAsReadReq {
+//   string id = 1;
+// }
+
+// message markAsReadRes {
+//   string message = 1;
+// }
+
+// message getUnreadCountReq {
+// }
+
+// message getUnreadCountRes {
+//   int32 count = 1;
+// }
+
+// message getNotificationByUserReq {
+//   string user_id = 1;
+// }
+// message getNotificationByUserRes {
+//   repeated Notification notifications = 1;
+// }
+
+
 syntax = "proto3";
+
 package notificationPackage;
 
 service NotificationService {
-  rpc GetNotifications (getNotificationsReq) returns (getNotificationsRes);
-  rpc MarkAsRead (markAsReadReq) returns (markAsReadRes);
-  rpc GetUnreadCount (getUnreadCountReq) returns (getUnreadCountRes);
-  rpc GetNotificationByUser (getNotificationByUserReq) returns (getNotificationByUserRes);
+
+  rpc CreateNotification (CreateNotificationReq) returns (CreateNotificationRes);
+  rpc GetNotificationByUser (GetNotificationByUserReq) returns (GetNotificationByUserRes);
+  rpc MarkAsRead (MarkAsReadReq) returns (MarkAsReadRes);
+  rpc GetUnreadCount (GetUnreadCountReq) returns (GetUnreadCountRes);
 }
 
+
 message Notification {
+
   string id = 1;
+
   string user_id = 2;
+
   string type = 3;
+
   string payload = 4;
+
   string read_at = 5;
+
   string created_at = 6;
 }
 
-message getNotificationsReq {
-  int32 page = 1;
-  int32 limit = 2;
-  bool unread_only = 3;
+
+message CreateNotificationReq {
+
+  string user_id = 1;
+
+  string type = 2;
+
+  string payload = 3;
 }
 
-message getNotificationsRes {
+
+message CreateNotificationRes {
+
+  Notification notification = 1;
+}
+
+
+message GetNotificationByUserReq {
+
+  string user_id = 1;
+
+  int32 page = 2;
+
+  int32 limit = 3;
+
+  bool unread_only = 4;
+}
+
+
+message GetNotificationByUserRes {
+
   int32 count = 1;
+
   repeated Notification notifications = 2;
 }
 
-message markAsReadReq {
+
+message MarkAsReadReq {
+
   string id = 1;
 }
 
-message markAsReadRes {
+
+message MarkAsReadRes {
+
   string message = 1;
 }
 
-message getUnreadCountReq {
-}
 
-message getUnreadCountRes {
-  int32 count = 1;
-}
+message GetUnreadCountReq {
 
-message getNotificationByUserReq {
   string user_id = 1;
 }
-message getNotificationByUserRes {
-  repeated Notification notifications = 1;
+
+
+message GetUnreadCountRes {
+
+  int32 count = 1;
 }
