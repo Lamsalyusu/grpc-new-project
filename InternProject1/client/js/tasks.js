@@ -35,7 +35,7 @@ async function loadTasks() {
 
   try {
     const res = await api(url);
-    const tasks = res.data?.rows || [];
+    const tasks = res.data?.tasks || [];
     const list = document.getElementById('tasksList');
     list.innerHTML = '';
 
@@ -101,17 +101,16 @@ async function loadTasks() {
 async function loadSharedTasks() {
   try {
     const res = await api('/tasks/shared-with-me');
-    const collabRows = res.data || [];
+    const tasks = res.data?.tasks || [];
     const list = document.getElementById('sharedTasksList');
     list.innerHTML = '';
 
-    if (collabRows.length === 0) {
+    if (tasks.length === 0) {
       list.innerHTML = '<p>No shared tasks yet.</p>';
       return;
     }
 
-    collabRows.forEach(row => {
-      const task = row.Task || row.task;
+    tasks.forEach(task => {
       if (!task) return;
 
       const card = document.createElement('div');

@@ -10,6 +10,7 @@ function socketMiddleware(socket:Socket,next:(err?:Error)=>void){
   try{
     const decode = verifyToken(token);
     (socket as any).data.user = decode;
+        (socket as any).data.token = token; // raw JWT, needed to forward as gRPC metadata
     // Now, socket.data.user literally equals:
     //socket as any .data.user --> { id: '1e61b247-bfe1-4e39-8272-7631ba4cb237',email: 'testuser@example.com',iat: 1785134931, exp: 1785221331}
     //the decode becomes the user data

@@ -18,7 +18,8 @@ async function initTaskDetail() {
   let task;
   try {
     const res = await api(`/tasks/${taskId}`);
-    task = res.data;
+    task = res.data.task;
+    // console.log(task);
     
     // HIDE collaborators section if NOT owner
     if (currentUserId !== task.owner_id) {
@@ -40,7 +41,7 @@ async function initTaskDetail() {
     return;
   }
 
-  loadCollaborators();
+  loadCollaborators();  
   loadMessages();
   initChat(taskId);
 }
@@ -48,8 +49,10 @@ async function initTaskDetail() {
 async function loadCollaborators() {
   try {
     const res = await api(`/tasks/${taskId}/collaborators`);
+    // console.log(res);
     const list = document.getElementById('collaborators');
-    const collabs = res.data || [];
+    const collabs = res.data.collaborators;
+    // console.log(collabs);
 
     if (collabs.length === 0) {
       list.innerHTML = '<p style="color:#666;font-size:14px;">No collaborators yet.</p>';
@@ -57,22 +60,22 @@ async function loadCollaborators() {
     }
 
     list.innerHTML = collabs.map(c => {
-      const name = c.user?.name || c.user?.email || c.user_id;
-      return `
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#f9f9f9;border-radius:8px;margin-bottom:8px;">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <div style="width:32px;height:32px;border-radius:50%;background:#2563eb;color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">
-              ${name.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <div style="font-weight:600;font-size:14px;">${escapeHtml(name)}</div>
-              <div style="font-size:12px;color:#666;">${escapeHtml(c.user?.email || '')}</div>
-            </div>
-          </div>
-          <button class="btn-remove-collab" data-userid="${c.user_id}" style="width:auto;padding:6px 12px;font-size:12px;background:#ef4444;color:white;border:none;border-radius:6px;cursor:pointer;">Remove</button>
+  const name = c.name || c.email || c.id;
+  return `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#f9f9f9;border-radius:8px;margin-bottom:8px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:#2563eb;color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">
+          ${name.charAt(0).toUpperCase()}
         </div>
-      `;
-    }).join('');
+        <div>
+          <div style="font-weight:600;font-size:14px;">${escapeHtml(name)}</div>
+          <div style="font-size:12px;color:#666;">${escapeHtml(c.email || '')}</div>
+        </div>
+      </div>
+      <button class="btn-remove-collab" data-userid="${c.id}" style="width:auto;padding:6px 12px;font-size:12px;background:#ef4444;color:white;border:none;border-radius:6px;cursor:pointer;">Remove</button>
+    </div>
+  `;
+}).join('');
 
     list.querySelectorAll('.btn-remove-collab').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -113,7 +116,9 @@ async function removeCollab(userId) {
 async function loadMessages() {
   try {
     const res = await api(`/tasks/${taskId}/messages?page=1&limit=50`);
-    const msgs = res.data?.rows || res.data || [];
+    console.log(res);
+    const msgs = res.data.message;
+    console.log(msgs);
     const box = document.getElementById('chatMessages');
     box.innerHTML = msgs.map(m => renderMsg(m)).join('');
     box.scrollTop = box.scrollHeight;
@@ -123,11 +128,11 @@ async function loadMessages() {
 }
 
 function renderMsg(m) {
-  const senderName = m.sender?.name || m.sender?.email || 'Unknown';
+  const sender = m.sender_name || 'Unknown';
   return `
     <div class="msg">
-      <strong>${escapeHtml(senderName)}</strong>
-      <time>${new Date(m.created_at).toLocaleTimeString()}</time>
+      <strong>${escapeHtml(sender)}</strong>
+      <time>${m.created_at ? new Date(m.created_at).toLocaleTimeString() : ''}</time>
       <p>${escapeHtml(m.body)}</p>
     </div>
   `;

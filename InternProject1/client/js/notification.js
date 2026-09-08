@@ -10,6 +10,7 @@ function notifvisible(n){
   async function loadNotifications() {
   try {
     const res = await api('/notifications?page=1&limit=20');
+    console.log('Notifications:', res);
     const list = document.getElementById('notificationsList');
     const notifs = res.data || [];
     const notification = notifs.filter(notifvisible);
