@@ -1,7 +1,7 @@
 {
   "name": "internproject1",
   "version": "1.0.0",
-  "description": "users              ---->           id, name, email, password_hash, role\r tasks              --->          id, owner_id, title, description, status, priority,\r                                     due_date, reminder_at, reminder_status\r task_collaborators -----> task_id, user_id  (composite PK)\r messages           -----> id, task_id, sender_id, body, created_at (indexed)\r notifications      -----> id, user_id, type, payload(JSON), read_at",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
@@ -11,13 +11,14 @@
     "migrate:undo": "sequelize-cli db:migrate:undo",
     "seed": "sequelize-cli db:seed:all",
     "lint": "eslint src --ext .ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "husky"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Lamsalyusu/intern-project.git"
   },
+  
   "keywords": [],
   "author": "",
   "license": "ISC",

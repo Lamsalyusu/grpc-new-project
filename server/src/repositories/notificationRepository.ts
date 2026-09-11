@@ -1,5 +1,4 @@
 import {Notification} from "../db/models";
-// import notification from "../db/models/notificationModel";
 
 //yo chai notification create garna ko lagi 
 async function create(user_id:string,type:string,payload:object){

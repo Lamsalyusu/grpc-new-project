@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 dotenv.config();
-// import  sequelize  from "./config/db";
 import app from './app';
 import {initSocket} from './sockets/index';
 import { createServer } from 'node:http';

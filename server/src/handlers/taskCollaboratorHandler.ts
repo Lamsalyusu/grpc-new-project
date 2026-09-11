@@ -1,5 +1,5 @@
 import grpc from '@grpc/grpc-js';
-import { createTaskCollaborator, getCollaboratorsByTask, deleteTaskCollaborator, getTasksSharedWithUser } from '../../service/taskCollaboratorServices';
+import { createTaskCollaborator, getCollaboratorsByTask, deleteTaskCollaborator, getTasksSharedWithUser } from '../service/taskCollaboratorServices';
 
 function getUserFromCall(call: any) {
   const raw = call.metadata.get('user')[0] as string;
@@ -77,6 +77,7 @@ const taskCollaboratorHandlers = {
         status:row.task.status,
         priority:row.task.priority,
         owner_id:row.task.owner_id,  
+        due_date:row.task.due_date,
       }));
 
       callback(null, { tasks });

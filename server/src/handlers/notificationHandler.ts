@@ -77,8 +77,7 @@
 
 
 import grpc from '@grpc/grpc-js';
-
-import { createNotification,markNotificationAsRead,getNotificationsByUser,countUnreadNotifications } from '../../service/notificationService';
+import { createNotification,markNotificationAsRead,getNotificationsByUser,countUnreadNotifications } from '../service/notificationService';
 
 function getUserFromCall(call: any) {
   const raw = call.metadata.get('user')[0] as string;
@@ -91,7 +90,6 @@ const notificationHandlers = {
       const user = getUserFromCall(call);
       const {type,payload} = call.request;
       const parsedPayload = payload? JSON.parse(payload): {};
-
       const result = await createNotification( user.id,type,parsedPayload );
 
       callback(null, {
@@ -116,112 +114,59 @@ const notificationHandlers = {
 
 
   GetNotificationByUser: async (call: any, callback: any) => {
-
-    try {
-
+    try { 
       const user = getUserFromCall(call);
-
-      const {
-        page = 1,
-        limit = 10,
-        unread_only = false
-      } = call.request;
-
-      const result = await getNotificationsByUser(
-        user.id,
-        page,
-        limit,
-        unread_only
-      );
+      const { page = 1,limit = 10,unread_only = false } = call.request;
+      const result = await getNotificationsByUser(user.id,page,limit,unread_only);
 
       const notifications = result.rows.map((notification: any) => ({
         id: notification.id,
         user_id: notification.user_id,
         type: notification.type,
         payload: JSON.stringify(notification.payload ?? {}),
-        read_at: notification.read_at
-          ? notification.read_at.toISOString()
-          : '',
-        created_at: notification.created_at
-          ? notification.created_at.toISOString()
-          : ''
+        read_at: notification.read_at ? notification.read_at.toISOString(): '',
+        created_at: notification.created_at ? notification.created_at.toISOString(): ''
       }));
-
-      callback(null, {
-        count: result.count,
-        notifications
-      });
-
-    } catch (err: any) {
-
+      callback(null, { count: result.count, notifications });
+    } 
+    catch (err: any) {
       console.error("Get notifications error:", err);
-
       callback({
         code: grpc.status.INTERNAL,
         message: err.message || 'Get notifications failed'
       });
-
     }
-
   },
 
-
   MarkAsRead: async (call: any, callback: any) => {
-
     try {
-
       const user = getUserFromCall(call);
-
-      const {
-        id
-      } = call.request;
-
-      await markNotificationAsRead(
-        id,
-        user.id
-      );
-
+      const { id } = call.request;
+      await markNotificationAsRead(id,user.id);
       callback(null, {
         message: 'Notification marked as read successfully'
       });
-
-    } catch (err: any) {
-
+    } 
+    catch (err: any) {
       callback({
         code: grpc.status.INTERNAL,
         message: err.message || 'Mark as read failed'
       });
-
     }
-
   },
 
-
   GetUnreadCount: async (call: any, callback: any) => {
-
     try {
-
       const user = getUserFromCall(call);
-
-      const count = await countUnreadNotifications(
-        user.id
-      );
-
-      callback(null, {
-        count
-      });
-
+      const count = await countUnreadNotifications(user.id);
+      callback(null, { count });
     } catch (err: any) {
-
       callback({
         code: grpc.status.INTERNAL,
         message: err.message || 'Get unread count failed'
       });
-
     }
-
   }
-
 };
 
 

@@ -45,10 +45,10 @@
 //                         total:result.count
 //                     },
 //                     message:'notifications fetched successfully'});
-       
+
 //         });
 //     },
-    
+
 //     GetUnreadCount:async(req:Request,res:Response,next:NextFunction)=>{
 //             const user_id = (req as any).user.id;
 //             const md = buildMetadata(req);
@@ -59,177 +59,55 @@
 //                 return res.status(200).json({data:result,message:'unread notifications count fetched successfully'});
 //         });
 
-//     }  
+//     }
 // }
 
 // export default notificationController;
 
-
-
-import {
-  NextFunction,
-  Request,
-  Response
-} from "express";
-
+import { NextFunction, Request, Response } from "express";
 import NotificationClient from "../grpc-client/notificationClient";
 import { buildMetadata } from "./grpcMetadata";
 
-
 const notificationController = {
-
-  getByUser: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-
+  getByUser: async (req: Request, res: Response, next: NextFunction) => {
     const user_id = (req as any).user.id;
-
-    const page =
-      parseInt(req.query.page as string) || 1;
-
-    const limit =
-      parseInt(req.query.limit as string) || 10;
-
-    const unread_only =
-      req.query.unreadOnly === 'true';
-
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const unread_only = req.query.unreadOnly === "true";
     const md = buildMetadata(req);
-
     NotificationClient.GetNotificationByUser(
-      {
-        user_id,
-        page,
-        limit,
-        unread_only
-      },
-      md,
-      (err: any, result: any) => {
-
+      { user_id, page, limit, unread_only },md,(err: any, result: any) => {
         if (err) {
-
-          return res
-            .status(500)
-            .json({
-              error: {
-                message:
-                  err.message ||
-                  "notification fetching failed"
-              }
-            });
-
-        }
-
-        return res.status(200).json({
-
-          data: result.notifications,
-
-          meta: {
-            page,
-            limit,
-            total: result.count
-          },
-
-          message:
-            'notifications fetched successfully'
-
+          return res.status(500).json({error: { message: err.message || "notification fetching failed" },
         });
-
       }
+      return res.status(200).json({ data: result.notifications,meta: { page,limit,total: result.count,},message: "notifications fetched successfully",
+      });
+      },
     );
-
   },
 
-
-  MarkAsRead: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-
-    const notification_id =
-      req.params.id as string;
-
+  MarkAsRead: async (req: Request, res: Response, next: NextFunction) => {
+    const notification_id = req.params.id as string;
     const md = buildMetadata(req);
-
-    NotificationClient.MarkAsRead(
-      {
-        id: notification_id
+    NotificationClient.MarkAsRead({ id: notification_id,},md,(err: any, result: any) => {
+        if (err) { return res.status(500).json({ error: { message: err.message || "notification marking failed",},});
+    }
+        return res.status(200).json({ data: result, message: "notification marked as read successfully",});
       },
-      md,
-      (err: any, result: any) => {
-
-        if (err) {
-
-          return res
-            .status(500)
-            .json({
-              error: {
-                message:
-                  err.message ||
-                  "notification marking failed"
-              }
-            });
-
-        }
-
-        return res.status(200).json({
-          data: result,
-          message:
-            'notification marked as read successfully'
-        });
-
-      }
     );
-
   },
 
-
-  GetUnreadCount: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-
-    const user_id =
-      (req as any).user.id;
-
+  GetUnreadCount: async (req: Request, res: Response, next: NextFunction) => {
+    const user_id = (req as any).user.id;
     const md = buildMetadata(req);
-
-    NotificationClient.GetUnreadCount(
-      {
-        user_id
-      },
-      md,
-      (err: any, result: any) => {
-
-        if (err) {
-
-          return res
-            .status(500)
-            .json({
-              error: {
-                message:
-                  err.message ||
-                  "unread notifications count fetching failed"
-              }
-            });
-
+    NotificationClient.GetUnreadCount({user_id,},md,(err: any, result: any) => {
+        if (err) {return res.status(500).json({ error: {message:err.message || "unread notifications count fetching failed",},
+          });
         }
-
-        return res.status(200).json({
-          data: result,
-          message:
-            'unread notifications count fetched successfully'
-        });
-
-      }
+        return res.status(200).json({ data: result, message: "unread notifications count fetched successfully"});
+      },
     );
-
-  }
-
+  },
 };
-
-
 export default notificationController;

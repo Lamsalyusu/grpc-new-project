@@ -1,9 +1,9 @@
 // import messages from "../models/messageModel";
 import { findOne as findCollaborator } from "../repositories/taskCollaboratorRepository";
 import { findById,create,findByOwner,remove,update} from "../repositories/taskRepository";
-import { taskqueryschema,Taskrequire } from "../validators/taskValidator";
+// import { taskqueryschema,Taskrequire } from "../validators/taskValidator";
 
-async function createTask(data:Taskrequire,owner_id:string){
+async function createTask(data:any,owner_id:string){
     const Tasks = await create({
         priority : data.priority || 'medium',
         description:data.description,
@@ -31,7 +31,7 @@ async function getTaskById(id:string,reqid:string){
 }
 
 
-async function getTasksByOwner(owner_id:string,filter:taskqueryschema){
+async function getTasksByOwner(owner_id:string,filter:any){
 const getownertask = await findByOwner(owner_id,filter);
 return getownertask;
 }
@@ -46,8 +46,29 @@ async function updateTask(data:any,reqid:string,id:string){
     if(uptask.owner_id !== reqid){
         throw {status:403,message:'not their task'}
     }
-    const newuptask = await update(id,data);
-    return newuptask;
+    // const newuptask = await update(id,data);
+    // if(newuptask?.reminder_at === data.reminder_at){
+    //     return newuptask
+
+    // }
+    // return newuptask;
+    //check if the updated tasks reminder date and edited reminder_date are actually different or not 
+    const reminder_changed = data.reminder_at && data.reminder_at !== uptask.reminder_at;
+    // if reminder_at is changed 
+    // if(data.status === "completed"){
+    //     // reminder_status:"sent"
+    //     {
+            
+    //     }
+    // }
+    const updateData = reminder_changed ? {...data,reminder_status:"pending"} : {...data}
+    if(updateData.status === "completed"){
+        updateData.reminder_status = "sent";
+        // return updateData;
+    }
+    // update the task based on the id and updatedata so that after the the reminder is changed we can fire the reminer again 
+    const newupdatetask = update(id,updateData);
+    return newupdatetask;
 }
 
 async function deleteTask(id:string,reqid:string){
@@ -62,4 +83,10 @@ async function deleteTask(id:string,reqid:string){
     return deltask;
 }
 
-export {createTask,deleteTask,updateTask,getTaskById,getTasksByOwner}
+
+
+// export {createTask,deleteTask,updateTask,getTaskById,getTasksByOwner}
+
+// export {createTask}
+
+export {deleteTask,updateTask,createTask,getTasksByOwner,getTaskById}

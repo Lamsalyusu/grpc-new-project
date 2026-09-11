@@ -1,8 +1,6 @@
-
-
 redirectIfNotAuth();
 
-// ─── Helpers ───
+// check for the specific tasks due 
 function isOverdue(dueDate, status) {
   if (!dueDate || status === 'completed') return false;
   return new Date(dueDate) < new Date();
@@ -16,20 +14,20 @@ function getDisplayStatus(task) {
 
 function getStatusColor(status) {
   const colors = {
-    pending: '#f59e0b',      // amber
-    in_progress: '#3b82f6',  // blue
-    completed: '#10b981',    // green
-    missing: '#ef4444',      // red
+    pending: '#f59e0b',      
+    in_progress: '#3b82f6',  
+    completed: '#10b981',    
+    missing: '#ef4444',     
   };
   return colors[status] || '#666';
 }
 
-// ─── Load Tasks ───
+
 async function loadTasks() {
   const status = document.getElementById('filterStatus')?.value || '';
   const priority = document.getElementById('filterPriority')?.value || '';
   
-  let url = '/tasks?page=1&limit=20';
+  let url = '/tasks?page=1&limit=5';
   if (status) url += `&status=${status}`;
   if (priority) url += `&priority=${priority}`;
 
@@ -124,7 +122,7 @@ async function loadSharedTasks() {
         <div class="task-meta">
           <span class="badge badge-${task.status}">${task.status}</span>
           <span class="badge badge-${task.priority}">${task.priority}</span>
-          <span>Due: ${task.due_date ? new Date(task.due_date).toLocaleDateString() : '—'}</span>
+          <span>Due: ${task.due_date ? new Date(task.due_date).toLocaleString() : '—'}</span>
         </div>
       `;
       list.appendChild(card);
@@ -140,7 +138,6 @@ function openModal() {
 }
 function closeModal() {
   document.getElementById('modal').classList.remove('active');
-// 
 }
 const now = new Date();
 
@@ -191,24 +188,59 @@ if (createForm) {
   });
 }
 
+function toLocalInputValue(dateStr) {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  const offset = date.getTimezoneOffset() * 60000;
+  return new Date(date - offset).toISOString().slice(0, 16);
+}
+
+
 function openEditModal(task) {
   document.getElementById('editId').value = task.id;
   document.getElementById('editTitle').value = task.title;
   document.getElementById('editDescription').value = task.description || '';
   document.getElementById('editStatus').value = getDisplayStatus(task);
   document.getElementById('editPriority').value = task.priority;
-  document.getElementById('editDueDate').value = task.due_date 
-    ? new Date(task.due_date).toISOString().slice(0, 16) 
-    : '';
-  document.getElementById('editReminderAt').value = task.reminder_at 
-    ? new Date(task.reminder_at).toISOString().slice(0, 16) 
-    : '';
+  document.getElementById('editDueDate').value = toLocalInputValue(task.due_date);
+  document.getElementById('editReminderAt').value = toLocalInputValue(task.reminder_at);
+
+  const isCompleted = getDisplayStatus(task) === 'completed';
+  const editReminderInputEl = document.getElementById('editReminderAt');
+  const editDueInputEl = document.getElementById('editDueDate');
+  editReminderInputEl.disabled = isCompleted;
+  editDueInputEl.disabled = isCompleted;
+  if (isCompleted) {
+    editReminderInputEl.removeAttribute('min');
+    editDueInputEl.removeAttribute('min');
+  } else {
+    editReminderInputEl.setAttribute('min', currentDateTime);
+    editDueInputEl.setAttribute('min', currentDateTime);
+  }
+
   document.getElementById('editModal').classList.add('active');
 }
 
 function closeEditModal() {
   document.getElementById('editModal').classList.remove('active');
 }
+
+// Live-update reminder/due-date fields whenever status dropdown changes
+document.getElementById('editStatus')?.addEventListener('change', (e) => {
+  const reminderInputEl = document.getElementById('editReminderAt');
+  const dueInputEl = document.getElementById('editDueDate');
+  if (e.target.value === 'completed') {
+    reminderInputEl.removeAttribute('min');
+    dueInputEl.removeAttribute('min');
+    reminderInputEl.disabled = true;
+    dueInputEl.disabled = true;
+  } else {
+    reminderInputEl.setAttribute('min', currentDateTime);
+    dueInputEl.setAttribute('min', currentDateTime);
+    reminderInputEl.disabled = false;
+    dueInputEl.disabled = false;
+  }
+});
 
 const editForm = document.getElementById('editTaskForm');
 if (editForm) {
@@ -253,11 +285,6 @@ document.getElementById('btnOpenModal')?.addEventListener('click', openModal);
 document.getElementById('btnCloseModal')?.addEventListener('click', closeModal);
 document.getElementById('btnCloseEditModal')?.addEventListener('click', closeEditModal);
 
-// function escapeHtml(text) {
-//   const div = document.createElement('div');
-//   div.textContent = text;
-//   return div.innerHTML;
-// }
 // Auto-refresh every 30 seconds to catch overdue tasks
 setInterval(loadTasks, 30000);
 

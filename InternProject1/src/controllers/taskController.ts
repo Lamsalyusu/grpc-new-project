@@ -1,6 +1,6 @@
-import { Taskrequire, taskqueryschema } from "../validators/taskValidator";
+import { Taskrequire} from "../validators/taskValidator";
 import TaskClient from '../grpc-client/taskClient'
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { buildMetadata } from "./grpcMetadata";
 
 const taskControllers = {
@@ -14,7 +14,7 @@ const taskControllers = {
     });
   },
 
-  getone: async (req: Request, res: Response, next: NextFunction) => {
+  getone: async (req: Request, res: Response) => {
     const taskid = req.params.id as string;
     const userid = (req as any).user.id;
     const md = buildMetadata(req);
@@ -24,7 +24,7 @@ const taskControllers = {
     });
   },
 
-  getAll: async (req: Request, res: Response, next: NextFunction) => {
+  getAll: async (req: Request, res: Response) => {
     const query = (req as any).validatedQuery;
     const userid = (req as any).user.id;
     const md = buildMetadata(req);
@@ -46,7 +46,7 @@ const taskControllers = {
     );
   },
 
-  update: async (req: Request, res: Response, next: NextFunction) => {
+  update: async (req: Request, res: Response) => {
     const data = req.body;
     const taskid = req.params.id as string;
     const userid = (req as any).user.id;
@@ -57,7 +57,7 @@ const taskControllers = {
     });
   },
 
-  remove: async (req: Request, res: Response, next: NextFunction) => {
+  remove: async (req: Request, res: Response) => {
     const taskid = req.params.id as string;
     const userid = (req as any).user.id;
     const md = buildMetadata(req);

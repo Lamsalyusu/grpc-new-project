@@ -4,7 +4,7 @@ import taskCollaboratorClient from '../grpc-client/taskCollaboratorClient';
 import {buildMetadata} from './grpcMetadata';
 const taskCollaboratorController = {
 
-    create:async(req:Request,res:Response,next:NextFunction) => {
+    create:async(req:Request,res:Response) => {
             const {email}= req.body as taskcollaboratorvalidation;
             //task id chai parameter bata aauxa hai
             const task_id = req.params.id as string;
@@ -19,7 +19,7 @@ const taskCollaboratorController = {
             });
     },
 
-    getCollaborator:async(req:Request,res:Response,next:NextFunction)=>{
+    getCollaborator:async(req:Request,res:Response)=>{
             //task id chai parameter bata aauxa hai
             const task_id = req.params.id as string;
             //reqid chai new add garne collaborator ko id ho 
@@ -34,7 +34,7 @@ const taskCollaboratorController = {
             });
     },
 
-    deleteCollaborators:async(req:Request,res:Response,next:NextFunction)=>{
+    deleteCollaborators:async(req:Request,res:Response)=>{
              //task id chai parameter bata aauxa hai
             const task_id = req.params.id as string;
             //reqid chai new add garne collaborator ko id ho 
@@ -49,7 +49,7 @@ const taskCollaboratorController = {
             });
     },
 
-    getSharedTasks: async (req: Request, res: Response, next: NextFunction) => {
+    getSharedTasks: async (req: Request, res: Response) => {
             const user_id = (req as any).user.id;
             const md = buildMetadata(req);
             taskCollaboratorClient.GetSharedTasks({user_id}, md, (err: any, result: any) => {

@@ -2,6 +2,13 @@ const params = new URLSearchParams(window.location.search);
 const taskId = params.get('id');
 let currentUserId = null;
 
+function formatMsgTime(dateStr) {
+  const d = new Date(dateStr);
+  const datePart = d.toLocaleDateString('en-US', { year: '2-digit', month: 'numeric', day: 'numeric' });
+  const timePart = d.toLocaleTimeString();
+  return `${datePart}, ${timePart}`;
+}
+
 async function initTaskDetail() {
   if (!taskId) return window.location.href = 'dashboard.html';
 
@@ -68,7 +75,8 @@ async function loadCollaborators() {
           ${name.charAt(0).toUpperCase()}
         </div>
         <div>
-          <div style="font-weight:600;font-size:14px;">${escapeHtml(name)}</div>
+          <div style="font-weight:6done
+Yuyutsu 100;font-size:14px;">${escapeHtml(name)}</div>
           <div style="font-size:12px;color:#666;">${escapeHtml(c.email || '')}</div>
         </div>
       </div>
@@ -132,7 +140,7 @@ function renderMsg(m) {
   return `
     <div class="msg">
       <strong>${escapeHtml(sender)}</strong>
-      <time>${m.created_at ? new Date(m.created_at).toLocaleTimeString() : ''}</time>
+      <time>${m.created_at ? formatMsgTime(m.created_at) : ''}</time>
       <p>${escapeHtml(m.body)}</p>
     </div>
   `;

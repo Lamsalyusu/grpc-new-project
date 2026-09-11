@@ -1,6 +1,6 @@
 import grpc from '@grpc/grpc-js';
-import { registerUser,loginUser } from '../../service/authService';
-import { findById } from '../../repositories/userRepository';
+import { registerUser,loginUser } from '../service/authService';
+import { findById } from '../repositories/userRepository';
 
 function getUserFromCall(call: any) {
   const raw = call.metadata.get('user')[0] as string;
@@ -30,7 +30,7 @@ const authHandlers = {
             callback(null,result);
         } catch(err:any){
             callback({
-                code: grpc.status.INTERNAL, 
+                // code: grpc.status.INTERNAL? 400 : 500, 
                 message: err.message || "Internal server error during logging."
             })
         }

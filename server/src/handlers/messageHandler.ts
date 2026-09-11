@@ -1,5 +1,5 @@
 import grpc from '@grpc/grpc-js';
-import { sendMessage, getMessage,checkAccess } from '../../service/messageService';
+import { sendMessage, getMessage,checkAccess } from '../service/messageService';
 
 function getUserFromCall(call: any) {
   const raw = call.metadata.get('user')[0] as string;   // ← "user", not "decodedToken"
@@ -13,7 +13,7 @@ const messageHandlers = {
     const { task_id, body } = call.request;
     const message = await sendMessage(task_id, user.id, body);
     if (!message) {
-      return callback({ code: grpc.status.INTERNAL, message: "message creation failed" });
+      return callback({ code: grpc.status.INTERNAL, message: "message creation f5ailed" });
     }
     callback(null, {
       message: {
