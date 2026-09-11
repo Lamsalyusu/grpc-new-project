@@ -23,7 +23,7 @@ function socketMiddleware(socket:Socket,next:(err?:Error)=>void){
     // }
     next();
   }
-  catch(_err){
+  catch(err){
     next (new Error('Authentication Error:token invalid or expired'))
   }
 };

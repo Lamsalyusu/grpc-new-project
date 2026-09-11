@@ -1,9 +1,9 @@
 import bcrypt from "bcrypt";
 import { findByEmail, createUser } from "../repositories/userRepository";
 import { signInToken } from "../utils/jwt";
-// import { RegisterInput, LoginInput } from "../validators/authValidator";
+import { RegisterInput, LoginInput } from "../validators/authValidator";
 
-async function registerUser(data: any) {
+async function registerUser(data:RegisterInput) {
   const existingUser = await findByEmail(data.email);
   if (existingUser) {
     throw { status: 409, message: "Email already in use" };
@@ -13,7 +13,7 @@ async function registerUser(data: any) {
     name: data.name,
     email: data.email,
     password_hash,
-  }) as any;
+  });
   // const token = signInToken({ id: user.id, email: user.email });
   return {
     user: { id: user.id, name: user.name, email: user.email, role: user.role }
@@ -21,7 +21,7 @@ async function registerUser(data: any) {
   };
 } 
 
-async function loginUser(data: any) {
+async function loginUser(data: LoginInput) {
   const user = await findByEmail(data.email);
 
   if (!user) {

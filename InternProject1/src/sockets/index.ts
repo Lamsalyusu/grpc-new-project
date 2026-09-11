@@ -8,7 +8,7 @@ function initSocket(httpServer:any){
 io = new Server(httpServer,{
     cors:{
     origin:allowedOrigins,
-    methods:['GET','POST'],
+    // methods:['GET','POST'],
     credentials:true,
   },
 });

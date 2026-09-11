@@ -1,4 +1,5 @@
 import { Task } from "../db/models/index";
+import { taskqueryschema, Taskrequire } from "../validators/taskValidator";
 
 interface TaskFilters {
   status?: string;
