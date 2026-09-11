@@ -1,14 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import * as grpc from '@grpc/grpc-js';
-// import AuthClient from "../grpc-client/authClient";
 import AuthClient from "../grpc-client/authClient";
 import { LoginInput, RegisterInput } from "../validators/authValidator";
 import { buildMetadata } from "./grpcMetadata";
 
 const authController = {
-  register: async (req: Request, res: Response, next: NextFunction) => {
+  register: async (req: Request, res: Response) => {
     const data = req.body as RegisterInput;
-
     AuthClient.Register(data, (err: any, response: any) => {
       if (err) {
         return res.status(err.code === grpc.status.ALREADY_EXISTS ? 409 : 500).json({

@@ -36,7 +36,7 @@ async function findTasksForUser(user_id: string) {
       { 
       model: Task ,
       as :'task',
-      attributes:['id','title','description','status','priority','owner_id'],
+      attributes:['id','title','description','status','priority','owner_id','due_date','reminder_at'],
     },
   ],   // requires the ser,Task↔TaskCollaborator association
   });

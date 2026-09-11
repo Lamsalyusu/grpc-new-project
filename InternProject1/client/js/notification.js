@@ -9,7 +9,7 @@ function notifvisible(n){
   
   async function loadNotifications() {
   try {
-    const res = await api('/notifications?page=1&limit=20');
+    const res = await api('/notifications?page=1&limit=5');
     // console.log('Notifications:', res);
     const list = document.getElementById('notificationsList');
     const notifs = res.data;
@@ -39,13 +39,13 @@ function notifvisible(n){
       if (n.type === 'reminder') {
         content = `
           <div>
-            <strong>⏰ Reminder: ${escapeHtml(payload.title || 'Task')}</strong>
+            <strong>Reminder: ${escapeHtml(payload.title || 'Task')}</strong>
             <p style="font-size:13px;color:#666;margin-top:4px;">${escapeHtml(payload.description || '')}</p>
             <p style="font-size:12px;color:#ef4444;">Due: ${payload.due_date ? new Date(payload.due_date).toLocaleString() : '—'}</p>
           </div>
         `;
       } else if (n.type === 'TASK_COLLABORATOR_ADDED') {
-        content = `<strong>🤝 Added as collaborator</strong>`;
+        content = `<strong> Added as collaborator</strong>`;
       } else {
         content = `<strong>${escapeHtml(n.type)}</strong>`;
       }

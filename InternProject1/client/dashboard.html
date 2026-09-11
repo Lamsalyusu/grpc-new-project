@@ -10,8 +10,8 @@
   <nav class="navbar">
     <h2>Task Manager</h2>
     <div>
-      <a href="profile.html">👤 Profile</a>
-      <a href="notifications.html">🔔 Notifications</a>
+      <a href="profile.html"> Profile</a>
+      <a href="notifications.html"> Notifications</a>
       <button id="btnLogout">Logout</button>
     </div>
   </nav>
@@ -51,12 +51,15 @@
         <input type="text" id="title" placeholder="Title" required />
         <textarea id="description" placeholder="Description"></textarea>
         
+        <h5>Priority</h5>
         <select id="priority">
           <option value="low">Low</option>
           <option value="medium" selected>Medium</option>
           <option value="high">High</option>
         </select>
+        <h5>Due-date</h5>
         <input type="datetime-local" id="due_date" />
+        <h5>Reminder-date</h5>
         <input type="datetime-local" id="reminder_at" />
         <button type="submit">Create</button>
         <!-- FIX: Added type="button" to prevent form submission -->
@@ -73,17 +76,21 @@
         <input type="hidden" id="editId" />
         <input type="text" id="editTitle" placeholder="Title" required />
         <textarea id="editDescription" placeholder="Description"></textarea>
+        <h5>Status</h5>
         <select id="editStatus">
           <option value="pending">Pending</option>
           <option value="in_progress">In Progress</option>
           <option value="completed">Completed</option>
         </select>
+        <h5>Priority</h5>
         <select id="editPriority">
           <option value="low">Low</option>
           <option value="medium">Medium</option>
           <option value="high">High</option>
         </select>
+        <h5>Due-date</h5>
         <input type="datetime-local" id="editDueDate" />
+        <h5>Reminder-date</h5>
         <input type="datetime-local" id="editReminderAt" />
         <button type="submit">Update</button>
         <!-- FIX: Added type="button" to prevent form submission -->

@@ -1,14 +1,8 @@
-import dotenv from 'dotenv';
 import path from 'path';
-dotenv.config();
+const PROTO_DIR = path.resolve(__dirname, '../../proto'); 
+// import {proto} from '../../proto'
 
-const PROTO_DIR = path.resolve(__dirname, '../../../proto');
-// import 
-
-const ENV = {
-  PORT: process.env.GRPC_PORT || 50051,
-  DATABASE_URL: process.env.DATABASE_URL,
-  JWT_SECRET: process.env.JWT_SECRET,
+const PROTO_PATHS = {
   AUTH_PROTO_PATH: path.join(PROTO_DIR, 'auth.proto'),
   TASK_PROTO_PATH: path.join(PROTO_DIR, 'task.proto'),
   TASKCOLLABORATOR_PROTO_PATH: path.join(PROTO_DIR, 'taskcollaborator.proto'),
@@ -25,4 +19,4 @@ const ENV = {
   }
 };
 
-export default ENV;
+export default PROTO_PATHS;

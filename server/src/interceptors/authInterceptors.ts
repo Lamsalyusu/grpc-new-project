@@ -16,11 +16,10 @@ const authInterceptor = (methodDescriptor: any, call: any) => {
   const listener = new grpc.ServerListenerBuilder()
     .withOnReceiveMetadata((metadata: any, next: any) => {
 
-      //  console.log("Incoming Metadata Headers:", metadata.toHttp2Headers());
+       console.log("Incoming Metadata Headers:", metadata.toHttp2Headers());
       const authorization = metadata.get("authorization");
       
       if (!authorization || authorization.length === 0) {
-        // Abort the call by passing an error status to the responder
         return call.sendStatus({ code: grpc.status.UNAUTHENTICATED, details: "Token not found" });
       }
 
@@ -33,7 +32,6 @@ const authInterceptor = (methodDescriptor: any, call: any) => {
 
       try {
         const decoded = verifyToken(token);
-        // Pass decoded token down to the actual service handler via metadata
         metadata.set("user", JSON.stringify(decoded));
         next(metadata);
       } catch (error) {

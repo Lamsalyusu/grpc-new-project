@@ -1,7 +1,7 @@
 import * as grpc from '@grpc/grpc-js';
 import * as protoloader from '@grpc/proto-loader'
-import ENV from "../../../server/src/config/env";
-const packageDefinition = protoloader.loadSync(ENV.NOTIFICATION_PROTO_PATH, ENV.PROTO_LOADER_OPTIONS,);
+import PROTO_PATHS from "../../../server/src/index";
+const packageDefinition = protoloader.loadSync(PROTO_PATHS.NOTIFICATION_PROTO_PATH, PROTO_PATHS.PROTO_LOADER_OPTIONS);
 const notificationProto = grpc.loadPackageDefinition(packageDefinition) as any;
 
 const NotificationService = notificationProto.notificationPackage.NotificationService;

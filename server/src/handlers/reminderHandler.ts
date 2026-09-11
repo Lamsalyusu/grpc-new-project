@@ -1,5 +1,5 @@
 import grpc from '@grpc/grpc-js';
-import processReminder from '../../service/reminderService';
+import processReminder from '../service/reminderService';
 
 const reminderHandlers = {
   CheckDueReminders: async (call: any, callback: any) => {

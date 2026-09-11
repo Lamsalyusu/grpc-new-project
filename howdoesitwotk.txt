@@ -29,7 +29,7 @@
 └──────────────────────────────┬────────────────────────────────┘
                                 ↓
 ┌─────────────────────────────────────────────────────────────────┐
-│  4. CLIENT (Gateway) — one per service, thin wrapper            │
+│  4. CLIENT (Gateway) — one per service, thin wrapper            │192.168.51.210
 │     authClient.ts / taskClient.ts / taskCollaboratorClient.ts / │
 │     messageClient.ts                                            │
 │     Loads the matching .proto file, exposes methods NAMED       │
