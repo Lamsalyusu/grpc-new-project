@@ -3,8 +3,7 @@ import reminderclient from '../grpc-client/reminderClient';
 
 async function reminderJob() {
   cron.schedule('*/10 * * * * *', async () => {
-
-    reminderclient.CheckDueReminders({},(err: any, result: any) => {
+    reminderclient.CheckDueReminders({},(err: any) => {
       if (err) {
         console.error("Error in reminder job", err);
         return;

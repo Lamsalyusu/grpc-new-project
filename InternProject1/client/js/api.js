@@ -34,13 +34,13 @@ async function api(endpoint, options = {}) {
     headers,
   });
   
- if (res.status === 401) {
+ if (res.status === 401 && !isAuthRoute) {
     logout();
     throw new Error('Unauthorized session. Please log in again.');
   }
 
   const data = await res.json().catch(() => ({}));
-
+  console.log(data)
   if (!res.ok) {
     const msg = data.error?.message || data.message || 'Something went wrong';
     throw new Error(msg);

@@ -7,6 +7,7 @@ import taskCollaboratorRouter from './routes/taskCollaboratorRoutes';
 import messageRoutes from './routes/messageRoutes';
 import errorHandler from './middlewares/errormiddleware';
 import notifroutes from './routes/notificationRoutes';
+import collaborationRoutes from './routes/collaborationRoutes';
 import path from 'path';
 
 
@@ -98,19 +99,12 @@ app.use(
     },
   })
 );
-    
-    // app.use(helmet()); 
+ 
 app.use(express.json());
 app.use(cors(corsOptions))
-// app.use(cors());
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, '../client')));
 
-// Fallback to index.html for SPA routes
-// app.get('/', (req, res) => {
-  // res.sendFile(path.join(__dirname, '../client/index.html'));
-// });
-// app.use(express.static(path.join(process.cwd(), 'client')));
 
 // Routes
 app.use('/api/v1/auth', router);
@@ -118,7 +112,7 @@ app.use('/api/v1/tasks', taskCollaboratorRouter);
 app.use('/api/v1/tasks', messageRoutes);
 app.use('/api/v1/tasks', taskrouter);
 app.use('/api/v1/notifications', notifroutes);
-// Health check
+app.use('/api/v1/collaborations', collaborationRoutes);// Health check
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok', message: 'app running smoothly' });
 });
