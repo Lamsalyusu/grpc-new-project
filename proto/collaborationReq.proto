@@ -1,0 +1,56 @@
+syntax = "proto3";
+package CollaborationPackage;
+
+service CollaborationReq{
+    rpc sendRequest(Request) returns (requeststatus);
+    rpc seeRequest(seeReq) returns (requests);
+    rpc acceptRequest(acceptReq) returns (accept);
+    rpc rejectRequest(rejectReq) returns (reject);
+}
+
+
+// ----------------------------------------------
+message Request{
+    // string sender_id=1;
+    string receiver_id=1;
+}
+
+message requeststatus{
+    string id =1;
+    string sender_id = 2;
+    string receiver_id = 3;
+    string status = 4;
+    // string something = 5;
+}
+// -----------------------------------------------
+
+message seeReq{
+    // string sender_id =1;
+    // string receiver_id = 2;
+}
+
+message requests{
+   repeated requeststatus reqs = 1;
+}
+// ---------------------------------------------
+message acceptReq{
+    string id = 1;
+    // string sendeid = 1;
+    // string receiver_id = 2;
+}
+
+message accept {
+    repeated requeststatus accept = 1;
+}
+// ----------------------------------------------
+
+message rejectReq{
+    string id = 1;
+    // string sender_id = 1;
+    // string receiver_id = 2;
+}
+
+message reject{
+   repeated requeststatus reject = 1;
+}
+// ----------------------------------------------
