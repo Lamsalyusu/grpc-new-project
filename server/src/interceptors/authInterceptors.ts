@@ -4,7 +4,7 @@ import { verifyToken } from "../utils/jwt";
 const EXEMPT_PATHS = [
   "/authPackage.auth/Register",
   "/authPackage.auth/Login",
-    "/reminderpackage.reminder/CheckDueReminders",
+  "/reminderpackage.reminder/CheckDueReminders",
 ];
 
 const authInterceptor = (methodDescriptor: any, call: any) => {
@@ -16,7 +16,7 @@ const authInterceptor = (methodDescriptor: any, call: any) => {
   const listener = new grpc.ServerListenerBuilder()
     .withOnReceiveMetadata((metadata: any, next: any) => {
 
-       console.log("Incoming Metadata Headers:", metadata.toHttp2Headers());
+      //  console.log("Incoming Metadata Headers:", metadata.toHttp2Headers());
       const authorization = metadata.get("authorization");
       
       if (!authorization || authorization.length === 0) {

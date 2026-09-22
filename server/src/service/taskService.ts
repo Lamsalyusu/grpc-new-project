@@ -20,13 +20,13 @@ async function createTask(data:Taskrequire,owner_id:string){
 async function getTaskById(id:string,reqid:string){
     const gettask = await findById(id);
     if(!gettask){
-        throw {status:404,message:"doesnot exists"}
+        throw {message:"doesnot exists"}
     }
     const isOwner = gettask.owner_id === reqid;
     const isCollaborator = await findCollaborator(id, reqid);
 
     if (!isOwner && !isCollaborator) {
-    throw { status: 403, message: "Not authorized to view this task" };
+    throw {  message: "Not authorized to view this task" };
   }
     return gettask;
 }
@@ -42,10 +42,10 @@ async function updateTask(data:Taskrequire,reqid:string,id:string){
     // const uptask = await update(data,id)
     const uptask = await findById(id);
     if(!uptask){
-        throw {status:404,message:"task doesnot exists"}
+        throw {message:"task doesnot exists"}
     }
     if(uptask.owner_id !== reqid){
-        throw {status:403,message:'not their task'}
+        throw {message:'not their task'}
     }
     // const newuptask = await update(id,data);
     // if(newuptask?.reminder_at === data.reminder_at){
@@ -76,10 +76,10 @@ async function updateTask(data:Taskrequire,reqid:string,id:string){
 async function deleteTask(id:string,reqid:string){
     const tsktodel = await findById(id);
     if (!tsktodel){
-        throw {status:404,message:'task doesnot exists'}
+        throw {message:'task doesnot exists'}
     }
     if (tsktodel.owner_id !== reqid){
-        throw {status:403,message:'not their task'}
+        throw {message:'not their task'}
     }
     const deltask = await remove(id);
     return deltask;

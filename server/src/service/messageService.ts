@@ -2,13 +2,13 @@ import { findById as findTaskById } from "../repositories/taskRepository";
 import { findOne as findCollaborator } from "../repositories/taskCollaboratorRepository";
 import { createMessage, findByTask } from "../repositories/messageRepository";
 
-//yo function chai if owner and collborator lai access cha ki nai bhanne ko lagi 
+//yo function chai if owner and collaborator lai access cha ki nai bhanne ko lagi 
 async function checkAccess(task_id:string,user_id:string){
     // console.log("CHECKING ACCESS:", { task_id, user_id });
     const task = await findTaskById(task_id);
     //  console.log("TASK FOUND:", task ? { id: task.id, owner_id: task.owner_id } : null);
     if(!task){
-        throw { status :404 ,message:'task not found'}
+        throw { message:'task not found'}
     }
     // yo condition ma chai task ko owner ho bhanne bujhinchha
     const owner = task.owner_id === user_id;
@@ -16,7 +16,7 @@ async function checkAccess(task_id:string,user_id:string){
     const iscollaborator = await findCollaborator(task_id,user_id);
     // if no owner and collaborator then no access to chat
     if(!owner && !iscollaborator){
-        throw { status :403 ,message: 'not authorized to access the chat'}
+        throw { message: 'not authorized to access the chat'}
     }
     return true;
 
