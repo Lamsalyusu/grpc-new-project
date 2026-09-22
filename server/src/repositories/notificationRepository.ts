@@ -5,7 +5,7 @@ async function create(user_id:string,type:string,payload:object){
     return Notification.create({user_id,type,payload});
 }
 async function findByUser(user_id:string,page:number,limit:number,unreadOnly:boolean=false){
-    const where: any = {user_id};
+    const where:any = {user_id};
     if (unreadOnly) {
         where.read_at = null;
     }
@@ -19,26 +19,20 @@ async function findByUser(user_id:string,page:number,limit:number,unreadOnly:boo
 
 
 async function markAsRead(notification_id: string, user_id: string) {
-
     const notif = await Notification.findOne({
         where: {
             id: notification_id,
             user_id,
         },
     });
-
     if (!notif) {
         throw {status :404,message:'Notification not found'};
     }
-
     if (notif.read_at) {
         return notif;
     }
-
     notif.read_at = new Date();
-
     await notif.save();
-
     return notif;
 }
 

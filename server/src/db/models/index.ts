@@ -4,6 +4,7 @@ import Task from "./taskModel";
 import TaskCollaborator from "./taskCollaboratorModel";
 import Message from "./messageModel";
 import Notification from "./notificationModel";
+import collaboration_request from "./collaborationRequestModel";
 // models/index.ts
 User.hasMany(Message, { foreignKey: "sender_id", as: "sentMessages" });
 Message.belongsTo(User, { foreignKey: "sender_id", as: "sender" });

@@ -1,5 +1,6 @@
-import grpc from '@grpc/grpc-js';
+import * as grpc from '@grpc/grpc-js';
 import { createTaskCollaborator, getCollaboratorsByTask, deleteTaskCollaborator, getTasksSharedWithUser } from '../service/taskCollaboratorServices';
+import logger from '../utils/logger';
 
 function getUserFromCall(call: any) {
   const raw = call.metadata.get('user')[0] as string;
@@ -13,12 +14,14 @@ const taskCollaboratorHandlers = {
       // const { task_id, email, requester_id } = call.request;
       const { task_id,email } = call.request;
       // const result = await createTaskCollaborator(task_id, requester_id, email);
-      const result = await createTaskCollaborator(task_id,user.id,email)
+      const result = await createTaskCollaborator(task_id,user.id,email);
+      logger.info("Task collaborator added")
       callback(null, result);
     } catch (err: any) {
+      logger.error(`Adding task collaborator failed ${err.message}`)
       callback(
               { 
-                  // code: grpc.status.INTERNAL, 
+                  code: grpc.status.INTERNAL, 
                   message: err.message || "Internal server error"
                });
     }
@@ -36,8 +39,10 @@ const taskCollaboratorHandlers = {
       name: row.user.name,
       email: row.user.email,
     }));
+    logger.info("fetched collaborators successfully");
       callback(null, { task_id, collaborators });
     } catch (err: any) {
+      logger.error(`getting task collbaorator failed: ${err.message}`)
       callback(
         { 
         code: grpc.status.INTERNAL, 
@@ -53,8 +58,10 @@ const taskCollaboratorHandlers = {
       const {task_id,user_id} = call.request;
       // await deleteTaskCollaborator(task_id, requester_id, user_id);
       await deleteTaskCollaborator(task_id,user.id, user_id);
+      logger.info("task collbaorator removed")
       callback(null, { message: 'Collaborator removed successfully' });
     } catch (err: any) {
+      logger.error(`deleting task collaborator failed ${err.message}`)
       callback(
         { 
         code: grpc.status.INTERNAL, 
@@ -79,9 +86,10 @@ const taskCollaboratorHandlers = {
         owner_id:row.task.owner_id,  
         due_date:row.task.due_date,
       }));
-
+      logger.info("shared task retrieved successfully")
       callback(null, { tasks });
     } catch (err: any) {
+      logger.error(`retrieving task failed ${err.message}`)
       callback(
         { 
         code: grpc.status.INTERNAL, 
