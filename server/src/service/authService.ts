@@ -6,7 +6,7 @@ import { RegisterInput, LoginInput } from "../validators/authValidator";
 async function registerUser(data:RegisterInput) {
   const existingUser = await findByEmail(data.email);
   if (existingUser) {
-    throw { status: 409, message: "Email already in use" };
+    throw { message: "Email already in use" };
   }
   const password_hash = await bcrypt.hash(data.password,10);
   const user = await createUser({
@@ -23,14 +23,18 @@ async function registerUser(data:RegisterInput) {
 
 async function loginUser(data: LoginInput) {
   const user = await findByEmail(data.email);
+  // console.log(user)
 
   if (!user) {
-    throw { status: 401, message: "Invalid email or password" };
+    throw { message: "No user found (try registering first) " };
   }
   const isMatch = await bcrypt.compare(data.password, user.password_hash);
   if (!isMatch) {
-    throw { status: 401, message: "Invalid email or password" };
+    throw { message: "Invalid email or password" };
   }
+  // const existingUser = await findByEmail(data.email);
+  // if(!existing)
+
   const token = signInToken({ id: user.id, email: user.email });
   return {
     user: { id: user.id, name: user.name, email: user.email, role: user.role },
