@@ -9,6 +9,8 @@ const PROTO_PATHS = {
   MESSAGE_PROTO_PATH: path.join(PROTO_DIR, 'message.proto'),
   NOTIFICATION_PROTO_PATH: path.join(PROTO_DIR, 'notification.proto'),
   REMINDER_PROTO_PATH: path.join(PROTO_DIR,'reminder.proto'),
+  COLLABORATION_PROTO_PATH :path.join(PROTO_DIR,'collaborationReq.proto'),
+
 
   PROTO_LOADER_OPTIONS: {
     keepCase: true,
