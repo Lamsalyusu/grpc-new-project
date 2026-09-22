@@ -1,5 +1,6 @@
-import grpc from '@grpc/grpc-js';
+import * as  grpc from '@grpc/grpc-js';
 import processReminder from '../service/reminderService';
+import logger from '../utils/logger';
 
 const reminderHandlers = {
   CheckDueReminders: async (call: any, callback: any) => {
@@ -12,9 +13,12 @@ const reminderHandlers = {
         description: f.payload.description,
         due_date: f.payload.due_date,
       }));
+      logger.info("checking due reminders")
       callback(null, { reminders });
     } catch (err: any) {
-      callback({ code: grpc.status.INTERNAL, message: err.message || 'Check reminders failed' });
+      logger.error(`finding due remiders failed ${err.message}`)
+      callback({ code: grpc.status.INTERNAL, 
+                  message: err.message || 'Check reminders failed' });
     }
   },
 };
