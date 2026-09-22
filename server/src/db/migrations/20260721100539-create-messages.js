@@ -37,6 +37,12 @@ module.exports = {
         allowNull:false,
         defaultValue:Sequelize.NOW
       },
+      // comment out the below if using postgres for mysql i am now doing migration along with updated_at;
+      updated_at:{
+        type:Sequelize.DATE,
+        allowNull:false,
+        defaultValue:Sequelize.NOW
+      }
     });
     await queryInterface.addIndex('messages',['task_id']);
   },
