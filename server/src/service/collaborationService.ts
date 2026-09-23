@@ -1,9 +1,9 @@
-import { findById } from "../repositories/userRepository";
+import { findByEmail, findById } from "../repositories/userRepository";
 import {createRequest,acceptRequest,rejectRequest,seeRequest,findPendingRequest,findRequestById} from '../repositories/collaborationRepository';
 import {  RequestType } from "../validators/collaborationReqvalidation";
 
 async function sendRequest(sender_id:string,data:RequestType){
-    const receiver = await findById(data.receiver_id)
+    const receiver = await findByEmail(data.receiver_email)
 
     // if(!receiver){
     //     throw { message:"user not found" };
@@ -13,13 +13,13 @@ async function sendRequest(sender_id:string,data:RequestType){
     throw new Error("User not found");
   }
 
-   if (sender_id === data.receiver_id) {
+   if (sender_id === receiver.id) {
     throw new Error("You cannot send a collaboration request to yourself");
   }
 
     const existingRequest = await findPendingRequest(
         sender_id,
-        data.receiver_id
+        receiver.id
     );
 
     if (existingRequest) {
@@ -28,7 +28,7 @@ async function sendRequest(sender_id:string,data:RequestType){
 
     const request = await createRequest({
         sender_id,
-        receiver_id:data.receiver_id,
+        receiver_id:receiver.id,
     })
     return request;
 }
