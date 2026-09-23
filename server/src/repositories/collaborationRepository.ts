@@ -1,6 +1,6 @@
 // import { status } from "@grpc/grpc-js";
 import collaboration_request from "../db/models/collaborationRequestModel";
-// import sendRequest from "../service/collaborationService";
+// import sendRequ from "../service/collaborationService";
 
 async function createRequest(data:{
     // id:string,
@@ -73,7 +73,7 @@ return findRequestById(id);
 async function rejectRequest(id:string,receiver_id:string){
     const[updatedRows]= await collaboration_request.update(
         {
-            status:'reject'
+            status:'rejected'
         },
         {
             where:{
