@@ -12,8 +12,10 @@ const collaboration_handler = {
         try{
             const user = getUserFromCall(call);
             const sender_id = user.id;
-            const {receiver_id} = call.request;
-            const request = await sendRequest(sender_id,{receiver_id})
+            // const {receiver_id} = call.request;
+            const {receiver_email} = call.request;
+            // const request = await sendRequest(sender_id,{receiver_id})
+            const request = await sendRequest(sender_id,{receiver_email})
             callback(null,request)
         }catch(err:any){
             callback({
@@ -44,8 +46,9 @@ const collaboration_handler = {
             const receiver_id = user.id;
             const {id} = call.request;
             const request = await  acceptReq(id,receiver_id);
+            // console.log(request);
             callback(null,{
-                request
+                accept:[request]
             })
         }catch(err:any){
             callback
@@ -64,7 +67,7 @@ const collaboration_handler = {
             const {id} = call.request;
             const request = await  rejectReq(id,receiver_id);
             callback(null,{
-                request
+                reject:[request]
             })
         }
         catch(err:any){
