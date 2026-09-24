@@ -1,5 +1,5 @@
 import { findByEmail, findById } from "../repositories/userRepository";
-import {createRequest,acceptRequest,rejectRequest,seeRequest,findPendingRequest,findRequestById} from '../repositories/collaborationRepository';
+import {createRequest,acceptRequest,rejectRequest,seeRequest,findPendingRequest,findRequestById,doublerequest} from '../repositories/collaborationRepository';
 import {  RequestType } from "../validators/collaborationReqvalidation";
 
 async function sendRequest(sender_id:string,data:RequestType){
@@ -16,6 +16,11 @@ async function sendRequest(sender_id:string,data:RequestType){
    if (sender_id === receiver.id) {
     throw new Error("You cannot send a collaboration request to yourself");
   }
+  
+    const double_request = await doublerequest(sender_id, receiver.id)
+    if(double_request){
+        throw new Error("Can't send request twice you are already added to this user");
+    }
 
     const existingRequest = await findPendingRequest(
         sender_id,
@@ -38,7 +43,9 @@ async function viewRequest(receiver_id:string){
     // if(!receiver){
     //     throw{message:'user not found'}
     // }
-    return seeRequest(receiver_id);
+    // return seeRequest(receiver_id);
+    const requests = await seeRequest(receiver_id)
+    return requests;
     // return view;
 }
 
@@ -89,11 +96,5 @@ async function rejectReq(request_id:string,receiver_id:string){
   return rejected;
 }
     // const reject = await rejectRequest(sender_id,receiver_id);
-
-
-
-
-
-
 
 export {sendRequest,viewRequest,acceptReq,rejectReq};
