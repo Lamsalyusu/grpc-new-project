@@ -30,7 +30,7 @@ const collaboration_handler = {
             // const sender_id = user.id;
             const receiver_id = user.id;
             // const {receiver_id} = call.request;
-            const request = await  viewRequest(receiver_id);
+            const request = await viewRequest(receiver_id);
             callback(null,{reqs:request})
         }catch(err:any){
             callback({
