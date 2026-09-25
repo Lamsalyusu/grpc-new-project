@@ -3,109 +3,452 @@
 <head>
   <meta charset="UTF-8" />
   <title>Dashboard</title>
+
   <link rel="stylesheet" href="css/style.css" />
-  <script src = 'js/redirect.js'></script>
+
+  <script src="js/redirect.js"></script>
 </head>
+
 <body>
+
+  <!-- ====================================================================== -->
+  <!-- Navbar -->
+  <!-- ====================================================================== -->
+
   <nav class="navbar">
+
     <h2>Task Manager</h2>
+
     <div>
-      <a href="profile.html"> Profile</a>
-      <a href="notifications.html"> Notifications</a>
+      <a href="profile.html">Profile</a>
+      <a href="notifications.html">Notifications</a>
       <button id="btnLogout">Logout</button>
     </div>
+
   </nav>
 
+
+  <!-- ====================================================================== -->
+  <!-- Tasks -->
+  <!-- ====================================================================== -->
+
   <div class="container">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+
+    <div
+      style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:16px;
+      "
+    >
       <h2>My Tasks</h2>
-      <button id="btnOpenModal">+ New Task</button>
+
+      <button id="btnOpenModal">
+        + New Task
+      </button>
     </div>
 
+
+    <!-- Filters -->
+
     <div id="filters" style="margin-bottom:16px;">
+
       <select id="filterStatus">
         <option value="">All Status</option>
         <option value="pending">Pending</option>
         <option value="in_progress">In Progress</option>
         <option value="completed">Completed</option>
       </select>
+
       <select id="filterPriority">
         <option value="">All Priority</option>
         <option value="low">Low</option>
         <option value="medium">Medium</option>
         <option value="high">High</option>
       </select>
-      <button id="btnFilter">Filter</button>
+
+      <button id="btnFilter">
+        Filter
+      </button>
+
     </div>
+
+
+    <!-- My Tasks -->
 
     <div id="tasksList"></div>
-    <h2 style="margin-top:32px;">Shared With Me</h2>
+
+
+    <!-- Shared Tasks -->
+
+    <h2 style="margin-top:32px;">
+      Shared With Me
+    </h2>
+
     <div id="sharedTasksList"></div>
+
   </div>
 
+
+  <!-- ====================================================================== -->
+  <!-- Collaboration -->
+  <!-- ====================================================================== -->
+
+  <section class="collaboration-container">
+
+    <div class="collaboration-card">
+
+
+      <!-- Collaboration Header -->
+
+      <div class="collaboration-header">
+
+        <div>
+
+          <h2>Collaborators</h2>
+
+          <p>
+            Connect with other users and manage collaboration requests.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- ================================================================== -->
+      <!-- Send Collaboration Request -->
+      <!-- ================================================================== -->
+
+      <div class="collaboration-search-group">
+
+        <h3>
+          Add New Collaborator
+        </h3>
+
+        <form
+          id="collaborationRequestForm"
+          class="collaboration-form"
+        >
+
+          <input
+            type="email"
+            id="collaborationUserEmail"
+            placeholder="Enter user's email"
+            required
+          />
+
+          <button
+            type="submit"
+            class="btn-send-request"
+          >
+            Send Request
+          </button>
+
+        </form>
+
+      </div>
+
+
+      <!-- ================================================================== -->
+      <!-- Incoming Requests -->
+      <!-- ================================================================== -->
+
+      <div class="collaboration-requests-group">
+
+        <div class="collaboration-requests-header">
+
+          <h3>
+            Incoming Requests
+          </h3>
+
+        </div>
+
+
+        <div id="collaborationRequestsList">
+
+          <p class="collaboration-empty-state">
+            Loading requests...
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- ================================================================== -->
+      <!-- My Collaborators -->
+      <!-- ================================================================== -->
+
+      <div class="collaborators-list-group">
+
+        <div class="collaborators-list-header">
+
+          <div>
+
+            <h3>
+              My Collaborators
+            </h3>
+
+            <p>
+              People you can collaborate with on your tasks.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div id="collaboratorsList">
+
+          <p class="collaboration-empty-state">
+            Loading collaborators...
+          </p>
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+  <!-- ====================================================================== -->
   <!-- Create Task Modal -->
-  <div class="modal-overlay" id="modal">
+  <!-- ====================================================================== -->
+
+  <div
+    class="modal-overlay"
+    id="modal"
+  >
+
     <div class="modal">
-      <h3>Create Task</h3>
+
+      <h3>
+        Create Task
+      </h3>
+
+
       <form id="createTaskForm">
-        <input type="text" id="title" placeholder="Title" required />
-        <textarea id="description" placeholder="Description"></textarea>
-        
-        <h5>Priority</h5>
+
+        <input
+          type="text"
+          id="title"
+          placeholder="Title"
+          required
+        />
+
+        <textarea
+          id="description"
+          placeholder="Description"
+        ></textarea>
+
+
+        <h5>
+          Priority
+        </h5>
+
         <select id="priority">
-          <option value="low">Low</option>
-          <option value="medium" selected>Medium</option>
-          <option value="high">High</option>
+
+          <option value="low">
+            Low
+          </option>
+
+          <option
+            value="medium"
+            selected
+          >
+            Medium
+          </option>
+
+          <option value="high">
+            High
+          </option>
+
         </select>
-        <h5>Due-date</h5>
-        <input type="datetime-local" id="due_date" />
-        <h5>Reminder-date</h5>
-        <input type="datetime-local" id="reminder_at" />
-        <button type="submit">Create</button>
-        <!-- FIX: Added type="button" to prevent form submission -->
-        <button type="button" id="btnCloseModal" style="background:#666;">Cancel</button>
+
+
+        <h5>
+          Due-date
+        </h5>
+
+        <input
+          type="datetime-local"
+          id="due_date"
+        />
+
+
+        <h5>
+          Reminder-date
+        </h5>
+
+        <input
+          type="datetime-local"
+          id="reminder_at"
+        />
+
+
+        <button type="submit">
+          Create
+        </button>
+
+
+        <button
+          type="button"
+          id="btnCloseModal"
+          style="background:#666;"
+        >
+          Cancel
+        </button>
+
       </form>
+
     </div>
+
   </div>
 
+
+  <!-- ====================================================================== -->
   <!-- Edit Task Modal -->
-  <div class="modal-overlay" id="editModal">
+  <!-- ====================================================================== -->
+
+  <div
+    class="modal-overlay"
+    id="editModal"
+  >
+
     <div class="modal">
-      <h3>Edit Task</h3>
+
+      <h3>
+        Edit Task
+      </h3>
+
+
       <form id="editTaskForm">
-        <input type="hidden" id="editId" />
-        <input type="text" id="editTitle" placeholder="Title" required />
-        <textarea id="editDescription" placeholder="Description"></textarea>
-        <h5>Status</h5>
+
+        <input
+          type="hidden"
+          id="editId"
+        />
+
+        <input
+          type="text"
+          id="editTitle"
+          placeholder="Title"
+          required
+        />
+
+        <textarea
+          id="editDescription"
+          placeholder="Description"
+        ></textarea>
+
+
+        <h5>
+          Status
+        </h5>
+
         <select id="editStatus">
-          <option value="pending">Pending</option>
-          <option value="in_progress">In Progress</option>
-          <option value="completed">Completed</option>
+
+          <option value="pending">
+            Pending
+          </option>
+
+          <option value="in_progress">
+            In Progress
+          </option>
+
+          <option value="completed">
+            Completed
+          </option>
+
         </select>
-        <h5>Priority</h5>
+
+
+        <h5>
+          Priority
+        </h5>
+
         <select id="editPriority">
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
+
+          <option value="low">
+            Low
+          </option>
+
+          <option value="medium">
+            Medium
+          </option>
+
+          <option value="high">
+            High
+          </option>
+
         </select>
-        <h5>Due-date</h5>
-        <input type="datetime-local" id="editDueDate" />
-        <h5>Reminder-date</h5>
-        <input type="datetime-local" id="editReminderAt" />
-        <button type="submit">Update</button>
-        <!-- FIX: Added type="button" to prevent form submission -->
-        <button type="button" id="btnCloseEditModal" style="background:#666;">Cancel</button>
+
+
+        <h5>
+          Due-date
+        </h5>
+
+        <input
+          type="datetime-local"
+          id="editDueDate"
+        />
+
+
+        <h5>
+          Reminder-date
+        </h5>
+
+        <input
+          type="datetime-local"
+          id="editReminderAt"
+        />
+
+
+        <button type="submit">
+          Update
+        </button>
+
+
+        <button
+          type="button"
+          id="btnCloseEditModal"
+          style="background:#666;"
+        >
+          Cancel
+        </button>
+
       </form>
+
     </div>
+
   </div>
+
+
+  <!-- ====================================================================== -->
+  <!-- JavaScript -->
+  <!-- ====================================================================== -->
 
   <script src="js/api.js"></script>
+
   <script src="js/tasks.js"></script>
-  <!-- FIX: Removed logout() from initial page load script string -->
+
+  <script src="js/collaboration.js"></script>
+
+
   <script>
-    redirectIfNotAuth(); 
-    loadTasks(); 
+
+    redirectIfNotAuth();
+
+    loadTasks();
+
     loadSharedTasks();
+
   </script>
+
 </body>
 </html>

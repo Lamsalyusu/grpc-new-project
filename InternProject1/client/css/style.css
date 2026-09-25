@@ -189,3 +189,772 @@ word-break: break-word;
   opacity: 0.8;
   filter: blur(0px);
 } */
+
+
+/* =========================================================
+   Collaboration
+   ========================================================= */
+/* =========================================================
+   Collaboration
+   ========================================================= */
+
+.collaboration-container {
+
+  max-width: 900px;
+
+  margin: 32px auto 40px auto;
+
+  padding: 0 16px;
+
+}
+
+
+.collaboration-card {
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 12px;
+
+  padding: 24px;
+
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+
+}
+
+
+/* =========================================================
+   Collaboration Header
+   ========================================================= */
+
+.collaboration-header {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding-bottom: 18px;
+
+  border-bottom: 1px solid #f0f0f0;
+
+  margin-bottom: 22px;
+
+}
+
+
+.collaboration-header h2 {
+
+  margin: 0;
+
+  font-size: 21px;
+
+  color: #111827;
+
+}
+
+
+.collaboration-header p {
+
+  margin-top: 4px;
+
+  color: #6b7280;
+
+  font-size: 13px;
+
+}
+
+
+/* =========================================================
+   Send Collaboration Request
+   ========================================================= */
+
+.collaboration-search-group {
+
+  background: #f8fafc;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 10px;
+
+  padding: 16px;
+
+  margin-bottom: 24px;
+
+}
+
+
+.collaboration-search-group h3 {
+
+  margin: 0 0 12px 0;
+
+  font-size: 14px;
+
+  color: #374151;
+
+}
+
+
+/* =========================================================
+   Collaboration Form
+   ========================================================= */
+
+.collaboration-form {
+
+  display: flex;
+
+  gap: 10px;
+
+  align-items: center;
+
+}
+
+
+#collaborationUserEmail {
+
+  flex: 1;
+
+  width: auto;
+
+  max-width: none;
+
+  margin: 0;
+
+  padding: 11px 13px;
+
+  border: 1px solid #d1d5db;
+
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  font-size: 14px;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+
+}
+
+
+#collaborationUserEmail:focus {
+
+  outline: none;
+
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.1);
+
+}
+
+
+.btn-send-request {
+
+  width: auto;
+
+  margin: 0;
+
+  padding: 11px 18px;
+
+  background: #2563eb;
+
+  color: white;
+
+  border: none;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  transition:
+    background 0.15s ease,
+    transform 0.1s ease;
+
+}
+
+
+.btn-send-request:hover {
+
+  background: #1d4ed8;
+
+}
+
+
+.btn-send-request:active {
+
+  transform: translateY(1px);
+
+}
+
+
+/* =========================================================
+   Incoming Requests
+   ========================================================= */
+
+.collaboration-requests-group {
+
+  margin-top: 4px;
+
+}
+
+
+.collaboration-requests-header {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 12px;
+
+}
+
+
+.collaboration-requests-header h3 {
+
+  margin: 0;
+
+  font-size: 15px;
+
+  color: #374151;
+
+}
+
+
+/* =========================================================
+   Collaboration Request Card
+   ========================================================= */
+
+.collaboration-request-card {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 14px 16px;
+
+  margin-bottom: 10px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 10px;
+
+  transition:
+    box-shadow 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+
+}
+
+
+.collaboration-request-card:hover {
+
+  border-color: #d1d5db;
+
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.06);
+
+  transform: translateY(-1px);
+
+}
+
+
+/* =========================================================
+   Request Information
+   ========================================================= */
+
+.collaboration-request-info {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  min-width: 0;
+
+}
+
+
+.collaboration-request-avatar {
+
+  width: 38px;
+
+  height: 38px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+
+  border-radius: 50%;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+}
+
+
+.collaboration-request-details {
+
+  min-width: 0;
+
+}
+
+
+.collaboration-request-title {
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  color: #111827;
+
+}
+
+
+.collaboration-request-sender {
+
+  margin-top: 2px;
+
+  font-size: 12px;
+
+  color: #6b7280;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+}
+
+
+/* =========================================================
+   Request Buttons
+   ========================================================= */
+
+.collaboration-request-actions {
+
+  display: flex;
+
+  gap: 8px;
+
+  flex-shrink: 0;
+
+}
+
+
+.btn-accept-request,
+.btn-reject-request {
+
+  width: auto;
+
+  margin: 0;
+
+  padding: 7px 12px;
+
+  border: none;
+
+  border-radius: 7px;
+
+  color: white;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    transform 0.1s ease;
+
+}
+
+
+.btn-accept-request {
+
+  background: #10b981;
+
+}
+
+
+.btn-accept-request:hover {
+
+  background: #059669;
+
+}
+
+
+.btn-reject-request {
+
+  background: #ef4444;
+
+}
+
+
+.btn-reject-request:hover {
+
+  background: #dc2626;
+
+}
+
+
+.btn-accept-request:active,
+.btn-reject-request:active {
+
+  transform: translateY(1px);
+
+}
+
+
+/* =========================================================
+   My Collaborators
+   ========================================================= */
+
+.collaborators-list-group {
+
+  margin-top: 28px;
+
+  padding-top: 22px;
+
+  border-top: 1px solid #f0f0f0;
+
+}
+
+
+.collaborators-list-header {
+
+  margin-bottom: 12px;
+
+}
+
+
+.collaborators-list-header h3 {
+
+  margin: 0;
+
+  font-size: 15px;
+
+  color: #374151;
+
+}
+
+
+.collaborators-list-header p {
+
+  margin-top: 4px;
+
+  color: #6b7280;
+
+  font-size: 13px;
+
+}
+
+
+/* =========================================================
+   Collaborator Card
+   ========================================================= */
+
+.collaborator-card {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 16px;
+
+  padding: 14px 16px;
+
+  margin-bottom: 10px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 10px;
+
+  transition:
+    box-shadow 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+
+}
+
+
+.collaborator-card:hover {
+
+  border-color: #d1d5db;
+
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.06);
+
+  transform: translateY(-1px);
+
+}
+
+
+/* =========================================================
+   Collaborator Information
+   ========================================================= */
+
+.collaborator-info {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  min-width: 0;
+
+}
+
+
+.collaborator-avatar {
+
+  width: 42px;
+
+  height: 42px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+
+  border-radius: 50%;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+}
+
+
+.collaborator-details {
+
+  min-width: 0;
+
+}
+
+
+.collaborator-name {
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  color: #111827;
+
+}
+
+
+.collaborator-email {
+
+  margin-top: 3px;
+
+  font-size: 13px;
+
+  color: #6b7280;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+}
+
+
+/* =========================================================
+   Remove Collaborator Button
+   ========================================================= */
+
+.btn-remove-collaborator {
+
+  width: auto;
+
+  margin: 0;
+
+  padding: 8px 14px;
+
+  background: #ffffff;
+
+  color: #ef4444;
+
+  border: 1px solid #ef4444;
+
+  border-radius: 7px;
+
+  cursor: pointer;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    transform 0.1s ease;
+
+}
+
+
+.btn-remove-collaborator:hover {
+
+  background: #ef4444;
+
+  color: #ffffff;
+
+}
+
+
+.btn-remove-collaborator:active {
+
+  transform: translateY(1px);
+
+}
+
+
+/* =========================================================
+   Empty State
+   ========================================================= */
+
+.collaboration-empty-state {
+
+  padding: 20px;
+
+  text-align: center;
+
+  color: #6b7280;
+
+  font-size: 14px;
+
+  background: #f9fafb;
+
+  border: 1px dashed #d1d5db;
+
+  border-radius: 8px;
+
+}
+
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  .collaboration-card {
+
+    padding: 16px;
+
+  }
+
+
+  .collaboration-form {
+
+    flex-direction: column;
+
+    align-items: stretch;
+
+  }
+
+
+  #collaborationUserEmail {
+
+    width: 100%;
+
+  }
+
+
+  .btn-send-request {
+
+    width: 100%;
+
+  }
+
+
+  .collaboration-request-card {
+
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+  }
+
+
+  .collaboration-request-actions {
+
+    width: 100%;
+
+  }
+
+
+  .btn-accept-request,
+  .btn-reject-request {
+
+    flex: 1;
+
+  }
+
+
+  .collaborator-card {
+
+    align-items: flex-start;
+
+    flex-direction: column;
+
+  }
+
+
+  .collaborator-info {
+
+    width: 100%;
+
+  }
+
+
+  .btn-remove-collaborator {
+
+    width: 100%;
+
+  }
+
+}

@@ -8,9 +8,9 @@ import CollaborationClient from "../grpc-client/collaborationClient";
 const CollaborationController = {
 
     sendReq: async(req:Request,res:Response,next:NextFunction)=>{
-        const {receiver_id} = req.body as RequestType;
+        const {receiver_email} = req.body as RequestType;
         const md = buildMetadata(req)
-        CollaborationClient.sendRequest({receiver_id},md,(err:any,response:any)=>{
+        CollaborationClient.sendRequest({receiver_email},md,(err:any,response:any)=>{
             if(err){
                 return next(err);
             }
@@ -31,6 +31,7 @@ const CollaborationController = {
 
     acceptReq:async(req:Request,res:Response,next:NextFunction)=>{
         // const {receiver_id} = req.body as RequestType;
+        console.log(req);
         const {id} = req.params;
         const md = buildMetadata(req);
         CollaborationClient.acceptRequest(
@@ -61,6 +62,35 @@ const CollaborationController = {
                 data:response,message:'request rejected'
             })
         });
+    },
+
+    viewCollaborators:async(req:Request,res:Response,next:NextFunction) => {
+        // const {id} = req.params;
+        const md = buildMetadata(req);
+        CollaborationClient.viewCollaborators({},md,(err:any,response:any)=>{
+            if(err){
+                return next(err);
+            }
+            return res.status(200).json({
+                data:response,message:'viewed collaborators succkessfully'
+            });
+        })
+    },
+
+
+    deleteCol:async(req:Request,res:Response,next:NextFunction)=>{
+        const {targetUserId} = req.params;
+        const md = buildMetadata(req);
+        CollaborationClient.removeCollaborators({targetUserId},md,(err:any,response:any)=>{
+            if (err){
+                return next(err);
+            }
+            return res.status(200).json({
+                data: response,
+                message: 'collaborator deleted successfully'
+            });
+        })
+
     }
 }
 export default CollaborationController;
