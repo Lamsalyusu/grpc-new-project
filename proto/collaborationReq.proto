@@ -6,13 +6,16 @@ service CollaborationReq{
     rpc seeRequest(seeReq) returns (requests);
     rpc acceptRequest(acceptReq) returns (accept);
     rpc rejectRequest(rejectReq) returns (reject);
+    rpc removeCollaborators(removeReq) returns (remove);
+    rpc viewCollaborators(collaboratorsView) returns (views);
 }
 
 
 // ----------------------------------------------
 message Request{
     // string sender_id=1;
-    string receiver_id=1;
+    // string receiver_id=1;
+    string receiver_email = 1;
 }
 
 message requeststatus{
@@ -20,7 +23,8 @@ message requeststatus{
     string sender_id = 2;
     string receiver_id = 3;
     string status = 4;
-    // string something = 5;
+    string sender_name = 5;
+    // string somethin = 5;
 }
 // -----------------------------------------------
 
@@ -54,3 +58,27 @@ message reject{
    repeated requeststatus reject = 1;
 }
 // ----------------------------------------------
+
+message removeReq{
+    string targetUserId =1;
+}
+
+message remove{
+string message =1;
+}
+
+// 
+
+message collaborator {
+    string id = 1;
+    string name = 2;
+    string email = 3;
+}
+
+message collaboratorsView{
+
+}
+
+message views{
+    repeated collaborator collaborators = 1;
+}
