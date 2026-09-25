@@ -32,7 +32,7 @@ const authController = {
     logger.info('login request received')
   
     const data = req.body as LoginInput;
-    // console.log(req.params)
+    console.log("req paramteres ko ho hai",req)
     // console.log(data)
     // console.log(req.body)
     // console.log(res)
