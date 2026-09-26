@@ -142,6 +142,8 @@ async function rejectRequest(id:string,receiver_id:string){
     return findRequestById(id);
 }
 
+// ===============================================================================================================================================================
+
 async function doublerequest(
     user_id1:string,user_id2:string
 ){
@@ -162,4 +164,50 @@ async function doublerequest(
     });
 }
 
-export {createRequest,seeRequest,acceptRequest,rejectRequest,findPendingRequest,findRequestById,doublerequest};
+//================================================================================================================================================================ 
+
+async function findAcceptedCollaborators(user_id:string){
+    // why user_id here beacuse we need to find the accepted requests from this specific user id 
+    const accepted = collaboration_request.findAll({
+        where:{
+            status:"accepted",
+            [Op.or]:[
+                {
+                    sender_id:user_id,
+                    // receiver_id: user_id2
+                },
+                {
+                    // sender_id:user_id2,
+                    receiver_id:user_id
+                }
+            ]
+        }
+    })
+    return accepted;
+}
+
+
+
+async function deleteCollaborators(currentUserId:string,targetUserId:string){
+    // const accepted = findAcceptedCollaborators(currentUserId)
+    const deletecolabs = collaboration_request.destroy({
+        where: {
+        status: "accepted",
+        [Op.or]: [
+            // This means either A ---> B or B ---> A
+                {
+                sender_id: currentUserId,
+                receiver_id: targetUserId,
+                },
+                {
+                sender_id: targetUserId,
+                receiver_id: currentUserId,
+                },
+            ],
+        },
+    });
+    return deletecolabs;
+}
+
+
+export {createRequest,seeRequest,acceptRequest,rejectRequest,findPendingRequest,findRequestById,doublerequest,findAcceptedCollaborators,deleteCollaborators};
