@@ -112,7 +112,7 @@ app.use('/api/v1/tasks', taskCollaboratorRouter);
 app.use('/api/v1/tasks', messageRoutes);
 app.use('/api/v1/tasks', taskrouter);
 app.use('/api/v1/notifications', notifroutes);
-app.use('/api/v1/collaborations', collaborationRoutes);// Health check
+app.use('/api/v1/collaboration', collaborationRoutes);// Health check
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok', message: 'app running smoothly' });
 });

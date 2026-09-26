@@ -107,8 +107,8 @@ export const grpcStatusCode = (code: grpc.status) => {
     case grpc.status.DATA_LOSS:
       return { status: 500, message: "Data loss" };
 
-    case grpc.status.UNAUTHENTICATED:
-      return { status: 401, message: "Unauthenticated" };
+    // case grpc.status.UNAUTHENTICATED:
+    //   return { status: 401, message: "Unauthenticated" };
 
     default:
       return { status: 500, message: "Unknown error" };
