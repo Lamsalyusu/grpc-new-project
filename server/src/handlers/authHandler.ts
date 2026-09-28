@@ -29,7 +29,8 @@ const authHandlers = {
 
     Login: async(call: any, callback:any) =>{
         try {
-          // console.log("REceived from gateway",call.request)
+          console.log("received from call matra",call)
+          console.log("REceived from gateway",call.request)
             const {email,password }= call.request;
             // console.log()
             const result = await loginUser({email,password});

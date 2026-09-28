@@ -2,49 +2,31 @@
 // Collaboration
 // ========================================
 
-
 function escapeCollaborationHtml(text) {
+  const div = document.createElement("div");
 
-  const div = document.createElement('div');
-
-  div.textContent = text || '';
+  div.textContent = text || "";
 
   return div.innerHTML;
-
 }
-
 
 // ========================================
 // Load Incoming Collaboration Requests
 // ========================================
 
-
 async function loadCollaborationRequests() {
-
   try {
+    const res = await api("/collaboration/requests");
 
-    const res = await api('/collaboration/requests');
-
-    const list =
-      document.getElementById(
-        'collaborationRequestsList'
-      );
+    const list = document.getElementById("collaborationRequestsList");
 
     if (!list) return;
 
+    const requests = res.data?.reqs || [];
 
-    const requests =
-      res.data?.reqs || [];
-
-
-    console.log(
-      'Collaboration requests:',
-      requests
-    );
-
+    console.log("Collaboration requests:", requests);
 
     if (requests.length === 0) {
-
       list.innerHTML = `
         <p class="collaboration-empty-state">
           No pending collaboration requests.
@@ -52,27 +34,17 @@ async function loadCollaborationRequests() {
       `;
 
       return;
-
     }
 
-
     list.innerHTML = requests
-      .map(request => {
+      .map((request) => {
+        const senderName = escapeCollaborationHtml(
+          request.sender_name || "Unknown User",
+        );
 
-        const senderName =
-          escapeCollaborationHtml(
-            request.sender_name ||
-            'Unknown User'
-          );
-
-
-        const senderInitial =
-          escapeCollaborationHtml(
-            (request.sender_name || 'U')
-              .charAt(0)
-              .toUpperCase()
-          );
-
+        const senderInitial = escapeCollaborationHtml(
+          (request.sender_name || "U").charAt(0).toUpperCase(),
+        );
 
         return `
           <div class="collaboration-request-card">
@@ -121,301 +93,154 @@ async function loadCollaborationRequests() {
 
           </div>
         `;
-
       })
-      .join('');
-
+      .join("");
 
     // ========================================
     // Accept Buttons
     // ========================================
 
-    list
-      .querySelectorAll(
-        '.btn-accept-request'
-      )
-      .forEach(button => {
-
-        button.addEventListener(
-          'click',
-          () => {
-
-            acceptCollaborationRequest(
-              button.dataset.id
-            );
-
-          }
-        );
-
+    list.querySelectorAll(".btn-accept-request").forEach((button) => {
+      button.addEventListener("click", () => {
+        acceptCollaborationRequest(button.dataset.id);
       });
-
+    });
 
     // ========================================
     // Reject Buttons
     // ========================================
 
-    list
-      .querySelectorAll(
-        '.btn-reject-request'
-      )
-      .forEach(button => {
-
-        button.addEventListener(
-          'click',
-          () => {
-
-            rejectCollaborationRequest(
-              button.dataset.id
-            );
-
-          }
-        );
-
+    list.querySelectorAll(".btn-reject-request").forEach((button) => {
+      button.addEventListener("click", () => {
+        rejectCollaborationRequest(button.dataset.id);
       });
-
-
+    });
   } catch (err) {
+    console.error("Failed to load collaboration requests:", err);
 
-    console.error(
-      'Failed to load collaboration requests:',
-      err
-    );
-
-
-    const list =
-      document.getElementById(
-        'collaborationRequestsList'
-      );
-
+    const list = document.getElementById("collaborationRequestsList");
 
     if (list) {
-
       list.innerHTML = `
         <p style="color:#ef4444;">
           Could not load collaboration requests.
         </p>
       `;
-
     }
-
   }
-
 }
-
 
 // ========================================
 // Send Collaboration Request
 // ========================================
 
-
-async function sendCollaborationRequest(
-  receiverEmail
-) {
-
+async function sendCollaborationRequest(receiverEmail) {
   try {
+    await api("/collaboration/request", {
+      method: "POST",
 
-    await api(
-      '/collaboration/request',
-      {
-        method: 'POST',
+      body: JSON.stringify({
+        receiver_email: receiverEmail,
+      }),
+    });
 
-        body: JSON.stringify({
-          receiver_email: receiverEmail
-        })
-      }
-    );
-
-
-    alert(
-      'Collaboration request sent successfully.'
-    );
-
+    alert("Collaboration request sent successfully.");
 
     return true;
-
-
   } catch (err) {
-
     alert(err.message);
 
     return false;
-
   }
-
 }
-
 
 // ========================================
 // Accept Collaboration Request
 // ========================================
 
-
-async function acceptCollaborationRequest(
-  requestId
-) {
-
+async function acceptCollaborationRequest(requestId) {
   try {
+    await api(`/collaboration/request/${requestId}/accept`, {
+      method: "PATCH",
+    });
 
-    await api(
-      `/collaboration/request/${requestId}/accept`,
-      {
-        method: 'PATCH'
-      }
-    );
-
-
-    alert(
-      'Collaboration request accepted.'
-    );
-
+    alert("Collaboration request accepted.");
 
     // Remove accepted request from
     // incoming requests list.
     await loadCollaborationRequests();
 
-
     // The accepted user is now a collaborator,
     // so refresh the collaborators list.
     await loadCollaborators();
-
-
   } catch (err) {
-
     alert(err.message);
-
   }
-
 }
-
 
 // ========================================
 // Reject Collaboration Request
 // ========================================
 
-
-async function rejectCollaborationRequest(
-  requestId
-) {
-
+async function rejectCollaborationRequest(requestId) {
   try {
+    await api(`/collaboration/request/${requestId}/reject`, {
+      method: "PATCH",
+    });
 
-    await api(
-      `/collaboration/request/${requestId}/reject`,
-      {
-        method: 'PATCH'
-      }
-    );
-
-
-    alert(
-      'Collaboration request rejected.'
-    );
-
+    alert("Collaboration request rejected.");
 
     await loadCollaborationRequests();
-
-
   } catch (err) {
-
     alert(err.message);
-
   }
-
 }
-
 
 // ========================================
 // Send Request Form
 // ========================================
 
-
 document
-  .getElementById(
-    'collaborationRequestForm'
-  )
-  ?.addEventListener(
-    'submit',
-    async (e) => {
+  .getElementById("collaborationRequestForm")
+  ?.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      e.preventDefault();
+    const input = document.getElementById("collaborationUserEmail");
 
+    if (!input) return;
 
-      const input =
-        document.getElementById(
-          'collaborationUserEmail'
-        );
+    const receiverEmail = input.value.trim();
 
+    if (!receiverEmail) {
+      alert("Please enter an email.");
 
-      if (!input) return;
-
-
-      const receiverEmail =
-        input.value.trim();
-
-
-      if (!receiverEmail) {
-
-        alert(
-          'Please enter an email.'
-        );
-
-        return;
-
-      }
-
-
-      const success =
-        await sendCollaborationRequest(
-          receiverEmail
-        );
-
-
-      if (success) {
-
-        input.value = '';
-
-      }
-
+      return;
     }
-  );
 
+    const success = await sendCollaborationRequest(receiverEmail);
+
+    if (success) {
+      input.value = "";
+    }
+  });
 
 // ========================================
 // Load My Collaborators
 // ========================================
 
-
 async function loadCollaborators() {
-
   try {
+    const res = await api("/collaboration/collaborators");
 
-    const res =
-      await api(
-        '/collaboration/collaborators'
-      );
-
-
-    const list =
-      document.getElementById(
-        'collaboratorsList'
-      );
-
+    const list = document.getElementById("collaboratorsList");
 
     if (!list) return;
 
+    const collaborators = res.data?.collaborators || [];
 
-    const collaborators =
-      res.data?.collaborators || [];
-
-
-    console.log(
-      'My collaborators:',
-      collaborators
-    );
-
+    console.log("My collaborators:", collaborators);
 
     if (collaborators.length === 0) {
-
       list.innerHTML = `
         <p class="collaboration-empty-state">
           No collaborators yet.
@@ -423,41 +248,21 @@ async function loadCollaborators() {
       `;
 
       return;
-
     }
 
-
     list.innerHTML = collaborators
-      .map(collaborator => {
+      .map((collaborator) => {
+        const name = escapeCollaborationHtml(
+          collaborator.name || "Unknown User",
+        );
 
-        const name =
-          escapeCollaborationHtml(
-            collaborator.name ||
-            'Unknown User'
-          );
+        const email = escapeCollaborationHtml(collaborator.email || "");
 
+        const id = escapeCollaborationHtml(collaborator.id || "");
 
-        const email =
-          escapeCollaborationHtml(
-            collaborator.email ||
-            ''
-          );
-
-
-        const id =
-          escapeCollaborationHtml(
-            collaborator.id ||
-            ''
-          );
-
-
-        const initial =
-          escapeCollaborationHtml(
-            (collaborator.name || 'U')
-              .charAt(0)
-              .toUpperCase()
-          );
-
+        const initial = escapeCollaborationHtml(
+          (collaborator.name || "U").charAt(0).toUpperCase(),
+        );
 
         return `
           <div class="collaborator-card">
@@ -495,153 +300,73 @@ async function loadCollaborators() {
 
           </div>
         `;
-
       })
-      .join('');
-
+      .join("");
 
     // ========================================
     // Remove Buttons
     // ========================================
 
-    list
-      .querySelectorAll(
-        '.btn-remove-collaborator'
-      )
-      .forEach(button => {
-
-        button.addEventListener(
-          'click',
-          () => {
-
-            removeCollaborator(
-              button.dataset.id
-            );
-
-          }
-        );
-
+    list.querySelectorAll(".btn-remove-collaborator").forEach((button) => {
+      button.addEventListener("click", () => {
+        removeCollaborator(button.dataset.id);
       });
-
-
+    });
   } catch (err) {
+    console.error("Failed to load collaborators:", err);
 
-    console.error(
-      'Failed to load collaborators:',
-      err
-    );
-
-
-    const list =
-      document.getElementById(
-        'collaboratorsList'
-      );
-
+    const list = document.getElementById("collaboratorsList");
 
     if (list) {
-
       list.innerHTML = `
         <p style="color:#ef4444;">
           Could not load collaborators.
         </p>
       `;
-
     }
-
   }
-
 }
 
-
-// ========================================
 // Remove Collaborator
-// ========================================
 
-
-async function removeCollaborator(
-  targetUserId
-) {
-
+async function removeCollaborator(targetUserId) {
   if (!targetUserId) {
-
-    alert(
-      'Invalid collaborator.'
-    );
-
+    alert("Invalid collaborator.");
     return;
-
   }
 
-
-  const confirmed =
-    confirm(
-      'Are you sure you want to remove this collaborator?'
-    );
-
+  const confirmed = confirm(
+    "Are you sure you want to remove this collaborator?",
+  );
 
   if (!confirmed) {
-
     return;
-
   }
 
-
   try {
+    await api(`/collaboration/${targetUserId}`, {
+      method: "DELETE",
+    });
 
-    await api(
-      `/collaboration/${targetUserId}`,
-      {
-        method: 'DELETE'
-      }
-    );
-
-
-    alert(
-      'Collaborator removed successfully.'
-    );
-
+    alert("Collaborator removed successfully.");
 
     // Refresh the list after deletion.
     await loadCollaborators();
-
-
   } catch (err) {
-
-    console.error(
-      'Failed to remove collaborator:',
-      err
-    );
-
+    console.error("Failed to remove collaborator:", err);
 
     alert(err.message);
-
   }
-
 }
-
 
 // ========================================
 // Initial Load
 // ========================================
 
-
-if (
-  document.getElementById(
-    'collaborationRequestsList'
-  )
-) {
-
+if (document.getElementById("collaborationRequestsList")) {
   loadCollaborationRequests();
-
 }
 
-
-if (
-  document.getElementById(
-    'collaboratorsList'
-  )
-) {
-
+if (document.getElementById("collaboratorsList")) {
   loadCollaborators();
-
 }
