@@ -1,102 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Dashboard</title>
-
-  <link rel="stylesheet" href="css/style.css" />
-
-  <script src="js/redirect.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css" />
 </head>
-
 <body>
+    
 
   <!-- ====================================================================== -->
-  <!-- Navbar -->
+  <!-- Collaboration -->
   <!-- ====================================================================== -->
 
-  <nav class="navbar">
+  <section class="collaboration-container">
 
-    <h2>Task Manager</h2>
+    <div class="collaboration-card">
 
-    <div>
-      <a href = "collaboration.html"> Collaborators</a>
-      <a href="profile.html">Profile</a>
-      <a href="notifications.html">Notifications</a>
-      <button id="btnLogout">Logout</button>
+
+      <!-- Collaboration Header -->
+
+      <div class="collaboration-header">
+
+        <div>
+
+          <h2>Collaborators</h2>
+
+          <p>
+            Connect with other users and manage collaboration requests.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- ================================================================== -->
+      <!-- Send Collaboration Request -->
+      <!-- ================================================================== -->
+
+      <div class="collaboration-search-group">
+
+        <h3>
+          Add New Collaborator
+        </h3>
+
+        <form
+          id="collaborationRequestForm"
+          class="collaboration-form"
+        >
+
+          <input
+            type="email"
+            id="collaborationUserEmail"
+            placeholder="Enter user's email"
+            required
+          />
+
+          <button
+            type="submit"
+            class="btn-send-request"
+          >
+            Send Request
+          </button>
+
+        </form>
+
+      </div>
+
+
+      <!-- ================================================================== -->
+      <!-- Incoming Requests -->
+      <!-- ================================================================== -->
+
+      <div class="collaboration-requests-group">
+
+        <div class="collaboration-requests-header">
+
+          <h3>
+            Incoming Requests
+          </h3>
+
+        </div>
+
+
+        <div id="collaborationRequestsList">
+
+          <p class="collaboration-empty-state">
+            Incoming Requests here
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- ================================================================== -->
+      <!-- My Collaborators -->
+      <!-- ================================================================== -->
+
+      <div class="collaborators-list-group">
+
+        <div class="collaborators-list-header">
+
+          <div>
+
+            <h3>
+              My Collaborators
+            </h3>
+
+            <p>
+              People you can collaborate with on your tasks.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div id="collaboratorsList">
+
+          <p class="collaboration-empty-state">
+            Added Collaborators 
+          </p>
+
+        </div>
+
+      </div>
+
     </div>
 
-  </nav>
-
-
-  <!-- ====================================================================== -->
-  <!-- Tasks -->
-  <!-- ====================================================================== -->
-
-  <div class="container">
-
-    <div
-      style="
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        margin-bottom:16px;
-      "
-    >
-      <h2>My Tasks</h2>
-
-      <button id="btnOpenModal">
-        + New Task
-      </button>
-    </div>
-
-
-    <!-- Filters -->
-
-    <div id="filters" style="margin-bottom:16px;">
-
-      <select id="filterStatus">
-        <option value="">All Status</option>
-        <option value="pending">Pending</option>
-        <option value="in_progress">In Progress</option>
-        <option value="completed">Completed</option>
-      </select>
-
-      <select id="filterPriority">
-        <option value="">All Priority</option>
-        <option value="low">Low</option>
-        <option value="medium">Medium</option>
-        <option value="high">High</option>
-      </select>
-
-      <button id="btnFilter">
-        Filter
-      </button>
-
-    </div>
-
-
-    <!-- My Tasks -->
-
-    <div id="tasksList"></div>
-
-
-    <!-- Shared Tasks -->
-
-    <h2 style="margin-top:32px;">
-      Shared With Me
-    </h2>
-
-    <div id="sharedTasksList"></div>
-
-  </div>
-
-
-
-
-
-
-      
+  </section>
 
 
   <!-- ====================================================================== -->
@@ -318,20 +352,22 @@
 
   <script src="js/api.js"></script>
 
-  <script src="js/tasks.js"></script>
+  <!-- <script src="js/tasks.js"></script> -->
 
-  <!-- <script src="js/collaboration.js"></script> -->
+  <script src="js/collaboration.js"></script>
 
 
   <script>
 
     redirectIfNotAuth();
 
-    loadTasks();
+    // loadTasks();
 
     loadSharedTasks();
 
   </script>
 
+</body>
+</html>
 </body>
 </html>
