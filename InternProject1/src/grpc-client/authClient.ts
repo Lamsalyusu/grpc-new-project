@@ -1,8 +1,7 @@
 import * as grpc from '@grpc/grpc-js';
-import path from 'path';
+// import path from 'path';
 import * as protoloader from '@grpc/proto-loader'
 import PROTO_PATHS from "../index"
-// const PROTO_PATH = path.resolve(__filename,'server/src/index.ts')
 
 
 const packageDefinition = protoloader.loadSync(PROTO_PATHS.AUTH_PROTO_PATH, PROTO_PATHS.PROTO_LOADER_OPTIONS);
