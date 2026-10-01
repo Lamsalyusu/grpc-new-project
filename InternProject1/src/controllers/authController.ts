@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import AuthClient from "../grpc-client/authClient";
-import { LoginInput, RegisterInput } from "../validators/authValidator";
+import authClient from "../grpc-client/authClient";
+import { loginInput, registerInput } from "../validators/authValidator";
 import { buildMetadata } from "./grpcMetadata";
 import logger from "../utils/logger";
 
@@ -9,10 +9,10 @@ const authController = {
   register: async (req: Request, res: Response,next:NextFunction) => {
     logger.info("register request received")
     // console.log("register controller hit")
-    const data = req.body as RegisterInput;
+    const data = req.body as registerInput;
     // console.log(req.body)
     // console.log(data);
-    AuthClient.Register(data, (err: any, response: any) => {
+    authClient.registerUser(data, (err: any, response: any) => {
       if (err) {
         // return res.status(err.code === grpc.status.ALREADY_EXISTS ? 409 : 500).json({
         //   error: { message: err.message || "Registration failed" },
@@ -31,12 +31,12 @@ const authController = {
   login: async (req: Request, res: Response, next: NextFunction) => {
     logger.info('login request received')
   
-    const data = req.body as LoginInput;
-    console.log("req paramteres ko ho hai",req)
+    const data = req.body as loginInput;
+    // console.log("req paramteres ko ho hai",req)
     // console.log(data)
     // console.log(req.body)
     // console.log(res)
-    AuthClient.Login(data, (err: any, response: any) => {
+    authClient.loginUser(data, (err: any, response: any) => {
       if (err) {
         // return res.status(err.code === grpc.status.UNAUTHENTICATED ? 401 : 500).json({
         //   error: { message: err.message || "Login failed" },
@@ -61,7 +61,7 @@ const authController = {
     // console.log(user_id)
     // console.log(md)
     // console.log(res);
-    AuthClient.Me({ user_id }, md, (err: any, response: any) => {
+    authClient.seeProfile({ user_id }, md, (err: any, response: any) => {
       if (err) {
         // return res.status(err.code === grpc.status.NOT_FOUND ? 404 : 500).json({
         //   error: { message: err.message || "Fetching user info failed" },

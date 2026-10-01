@@ -1,6 +1,6 @@
 import { Request,Response,NextFunction } from "express";
-import MessageClient from "../grpc-client/messageClient";
-import { MessageValidation } from "../validators/messageValidators";
+import messageClient from "../grpc-client/messageClient";
+import { messageValidation } from "../validators/messageValidators";
 import { buildMetadata } from "./grpcMetadata";
 import logger from "../utils/logger";
 const messageControllers = {
@@ -14,7 +14,7 @@ const messageControllers = {
             const md = buildMetadata(req);
             // console.log(req.params)
             // console.log(md)
-            MessageClient.GetMessage({task_id:task_id,page:page,limit:limit},md,(error:any,result:any) => {
+            messageClient.getMessage({task_id:task_id,page:page,limit:limit},md,(error:any,result:any) => {
                 if(error){
                     return next(error);
                 }
@@ -24,11 +24,11 @@ const messageControllers = {
         },
 
     send:async(req:Request,res:Response,next:NextFunction)=>{
-            const {body} = req.body as MessageValidation;
+            const {body} = req.body as messageValidation;
             const senderid = (req as any).user.id;
             const task_id = req.params.id as string;
             const md = buildMetadata(req);
-            MessageClient.SendMessage({task_id:task_id,sender_id:senderid,body},md,(error:any,result:any) => {
+            messageClient.sendMessage({task_id:task_id,sender_id:senderid,body},md,(error:any,result:any) => {
                 if(error){
                     return next(error);
                 }
