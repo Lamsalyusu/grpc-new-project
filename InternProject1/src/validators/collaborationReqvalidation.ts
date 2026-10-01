@@ -6,4 +6,4 @@ export const requestSchema = z.object({
     receiver_email:z.email("Invalid email format")
 });
 
-export type RequestType = z.infer<typeof requestSchema>;
+export type requestType = z.infer<typeof requestSchema>;

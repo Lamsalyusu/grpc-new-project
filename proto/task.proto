@@ -13,12 +13,12 @@ package taskPackage;
 //     High =2;
 // }
 
-service task{
-    rpc CreateTask (createReq) returns (createRes);
-    rpc GetAllTask (getAllReq) returns (getAllRes);
-    rpc GetOne (getOneReq) returns (getOneRes);
-    rpc Update (updateReq) returns (updateRes);
-    rpc Remove (removeReq) returns (removeRes);
+service taskService{
+    rpc createTask (createReq) returns (createRes);
+    rpc getAllTask (getAllReq) returns (getAllRes);
+    rpc getOne (getOneReq) returns (getOneRes);
+    rpc updateTask (updateReq) returns (updateRes);
+    rpc removeTask (removeReq) returns (removeRes);
 }
 
 message createReq {
@@ -29,6 +29,7 @@ message createReq {
     string due_date = 5;
     string reminder_at = 6;
     string owner_id = 7; 
+    repeated string collaborator_ids=8;
 }
 
 message createRes{
@@ -41,8 +42,9 @@ message createRes{
     string due_date =7;
     string reminder_at = 8;
     string reminder_status =9;
-    string created_at =10;
-    string updated_at = 11;
+    repeated string collaborator_ids=10;
+    string created_at =11;
+    string updated_at = 12;
 
 }
 

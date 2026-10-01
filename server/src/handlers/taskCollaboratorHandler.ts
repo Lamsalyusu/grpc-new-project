@@ -8,13 +8,14 @@ function getUserFromCall(call: any) {
 }
 
 const taskCollaboratorHandlers = {
-  CreateCollaborator: async (call: any, callback: any) => {
+  createCollaborator: async (call: any, callback: any) => {
     try {
+      console.log("Collaborator ko request yesma aako chha " , call.request)
       const user = getUserFromCall(call);
       // const { task_id, email, requester_id } = call.request;
-      const { task_id,email } = call.request;
+      const { task_id,user_id } = call.request;
       // const result = await createTaskCollaborator(task_id, requester_id, email);
-      const result = await createTaskCollaborator(task_id,user.id,email);
+      const result = await createTaskCollaborator(task_id,user.id,user_id);
       logger.info("Task collaborator added")
       callback(null, result);
     } catch (err: any) {
@@ -27,7 +28,7 @@ const taskCollaboratorHandlers = {
     }
   },
 
-  GetCollaborators: async (call: any, callback: any) => {
+  getCollaborators: async (call: any, callback: any) => {
     try {
       const user = getUserFromCall(call);
       // const { task_id, requester_id } = call.request;
@@ -51,7 +52,7 @@ const taskCollaboratorHandlers = {
     }
   },
 
-  DeleteCollaborator: async (call: any, callback: any) => {
+  deleteCollaborator: async (call: any, callback: any) => {
     try {
       const user = getUserFromCall(call);
       // const { task_id, user_id, requester_id } = call.request;
@@ -70,7 +71,7 @@ const taskCollaboratorHandlers = {
     }
   },
 
-  GetSharedTasks: async (call: any, callback: any) => {
+  getSharedTasks: async (call: any, callback: any) => {
     try {
       // const { requester_id } = call.request;
       const user = getUserFromCall(call);

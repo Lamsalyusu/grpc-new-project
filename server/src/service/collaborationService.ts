@@ -1,6 +1,7 @@
 import { findByEmail, findById } from "../repositories/userRepository";
-import {createRequest,acceptRequest,rejectRequest,seeRequest,findPendingRequest,findRequestById,doublerequest} from '../repositories/collaborationRepository';
+import {createRequest,acceptRequest,rejectRequest,seeRequest,findPendingRequest,findRequestById,doubleRequest,findAcceptedCollaborators,deleteCollaborators} from '../repositories/collaborationRepository';
 import {  RequestType } from "../validators/collaborationReqvalidation";
+// import { col } from "sequelize";
 
 async function sendRequest(sender_id:string,data:RequestType){
     const receiver = await findByEmail(data.receiver_email)
@@ -17,7 +18,7 @@ async function sendRequest(sender_id:string,data:RequestType){
     throw new Error("You cannot send a collaboration request to yourself");
   }
   
-    const double_request = await doublerequest(sender_id, receiver.id)
+    const double_request = await doubleRequest(sender_id, receiver.id)
     if(double_request){
         throw new Error("Can't send request twice you are already added to this user");
     }
@@ -28,7 +29,7 @@ async function sendRequest(sender_id:string,data:RequestType){
     );
 
     if (existingRequest) {
-        throw new Error("Collaboration request already exists");
+        throw new Error("Collaboration request already sent");
     }
 
     const request = await createRequest({
@@ -97,4 +98,53 @@ async function rejectReq(request_id:string,receiver_id:string){
 }
     // const reject = await rejectRequest(sender_id,receiver_id);
 
-export {sendRequest,viewRequest,acceptReq,rejectReq};
+async function viewCollaborationRequest(user_id:string){
+    const relationships = await findAcceptedCollaborators(user_id);
+    const collaborators = await Promise.all(
+        relationships.map(async(relationship)=>{
+            const collaborator_id = relationship.sender_id === user_id ? relationship.receiver_id
+                    : relationship.sender_id;
+            const collaborator = await findById(collaborator_id);
+
+            return {
+                id:collaborator?.id,
+                name:collaborator?.name,
+                email:collaborator?.email
+            }
+
+        })
+    
+    )
+    return collaborators;
+
+}
+
+async function deleteCollaborator(currentUserId:string,targetUserId:string){
+    
+    
+    // const accepted = await findAcceptedCollaborators(currentUserId);
+    // if(!accepted){
+    //     throw new Error("Collaborator not found")
+    // }
+    // await deleteCollaborators(currentUserId,targetUserId);
+    // return {
+    //     message:"collaborators deleted successfully"
+    // }
+    // console.log("CURRENT USER ", currentUserId)
+    // console.log("TARGET USER ID",targetUserId)
+        const deleted = await deleteCollaborators(
+            currentUserId,
+            targetUserId
+        );
+          console.log("DELETED ROWS:", deleted);
+        // destroy in repository returns number of rows that were deleted.
+        // so if deleted = 1 1 === 0 is false 
+        if (deleted === 0) {
+            throw new Error("Collaborator not found");
+        }
+        return {
+            message: "Collaborator deleted successfully"
+        };
+}
+
+export {sendRequest,viewRequest,acceptReq,rejectReq,viewCollaborationRequest,deleteCollaborator};

@@ -9,9 +9,11 @@ import errorHandler from './middlewares/errormiddleware';
 import notifroutes from './routes/notificationRoutes';
 import collaborationRoutes from './routes/collaborationRoutes';
 import path from 'path';
+import morgan from 'morgan'
 
 
 const app = express();
+
 
 const allowedOrigins = ['http://127.0.0.1:5500','http://localhost:5500','http://127.0.0.1:3000','http://localhost:3000'];
 const corsOptions: cors.CorsOptions = {
@@ -102,6 +104,11 @@ app.use(
  
 app.use(express.json());
 app.use(cors(corsOptions))
+
+// app.use(morgan('dev'))
+// Outputs: GET /api/users 200 - 12.345 ms / 15.120 ms
+app.use(morgan(':method :url :status - :response-time ms / :total-time ms'));
+
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, '../client')));
 
@@ -113,11 +120,10 @@ app.use('/api/v1/tasks', messageRoutes);
 app.use('/api/v1/tasks', taskrouter);
 app.use('/api/v1/notifications', notifroutes);
 app.use('/api/v1/collaboration', collaborationRoutes);// Health check
-app.get('/health', (req, res) => {
+app.get('/health', (req,res) => {
     res.status(200).json({ status: 'ok', message: 'app running smoothly' });
 });
 
 // Error handling middleware 
 app.use(errorHandler);
-
 export default app;

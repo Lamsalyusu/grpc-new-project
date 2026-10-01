@@ -1,24 +1,24 @@
 syntax = "proto3";
-package CollaborationPackage;
+package collaborationPackage;
 
-service CollaborationReq{
-    rpc sendRequest(Request) returns (requeststatus);
+service collaborationService{
+    rpc sendRequest(Friendrequest) returns (requestStatus);
     rpc seeRequest(seeReq) returns (requests);
-    rpc acceptRequest(acceptReq) returns (accept);
-    rpc rejectRequest(rejectReq) returns (reject);
-    rpc removeCollaborators(removeReq) returns (remove);
-    rpc viewCollaborators(collaboratorsView) returns (views);
+    rpc acceptRequest(acceptReq) returns (acceptResponse);
+    rpc rejectRequest(rejectReq) returns (rejectResponse);
+    rpc removeCollaborators(removeReq) returns (removeResponse);
+    rpc viewCollaborators(collaboratorsView) returns (viewResponse);
 }
 
 
 // ----------------------------------------------
-message Request{
+message Friendrequest{
     // string sender_id=1;
     // string receiver_id=1;
     string receiver_email = 1;
 }
 
-message requeststatus{
+message requestStatus{
     string id =1;
     string sender_id = 2;
     string receiver_id = 3;
@@ -34,7 +34,7 @@ message seeReq{
 }
 
 message requests{
-   repeated requeststatus reqs = 1;
+   repeated requestStatus reqs = 1;
 }
 // ---------------------------------------------
 message acceptReq{
@@ -43,8 +43,8 @@ message acceptReq{
     // string receiver_id = 2;
 }
 
-message accept {
-    repeated requeststatus accept = 1;
+message acceptResponse {
+    repeated requestStatus accept = 1;
 }
 // ----------------------------------------------
 
@@ -54,8 +54,8 @@ message rejectReq{
     // string receiver_id = 2;
 }
 
-message reject{
-   repeated requeststatus reject = 1;
+message rejectResponse{
+   repeated requestStatus reject = 1;
 }
 // ----------------------------------------------
 
@@ -63,7 +63,7 @@ message removeReq{
     string targetUserId =1;
 }
 
-message remove{
+message removeResponse{
 string message =1;
 }
 
@@ -79,6 +79,6 @@ message collaboratorsView{
 
 }
 
-message views{
+message viewResponse{
     repeated collaborator collaborators = 1;
 }

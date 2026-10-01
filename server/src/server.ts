@@ -16,6 +16,7 @@ import sequelize from './db/connection';
 import logger from './utils/logger';
 import collaboration_handler from './handlers/collaboration_handler';
 
+// import morgan from 'morgan'
 // const AuthServ
 const packageDefinition = protoloader.loadSync(
     [ 
@@ -36,13 +37,13 @@ const server = new grpc.Server(
     interceptors : [authInterceptor]
 }
 );
-server.addService(protoDescriptor.authPackage.auth.service,authHandlers)
-server.addService(protoDescriptor.taskPackage.task.service,taskHandlers)
-server.addService(protoDescriptor.taskcollaborator.taskCollaborator.service,taskCollaboratorHandlers)
+server.addService(protoDescriptor.authPackage.authService.service,authHandlers)
+server.addService(protoDescriptor.taskPackage.taskService.service,taskHandlers)
+server.addService(protoDescriptor.taskCollaboratorPackage.taskCollaboratorService.service,taskCollaboratorHandlers)
 server.addService(protoDescriptor.messagePackage.messageService.service, messageHandlers)
-server.addService(protoDescriptor.notificationPackage.NotificationService.service,notificationHandlers)
-server.addService(protoDescriptor.reminderpackage.reminder.service,reminderHandlers)
-server.addService(protoDescriptor.CollaborationPackage.CollaborationReq.service,collaboration_handler)
+server.addService(protoDescriptor.notificationPackage.notificationService.service,notificationHandlers)
+server.addService(protoDescriptor.reminderPackage.reminderService.service,reminderHandlers)
+server.addService(protoDescriptor.collaborationPackage.collaborationService.service,collaboration_handler)
 
 async function connectDB() {
     try{
@@ -56,7 +57,7 @@ async function connectDB() {
     }
 }
 connectDB();
-
+// server.unregister()
 const PORT = process.env.GRPC_PORT || "0.0.0.0:50051";
 
 server.bindAsync(PORT,grpc.ServerCredentials.createInsecure(),(err,PORT)=>{

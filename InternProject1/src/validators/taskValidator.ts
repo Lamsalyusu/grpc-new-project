@@ -20,6 +20,7 @@ export const taskSchema = z.object({
     priority:z.enum(["low","medium","high"]).optional(),
     due_date: z.string().datetime().optional(),
     reminder_at: z.string().datetime().optional(),
+    collaborator_ids: z.array(z.uuid()).optional(),
 });
 
 // taskQuery --> are the instructions for fetching.filtering a list of tasks valid?

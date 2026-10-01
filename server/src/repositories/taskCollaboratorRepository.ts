@@ -20,7 +20,7 @@ async function findAllByTask(task_id: string) {
   });
 }
 
-async function add(task_id:string,user_id:string){
+async function addCollaborator(task_id:string,user_id:string){
     return TaskCollaborator.create({user_id,task_id});
 }
 
@@ -41,4 +41,4 @@ async function findTasksForUser(user_id: string) {
   ],   // requires the ser,Task↔TaskCollaborator association
   });
 }
-export {findOne,findAllByTask,add,remove,findTasksForUser};
+export {findOne,findAllByTask,addCollaborator,remove,findTasksForUser};

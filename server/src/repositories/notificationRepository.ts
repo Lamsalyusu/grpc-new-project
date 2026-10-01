@@ -19,21 +19,21 @@ async function findByUser(user_id:string,page:number,limit:number,unreadOnly:boo
 
 
 async function markAsRead(notification_id: string, user_id: string) {
-    const notif = await Notification.findOne({
+    const notification = await Notification.findOne({
         where: {
             id: notification_id,
             user_id,
         },
     });
-    if (!notif) {
+    if (!notification) {
         throw {status :404,message:'Notification not found'};
     }
-    if (notif.read_at) {
-        return notif;
+    if (notification.read_at) {
+        return notification;
     }
-    notif.read_at = new Date();
-    await notif.save();
-    return notif;
+    notification.read_at = new Date();
+    await notification.save();
+    return notification;
 }
 
 async function countUnread(user_id:string) {

@@ -11,7 +11,7 @@ function getUserFromCall(call: any) {
 }
 
 const authHandlers = {
-    Register :async (call:any, callback:any) => {
+    registerUser :async (call:any, callback:any) => {
         try{
             const { name,email,password } = call.request;
             const result = await registerUser({name,email,password});  
@@ -27,7 +27,7 @@ const authHandlers = {
         }
     },
 
-    Login: async(call: any, callback:any) =>{
+    loginUser: async(call: any, callback:any) =>{
         try {
           console.log("received from call matra",call)
           console.log("REceived from gateway",call.request)
@@ -46,7 +46,7 @@ const authHandlers = {
           }
     },
 
-    Me: async (call: any, callback: any) => {
+    seeProfile: async (call: any, callback: any) => {
     try {
       const user = getUserFromCall(call);
       // console.log(user) // identity from verified token, not call.request

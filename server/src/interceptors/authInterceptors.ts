@@ -2,9 +2,9 @@ import * as grpc from "@grpc/grpc-js";
 import { verifyToken } from "../utils/jwt";
 
 const EXEMPT_PATHS = [
-  "/authPackage.auth/Register",
-  "/authPackage.auth/Login",
-  "/reminderpackage.reminder/CheckDueReminders",
+  "/authPackage.authService/registerUser",
+  "/authPackage.authService/loginUser",
+  "/reminderPackage.reminderService/checkDueReminders",
 ];
 
 const authInterceptor = (methodDescriptor: any, call: any) => {

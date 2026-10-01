@@ -8,7 +8,7 @@ function getUserFromCall(call: any) {
 }
 
 const messageHandlers = {
-  SendMessage: async (call: any, callback: any) => {
+  sendMessage: async (call: any, callback: any) => {
   try {
     const user = getUserFromCall(call);
     const { task_id, body } = call.request;
@@ -36,14 +36,14 @@ const messageHandlers = {
   }
 },
 
-GetMessage: async (call: any, callback: any) => {
+getMessage: async (call: any, callback: any) => {
   try {
     const user = getUserFromCall(call);
     const { task_id, page, limit } = call.request;
     const result = await getMessage(task_id, user.id, page, limit);
     if(!result){
       logger.warn("get message failed")
-      return callback({ code: grpc.status.INTERNAL, message: "message loading failed" });
+      callback({ code: grpc.status.INTERNAL, message: "message loading failed" });
     }
     callback(null, {
       count: result.count,

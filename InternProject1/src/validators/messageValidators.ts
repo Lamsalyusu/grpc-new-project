@@ -8,4 +8,4 @@ export const messageValidationSchema = z.object({
     .transform((val) => validator.escape(val))
 });
 
-export type MessageValidation = z.infer<typeof messageValidationSchema>;
+export type messageValidation = z.infer<typeof messageValidationSchema>;
