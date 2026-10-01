@@ -1,7 +1,7 @@
 //chat handling garda express ko req ,res, next function use nagarne
 
 import { Namespace,Socket } from "socket.io";
-import MessageClient from "../grpc-client/messageClient";
+import messageClient from "../grpc-client/messageClient";
 import { messageValidationSchema } from "../validators/messageValidators";
 import * as grpc from '@grpc/grpc-js';
 
@@ -14,13 +14,12 @@ function buildSocketMetadata(socket: Socket): grpc.Metadata {
   return md;
 }
 
-
 function registerChatHandler(io: Namespace, socket: Socket) {
   socket.on('join_task', (data) => {
     const taskid = data.task_id;
     const md = buildSocketMetadata(socket);
 
-    MessageClient.checkAccess({ task_id: taskid }, md, (err: any, result: any) => {
+    messageClient.checkAccess({ task_id: taskid }, md, (err: any, result: any) => {
       if (err || !result?.has_access) {
         socket.emit('error', { message: err?.message || "cannot join the task" });
         return;
@@ -41,7 +40,7 @@ function registerChatHandler(io: Namespace, socket: Socket) {
         }
         const { body } = parsed.data;
         const md = buildSocketMetadata(socket);
-        MessageClient.SendMessage({task_id:taskid,body},md, (err: any, result: any) => {
+        messageClient.SendMessage({task_id:taskid,body},md, (err: any, result: any) => {
             if (err) {
                 socket.emit('error', { message: err.message || 'Failed to send the message' });
                 return;

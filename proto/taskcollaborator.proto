@@ -1,12 +1,20 @@
 syntax = "proto3";
-package taskcollaborator;
+package taskCollaboratorPackage;
+
+service taskCollaboratorService {
+
+    rpc createCollaborator(createCollaboratorReq) returns (createCollaboratorRes);
+    rpc getCollaborators(getCollaboratorReq) returns (getCollaboratorRes);
+    rpc deleteCollaborator(delCollaboratorsReq) returns (delCollaboratorRes);
+    rpc getSharedTasks(getSharedTaskReq) returns (getSharesTaskRes);
+
+}
 
 message User {
     string id = 1;
     string name = 2;
     string email = 3;
 }
-
 
 message Task {
   string id = 1;
@@ -19,19 +27,10 @@ message Task {
   string reminder_at =8;
 }
 
-service taskCollaborator {
-
-    rpc CreateCollaborator(createCollaboratorReq) returns (createCollaboratorRes);
-    rpc GetCollaborators(getCollaboratorReq) returns (getCollaboratorRes);
-    rpc DeleteCollaborator(delCollaboratorsReq) returns (delCollaboratorRes);
-    rpc GetSharedTasks(getSharedTaskReq) returns (getSharesTaskRes);
-
-}
-
-
 message createCollaboratorReq {
     string task_id = 1;
-    string email = 2;
+    // string email = 2;
+    string user_id=2;
 }
 
 message createCollaboratorRes {
@@ -59,8 +58,7 @@ message delCollaboratorRes {
     string message = 1;
 }
 
-message getSharedTaskReq{
-    
+message getSharedTaskReq{   
 }
 
 message getSharesTaskRes{

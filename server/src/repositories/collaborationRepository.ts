@@ -15,8 +15,6 @@ async function createRequest(data:{
     return collaboration_request.create(data)
 }
 
-// ==============================================================================================================================================================
-
 async function seeRequest(
     // id:string,
     // // status:'pending'
@@ -44,9 +42,9 @@ async function seeRequest(
 //     }
 // })
 
- const sendername = await Promise.all(
+ const senderName = await Promise.all(
         requests.map(async (req) => {
-            const sender = await findById(req.sender_id);
+            const senderInfo = await findById(req.sender_id);
 
             return {
                 // request: req,
@@ -54,18 +52,16 @@ async function seeRequest(
                 sender_id: req.sender_id,
                 receiver_id: req.receiver_id,
                 status: req.status,
-                sender_name: sender?.name,
+                sender_name: senderInfo?.name,
                 // sender_name: sender?.name,
             };
         })
     );
 // console.log(sendername)
-console.log(sendername)
-return sendername;
+// console.log(sendername)
+return senderName;
 
 }
-
-// ==============================================================================================================================================================
 
 async function findPendingRequest(
     sender_id:string,
@@ -81,9 +77,6 @@ async function findPendingRequest(
 }
 
 
-// async 
-// ================================================================================================================================================================
-
 async function findRequestById(id: string) {
   return collaboration_request.findOne({
     where: {
@@ -91,8 +84,6 @@ async function findRequestById(id: string) {
     },
   });
 }
-
-// ================================================================================================================================================================
 
 // async function sendername(sender_id:string){
 //     const sender_name = await findById(sender_id)
@@ -120,9 +111,6 @@ if(updatedRows === 0){
 return findRequestById(id);
 }
 
-// ================================================================================================================================================================
-
-
 async function rejectRequest(id:string,receiver_id:string){
     const[updatedRows]= await collaboration_request.update(
         {
@@ -142,9 +130,7 @@ async function rejectRequest(id:string,receiver_id:string){
     return findRequestById(id);
 }
 
-// ===============================================================================================================================================================
-
-async function doublerequest(
+async function doubleRequest(
     user_id1:string,user_id2:string
 ){
     return collaboration_request.findOne({
@@ -163,8 +149,6 @@ async function doublerequest(
         },
     });
 }
-
-//================================================================================================================================================================ 
 
 async function findAcceptedCollaborators(user_id:string){
     // why user_id here beacuse we need to find the accepted requests from this specific user id 
@@ -186,9 +170,8 @@ async function findAcceptedCollaborators(user_id:string){
     return accepted;
 }
 
-
-
 async function deleteCollaborators(currentUserId:string,targetUserId:string){
+    // console.log(currentUserId,targetUserId)
     // const accepted = findAcceptedCollaborators(currentUserId)
     const deletecolabs = collaboration_request.destroy({
         where: {
@@ -210,4 +193,4 @@ async function deleteCollaborators(currentUserId:string,targetUserId:string){
 }
 
 
-export {createRequest,seeRequest,acceptRequest,rejectRequest,findPendingRequest,findRequestById,doublerequest,findAcceptedCollaborators,deleteCollaborators};
+export {createRequest,seeRequest,acceptRequest,rejectRequest,findPendingRequest,findRequestById,doubleRequest,findAcceptedCollaborators,deleteCollaborators};

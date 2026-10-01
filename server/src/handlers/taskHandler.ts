@@ -8,11 +8,13 @@ function getUserFromCall(call: any) {
   return JSON.parse(raw);
 }
 const taskHandlers = {
-  CreateTask: async (call: any, callback: any) => {
+  createTask: async (call: any, callback: any) => {
     try {
+      console.log("call bata matraaako ", call.request)
       const user = getUserFromCall(call);
-      const { title, description, priority, due_date,reminder_at } = call.request;
-      const task = await createTask({ title, description, priority, due_date,reminder_at}, user.id);
+      const { title, description, priority, due_date,reminder_at,collaborator_ids} = call.request;
+      const task = await createTask({ title, description, priority, due_date,reminder_at,collaborator_ids}, user.id);
+      console.log("kk aayo ta console ma ", task)
       logger.info("task created successfully")
       callback(null, task);
     } catch (err: any) {
@@ -23,7 +25,7 @@ const taskHandlers = {
     }
   },
 
-  GetOne: async (call: any, callback: any) => {
+  getOne: async (call: any, callback: any) => {
     try {
       const user = getUserFromCall(call);
       const { id } = call.request;
@@ -49,7 +51,7 @@ const taskHandlers = {
   //   }
   // },
 
-        GetAllTask: async (call: any, callback: any) => {
+        getAllTask: async (call: any, callback: any) => {
         try {
           const user = getUserFromCall(call);
           // const { status, priority, page, limit, sort_by, order } = call.request;
@@ -72,7 +74,7 @@ const taskHandlers = {
         }
       },
 
-  Update: async (call: any, callback: any) => {
+  updateTask: async (call: any, callback: any) => {
     try {
       const user = getUserFromCall(call);
       const { id, ...data } = call.request;
@@ -87,7 +89,7 @@ const taskHandlers = {
     }
   },
 
-  Remove: async (call: any, callback: any) => {
+  removeTask: async (call: any, callback: any) => {
     try {
       const user = getUserFromCall(call);
       const { id } = call.request;

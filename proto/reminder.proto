@@ -1,15 +1,14 @@
 syntax = "proto3";
-package reminderpackage;
+package reminderPackage;
 
-
-service reminder {
-  rpc CheckDueReminders (CheckRemindersReq) returns (CheckRemindersRes);
+service reminderService {
+  rpc checkDueReminders (checkRemindersReq) returns (checkRemindersRes);
 }
 
-message CheckRemindersReq {
+message checkRemindersReq {
 }
 
-message FiredReminder {
+message firedReminder {
   string owner_id = 1;
   string task_id = 2;
   string title = 3;
@@ -17,6 +16,6 @@ message FiredReminder {
   string due_date = 5;
 }
 
-message CheckRemindersRes {
-  repeated FiredReminder reminders = 1;
+message checkRemindersRes {
+  repeated firedReminder reminders = 1;
 }

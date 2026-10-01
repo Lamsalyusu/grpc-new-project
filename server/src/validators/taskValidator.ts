@@ -21,6 +21,7 @@ export const taskSchema = z.object({
     due_date: z.iso.datetime().optional(),
     reminder_at: z.iso.datetime().optional(),
     reminder_status:z.enum(["sent","pending"]).optional(),
+    collaborator_ids:z.uuid("MUst be a uuid value").optional(),
     // owner_id:z.string()
 });
 

@@ -1,10 +1,10 @@
-import { findOne,add,findAllByTask,remove } from "../repositories/taskCollaboratorRepository";
+import { findOne,addCollaborator,findAllByTask,remove } from "../repositories/taskCollaboratorRepository";
 import { findById } from "../repositories/taskRepository";
-import { findByEmail } from "../repositories/userRepository";
+import { findById as id } from "../repositories/userRepository";
 import { findTasksForUser } from "../repositories/taskCollaboratorRepository";
 
 // Add a colaborator to a task 
-async function createTaskCollaborator(task_id:string,reqid:string,email:string){
+async function createTaskCollaborator(task_id:string,reqid:string,user_id:string){
     //confirm if a task actually exists
     const task = await findById(task_id);
     if(!task){
@@ -17,23 +17,23 @@ async function createTaskCollaborator(task_id:string,reqid:string,email:string){
     }
 
     //find the collaborator to add via email
-    const usertoadd = await findByEmail(email);
-    if(!usertoadd){
-        throw{message:'no user found with that email'};
+    const userToAdd = await id(user_id);
+    if(!userToAdd){
+        throw{message:'no user found with that id'};
     }
     //prevent adding the owner as their own collaborator
-    if (usertoadd.id === task.owner_id){
+    if (userToAdd.id === task.owner_id){
         throw { message:'owner cannot be added as a collaborator'};
     }
     
     // prevent adding double collaborator to single task
-    const aleadycollab = await findOne(task_id,usertoadd.id);
-    if(aleadycollab){
+    const aleadyCollab = await findOne(task_id,userToAdd.id);
+    if(aleadyCollab){
         throw {message:"user already a collaborator on this task"}
     }
     //add a new collaborator to the task
-    const newcolab = await add(task_id,usertoadd.id)
-        return newcolab;
+    const newColab = await addCollaborator(task_id,userToAdd.id)
+        return newColab;
     
 }
 
@@ -50,8 +50,8 @@ async function getCollaboratorsByTask(task_id:string,reqid:string){
         throw {message: 'not authorized to view this task\'s collaborators' };
     }
 
-    const collaboratos = await findAllByTask(task_id);
-    return collaboratos;
+    const collaborators = await findAllByTask(task_id);
+    return collaborators;
 }
 
 async function deleteTaskCollaborator(task_id:string,reqid:string,user_id:string){
@@ -62,8 +62,8 @@ if(!deltask){
 if (deltask.owner_id !== reqid){
     throw{message:'only the task owner can remove the task'}
 }
-const delcollaborator = await remove(task_id,user_id);
-if(delcollaborator === 0){
+const delCollaborator = await remove(task_id,user_id);
+if(delCollaborator === 0){
     throw {message:'no collaborator found on this task'}
 }
 }

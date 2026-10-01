@@ -1,13 +1,13 @@
 import express from 'express';
 const collaborationrouter = express.Router();
-import CollaborationController from '../controllers/collaborationControllers';
+import collaborationController from '../controllers/collaborationControllers';
 // import CollaborationClient from '../grpc-client/collaborationClient';
 
-collaborationrouter.get('/requests',CollaborationController.seeReq)
-collaborationrouter.post('/request', CollaborationController.sendReq);
-collaborationrouter.patch('/request/:id/accept',CollaborationController.acceptReq)
-collaborationrouter.patch('/request/:id/reject',CollaborationController.rejectReq)
-collaborationrouter.delete('/:id',CollaborationController.deleteCol)
-collaborationrouter.get('/collaborators',CollaborationController.viewCollaborators);
+collaborationrouter.get('/requests',collaborationController.seeReq)
+collaborationrouter.post('/request', collaborationController.sendReq);
+collaborationrouter.patch('/request/:id/accept',collaborationController.acceptReq)
+collaborationrouter.patch('/request/:id/reject',collaborationController.rejectReq)
+collaborationrouter.delete('/:targetUserId',collaborationController.deleteCol)
+collaborationrouter.get('/collaborators',collaborationController.viewCollaborators);
 
 export default collaborationrouter;
