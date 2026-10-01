@@ -7,12 +7,16 @@
     <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-    
+  <nav class="navbar">
+      <h2>Task Manager</h2>
 
-  <!-- ====================================================================== -->
-  <!-- Collaboration -->
-  <!-- ====================================================================== -->
-
+      <div>
+        <a href="collaboration.html">Collaborators</a>
+        <a href="profile.html">Profile</a>
+        <a href="notifications.html">Notifications</a>
+        <button id="btnLogout">Logout</button>
+      </div>
+    </nav>
   <section class="collaboration-container">
 
     <div class="collaboration-card">
@@ -29,18 +33,10 @@
           <p>
             Connect with other users and manage collaboration requests.
           </p>
-
         </div>
-
       </div>
 
-
-      <!-- ================================================================== -->
-      <!-- Send Collaboration Request -->
-      <!-- ================================================================== -->
-
       <div class="collaboration-search-group">
-
         <h3>
           Add New Collaborator
         </h3>
@@ -67,25 +63,13 @@
         </form>
 
       </div>
-
-
-      <!-- ================================================================== -->
-      <!-- Incoming Requests -->
-      <!-- ================================================================== -->
-
       <div class="collaboration-requests-group">
-
         <div class="collaboration-requests-header">
-
           <h3>
             Incoming Requests
           </h3>
-
         </div>
-
-
         <div id="collaborationRequestsList">
-
           <p class="collaboration-empty-state">
             Incoming Requests here
           </p>
@@ -93,18 +77,9 @@
         </div>
 
       </div>
-
-
-      <!-- ================================================================== -->
-      <!-- My Collaborators -->
-      <!-- ================================================================== -->
-
       <div class="collaborators-list-group">
-
         <div class="collaborators-list-header">
-
           <div>
-
             <h3>
               My Collaborators
             </h3>
@@ -112,43 +87,28 @@
             <p>
               People you can collaborate with on your tasks.
             </p>
-
           </div>
-
         </div>
 
 
         <div id="collaboratorsList">
-
           <p class="collaboration-empty-state">
             Added Collaborators 
           </p>
-
         </div>
-
       </div>
-
     </div>
-
   </section>
-
-
-  <!-- ====================================================================== -->
-  <!-- Create Task Modal -->
-  <!-- ====================================================================== -->
 
   <div
     class="modal-overlay"
     id="modal"
   >
-
     <div class="modal">
 
       <h3>
         Create Task
       </h3>
-
-
       <form id="createTaskForm">
 
         <input
@@ -162,11 +122,7 @@
           id="description"
           placeholder="Description"
         ></textarea>
-
-
-        <h5>
-          Priority
-        </h5>
+        <h5>Priority</h5>
 
         <select id="priority">
 
@@ -226,11 +182,6 @@
     </div>
 
   </div>
-
-
-  <!-- ====================================================================== -->
-  <!-- Edit Task Modal -->
-  <!-- ====================================================================== -->
 
   <div
     class="modal-overlay"
@@ -345,26 +296,13 @@
 
   </div>
 
-
-  <!-- ====================================================================== -->
-  <!-- JavaScript -->
-  <!-- ====================================================================== -->
-
   <script src="js/api.js"></script>
-
   <!-- <script src="js/tasks.js"></script> -->
-
   <script src="js/collaboration.js"></script>
-
-
   <script>
-
     redirectIfNotAuth();
-
     // loadTasks();
-
     loadSharedTasks();
-
   </script>
 
 </body>
