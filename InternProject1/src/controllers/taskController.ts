@@ -1,5 +1,5 @@
 import { Taskrequire} from "../validators/taskValidator";
-import TaskClient from '../grpc-client/taskClient'
+import taskClient from '../grpc-client/taskClient'
 import { NextFunction, Request, Response } from "express";
 import { buildMetadata } from "./grpcMetadata";
 import logger from "../utils/logger";
@@ -10,7 +10,7 @@ const taskControllers = {
     const crtdata = req.body as Taskrequire;
     const owner_id = (req as any).user.id;
     const md = buildMetadata(req);
-    TaskClient.CreateTask({ ...crtdata, owner_id }, md,(err: any, result: any) => {
+    taskClient.createTask({ ...crtdata, owner_id }, md,(err: any, result: any) => {
       if(err) {        
         // return res.status(err.code === 409 ? 409 : 500).json({ 
         //   error: { message: err.message || "task creation failed" } 
@@ -30,7 +30,7 @@ const taskControllers = {
     const taskid = req.params.id as string;
     const userid = (req as any).user.id;
     const md = buildMetadata(req);
-    TaskClient.GetOne({ id: taskid, user_id: userid }, md, (err: any, result: any) => {
+    taskClient.getOne({ id: taskid, user_id: userid }, md, (err: any, result: any) => {
       if (err) {        
         // return res.status(err.code === 404 ? 404 : 500).json({ 
         //   error: { message: err.message || "task retrieval failed" } 
@@ -50,7 +50,7 @@ const taskControllers = {
     const query = (req as any).validatedQuery;
     const userid = (req as any).user.id;
     const md = buildMetadata(req);
-    TaskClient.GetAllTask(
+    taskClient.getAllTask(
       {
         owner_id: userid,
         status: query.status,
@@ -83,7 +83,7 @@ const taskControllers = {
     const taskid = req.params.id as string;
     const userid = (req as any).user.id;
     const md = buildMetadata(req);
-    TaskClient.Update({ id: taskid, user_id: userid, ...data }, md, (err: any, result: any) => {
+    taskClient.updateTask({ id: taskid, user_id: userid, ...data }, md, (err: any, result: any) => {
       if (err) {
         // const errorInfo = grpcStatusCode(err.code);
         // return res.status(errorInfo.status).json({
@@ -100,7 +100,7 @@ const taskControllers = {
     const taskid = req.params.id as string;
     const userid = (req as any).user.id;
     const md = buildMetadata(req);
-    TaskClient.Remove({ id: taskid, user_id: userid }, md, (err: any, result: any) => {
+    taskClient.removeTask({ id: taskid, user_id: userid }, md, (err: any, result: any) => {
       if (err) {
         // const errorInfo = grpcStatusCode(err.code);
         // return res.status(errorInfo.status).json({
@@ -113,5 +113,4 @@ const taskControllers = {
     });
   },
 }
-
 export default taskControllers;

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import NotificationClient from "../grpc-client/notificationClient";
+import notificationClient from "../grpc-client/notificationClient";
 import { buildMetadata } from "./grpcMetadata";
 import logger from "../utils/logger";
 // import { grpcStatusCode } from "../utils/statuscode";
@@ -11,7 +11,7 @@ const notificationController = {
     const limit = parseInt(req.query.limit as string) || 10;
     const unread_only = req.query.unreadOnly === "true";
     const md = buildMetadata(req);
-    NotificationClient.GetNotificationByUser(
+    notificationClient.getNotificationByUser(
       { user_id, page, limit, unread_only },md,(err: any, result: any) => {
         if (err) {
           // return res.status(500).json({error: { message: err.message || "notification fetching failed" },
@@ -33,7 +33,7 @@ const notificationController = {
   MarkAsRead: async (req: Request, res: Response, next: NextFunction) => {
     const notification_id = req.params.id as string;
     const md = buildMetadata(req);
-    NotificationClient.MarkAsRead({ id: notification_id,},md,(err: any, result: any) => {
+    notificationClient.markAsRead({ id: notification_id,},md,(err: any, result: any) => {
         if (err) { 
           // return res.status(500).json({ error: { message: err.message || "notification marking failed",},});
         //   const errorInfo = grpcStatusCode(err.code);
@@ -54,7 +54,7 @@ const notificationController = {
   GetUnreadCount: async (req: Request, res: Response, next: NextFunction) => {
     const user_id = (req as any).user.id;
     const md = buildMetadata(req);
-    NotificationClient.GetUnreadCount({user_id,},md,(err: any, result: any) => {
+    notificationClient.getUnreadCount({user_id,},md,(err: any, result: any) => {
         if (err) {
           // return res.status(500).json({ 
           //   error: {message:err.message || "unread notifications count fetching failed",}

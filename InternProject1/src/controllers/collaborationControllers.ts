@@ -1,16 +1,15 @@
 import { Request, Response, NextFunction } from "express";
 // import AuthClient from "../grpc-client/authClient";
-import { RequestType } from "../validators/collaborationReqvalidation";
+import { requestType } from "../validators/collaborationReqvalidation";
 import { buildMetadata } from "./grpcMetadata";
 // import logger from "../utils/logger";
-import CollaborationClient from "../grpc-client/collaborationClient";
+import collaborationClient from "../grpc-client/collaborationClient";
 
-const CollaborationController = {
-
+const collaborationController = {
     sendReq: async(req:Request,res:Response,next:NextFunction)=>{
-        const {receiver_email} = req.body as RequestType;
+        const {receiver_email} = req.body as requestType;
         const md = buildMetadata(req)
-        CollaborationClient.sendRequest({receiver_email},md,(err:any,response:any)=>{
+        collaborationClient.sendRequest({receiver_email},md,(err:any,response:any)=>{
             if(err){
                 return next(err);
             }
@@ -21,7 +20,7 @@ const CollaborationController = {
     seeReq:async (req:Request, res:Response, next:NextFunction)=>{
         // const {receiver_id} = req.body as RequestType;
         const md = buildMetadata(req);
-        CollaborationClient.seeRequest({},md,(err:any,response:any)=>{
+        collaborationClient.seeRequest({},md,(err:any,response:any)=>{
             if(err){
                 return next(err);
             }
@@ -34,10 +33,7 @@ const CollaborationController = {
         console.log(req);
         const {id} = req.params;
         const md = buildMetadata(req);
-        CollaborationClient.acceptRequest(
-            {id},
-            md,
-            (err:any,response:any)=>{
+        collaborationClient.acceptRequest({id},md,(err:any,response:any)=>{
             if(err){
                 return next(err);
             }
@@ -51,10 +47,7 @@ const CollaborationController = {
         // const {receiver_id} = req.body as RequestType;
         const {id} = req.params;
         const md = buildMetadata(req);
-        CollaborationClient.rejectRequest(
-            {id},
-            md,
-            (err:any,response:any)=>{
+        collaborationClient.rejectRequest({id},md,(err:any,response:any)=>{
             if(err){
                 return next(err);
             }
@@ -67,7 +60,7 @@ const CollaborationController = {
     viewCollaborators:async(req:Request,res:Response,next:NextFunction) => {
         // const {id} = req.params;
         const md = buildMetadata(req);
-        CollaborationClient.viewCollaborators({},md,(err:any,response:any)=>{
+        collaborationClient.viewCollaborators({},md,(err:any,response:any)=>{
             if(err){
                 return next(err);
             }
@@ -81,7 +74,7 @@ const CollaborationController = {
     deleteCol:async(req:Request,res:Response,next:NextFunction)=>{
         const {targetUserId} = req.params;
         const md = buildMetadata(req);
-        CollaborationClient.removeCollaborators({targetUserId},md,(err:any,response:any)=>{
+        collaborationClient.removeCollaborators({targetUserId},md,(err:any,response:any)=>{
             if (err){
                 return next(err);
             }
@@ -90,7 +83,6 @@ const CollaborationController = {
                 message: 'collaborator deleted successfully'
             });
         })
-
     }
 }
-export default CollaborationController;
+export default collaborationController;

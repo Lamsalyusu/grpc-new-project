@@ -8,13 +8,19 @@ import logger from '../utils/logger';
 const taskCollaboratorController = {
 
     create:async(req:Request,res:Response,next:NextFunction) => {
-            const {email}= req.body as taskcollaboratorvalidation;
+        console.log("Tori ho yo muji req pani", req)    
+            // suruma maile yeta email rakheko the because earlier maile collaborators chai through email add garirako thiye 
+            // suruma maile yeta email rakheko the because earlier maile collaborators chai through email add garirako thiye 
+            // but now i am adding the collaborators through id thats why i am using user_id
+            const {user_id}= req.body as taskcollaboratorvalidation;
             //task id chai parameter bata aauxa hai
+            // console.log(req.params.id)
+            console.log("Req ko jatha parameters haru",req.params)
             const task_id = req.params.id as string;
             //reqid chai new add garne collaborator ko id ho 
             const reqid = (req as any).user.id;
             const md = buildMetadata(req);
-            taskCollaboratorClient.CreateCollaborator({task_id,reqid,email},md,(err:any,result:any)=>{
+            taskCollaboratorClient.createCollaborator({task_id,reqid,user_id},md,(err:any,result:any)=>{
                 if(err){
                     // return res.status(err.code === 409 ? 409 : 500).json({error:{message:err.message || "collaborator creation failed"}});
                 //     const errorInfo = grpcStatusCode(err.code);
@@ -34,7 +40,7 @@ const taskCollaboratorController = {
             //reqid chai new add garne collaborator ko id ho 
             const reqid = (req as any).user.id;
             const md = buildMetadata(req);
-            taskCollaboratorClient.GetCollaborators({task_id,reqid},md,(err:any,result:any)=>{
+            taskCollaboratorClient.getCollaborators({task_id,reqid},md,(err:any,result:any)=>{
                 if(err){
                     // return res.status(err.code === 409 ? 409 : 500).json({error:{message:err.message || "collaborator fetching failed"}});
                     // const errorInfo = grpcStatusCode(err.code);
@@ -55,7 +61,7 @@ const taskCollaboratorController = {
             const reqid = (req as any).user.id;
             const md = buildMetadata(req);
             const user_id = req.params.userId as string;
-            taskCollaboratorClient.DeleteCollaborator({task_id,reqid,user_id},md,(err:any,result:any)=>{
+            taskCollaboratorClient.deleteCollaborator({task_id,reqid,user_id},md,(err:any,result:any)=>{
                 if(err){
                     // return res.status(err.code === 409 ? 409 : 500).json({error:{message:err.message || "collaborator deletion failed"}});
                     // const errorInfo = grpcStatusCode(err.code);
@@ -72,7 +78,7 @@ const taskCollaboratorController = {
     getSharedTasks: async (req: Request, res: Response,next:NextFunction) => {
             const user_id = (req as any).user.id;
             const md = buildMetadata(req);
-            taskCollaboratorClient.GetSharedTasks({user_id}, md, (err: any, result: any) => {
+            taskCollaboratorClient.getSharedTasks({user_id}, md, (err: any, result: any) => {
                 if (err) {
                     // return res.status(err.code === 409 ? 409 : 500).json({ error: { message: err.message || "Failed to retrieve shared tasks" } });
                     // const errorInfo = grpcStatusCode(err.code);
