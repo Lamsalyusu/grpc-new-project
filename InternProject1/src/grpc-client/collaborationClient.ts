@@ -7,8 +7,8 @@ import PROTO_PATHS from "../index"
 
 const packageDefinition = protoloader.loadSync(PROTO_PATHS.COLLABORATION_PROTO_PATH, PROTO_PATHS.PROTO_LOADER_OPTIONS);
 const collaborationProto = grpc.loadPackageDefinition(packageDefinition) as any;
-const CollaborationService = collaborationProto.CollaborationPackage.CollaborationReq;
+const collaborationService = collaborationProto.collaborationPackage.collaborationService;
 
 const COLLABORATION_HOST_URL = process.env.GRPC_CLIENT_URL || 'localhost:50051';
-const CollaborationClient = new CollaborationService( COLLABORATION_HOST_URL, grpc.credentials.createInsecure());
-export default CollaborationClient;
+const collaborationClient = new collaborationService( COLLABORATION_HOST_URL, grpc.credentials.createInsecure());
+export default collaborationClient;
