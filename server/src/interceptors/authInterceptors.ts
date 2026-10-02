@@ -15,19 +15,23 @@ const authInterceptor = (methodDescriptor: any, call: any) => {
 
   const listener = new grpc.ServerListenerBuilder()
     .withOnReceiveMetadata((metadata: any, next: any) => {
-
-      //  console.log("Incoming Metadata Headers:", metadata.toHttp2Headers());
       const authorization = metadata.get("authorization");
-      
+
       if (!authorization || authorization.length === 0) {
-        return call.sendStatus({ code: grpc.status.UNAUTHENTICATED, details: "Token not found" });
+        return call.sendStatus({
+          code: grpc.status.UNAUTHENTICATED,
+          details: "Token not found",
+        });
       }
 
       const authString = authorization[0] as string;
       const token = authString.split(" ")[1];
 
       if (!token) {
-        return call.sendStatus({ code: grpc.status.UNAUTHENTICATED, details: "Token not found" });
+        return call.sendStatus({
+          code: grpc.status.UNAUTHENTICATED,
+          details: "Token not found",
+        });
       }
 
       try {
@@ -35,10 +39,13 @@ const authInterceptor = (methodDescriptor: any, call: any) => {
         metadata.set("user", JSON.stringify(decoded));
         next(metadata);
       } catch (error) {
-        return call.sendStatus({ code: grpc.status.UNAUTHENTICATED, details: "Invalid or expired token" });
+        return call.sendStatus({
+          code: grpc.status.UNAUTHENTICATED,
+          details: "Invalid or expired token",
+        });
       }
     })
-    .build()
+    .build();
 
   const responder = new (grpc as any).ResponderBuilder()
     .withStart((next: any) => {
