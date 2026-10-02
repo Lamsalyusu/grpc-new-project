@@ -23,9 +23,6 @@ async function loadCollaborationRequests() {
     if (!list) return;
 
     const requests = res.data?.reqs || [];
-
-    console.log("Collaboration requests:", requests);
-
     if (requests.length === 0) {
       list.innerHTML = `
         <p class="collaboration-empty-state">
@@ -237,9 +234,6 @@ async function loadCollaborators() {
     if (!list) return;
 
     const collaborators = res.data?.collaborators || [];
-
-    console.log("My collaborators:", collaborators);
-
     if (collaborators.length === 0) {
       list.innerHTML = `
         <p class="collaboration-empty-state">

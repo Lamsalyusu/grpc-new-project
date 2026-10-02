@@ -9,7 +9,6 @@ function initChat(taskId) {
   });
 
   socket.on('connect', () => {
-    // console.log('Socket connected');
     socket.emit('join_task', { task_id: currentTaskId });
   });
 
@@ -27,8 +26,6 @@ function initChat(taskId) {
 function sendChat() {
   const input = document.getElementById('chatInput');
   const body = input.value.trim();
-  console.log("currentTaskId", currentTaskId);
-  console.log(body);
   if (!body || !socket || !currentTaskId) return;
 
   socket.emit('send_message', { task_id: currentTaskId, body });  // ← use stored ID

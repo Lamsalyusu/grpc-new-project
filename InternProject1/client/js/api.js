@@ -40,7 +40,6 @@ async function api(endpoint, options = {}) {
   }
 
   const data = await res.json().catch(() => ({}));
-  console.log(data)
   if (!res.ok) {
     const msg = data.error?.message || data.message || 'Something went wrong';
     throw new Error(msg);
@@ -50,7 +49,6 @@ async function api(endpoint, options = {}) {
 }
 
 function redirectIfNotAuth() {
-  // console.log("hello")
   if (!getToken()||isTokenExpired()) {
     // window.location.href = 'index.html';
     logout();

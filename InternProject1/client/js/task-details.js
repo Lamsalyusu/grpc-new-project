@@ -65,11 +65,22 @@ async function initTaskDetail() {
     // Only owner can manage
     // task collaborators.
 
-    if (currentUserId !== currentTask.owner_id) {
-      const collabSection = document.getElementById("collabSection");
+    // if (currentUserId !== currentTask.owner_id) {
+    //   const collabSection = document.getElementById("collabSection");
 
-      if (collabSection) {
-        collabSection.style.display = "none";
+    //   if (collabSection) {
+    //     collabSection.style.display = "none";
+    //   }
+    // }
+
+    if (currentUserId !== currentTask.owner_id) {
+      const addButton = document.getElementById("btnAddCollaborator");
+      const picker = document.getElementById("collaboratorPicker");
+      if (addButton) {
+        addButton.style.display = "none";
+      }
+      if (picker) {
+        picker.style.display = "none";
       }
     }
 
@@ -118,7 +129,7 @@ async function initTaskDetail() {
   await loadCollaborators();
 
   await loadAvailableCollaborators();
-
+  setupLeaveTask();
   loadMessages();
 
   initChat(taskId);
@@ -218,11 +229,9 @@ async function loadCollaborators() {
                 </div>
 
               </div>
-
-
               <button
                 class="btn-remove-collab"
-                data-userid="${c.id}"
+                data-userid="${c.id}"class="btn-remove-collab"
                 style="
                   width:auto;
                   padding:6px 12px;
@@ -382,7 +391,7 @@ document.getElementById("btnAddCollaborator")?.addEventListener("click", () => {
 async function addCollaborator(userId) {
   try {
     await api(`/tasks/${taskId}/collaborators`, {
-      method: "POST", 
+      method: "POST",
       body: JSON.stringify({
         user_id: userId,
       }),
@@ -425,6 +434,54 @@ async function removeCollab(userId) {
     await loadCollaborators();
 
     await loadAvailableCollaborators();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+// ============================================================================
+// Leave Task
+// ============================================================================
+
+function setupLeaveTask() {
+  const button = document.getElementById("btnLeaveTask");
+
+  if (!button) return;
+
+  // Owner cannot leave their own task
+  if (currentUserId === currentTask.owner_id) {
+    return;
+  }
+
+  // Show leave button only if current user is a collaborator
+  const isCollaborator = taskCollaborators.some(
+    (collaborator) => collaborator.id === currentUserId,
+  );
+
+  if (!isCollaborator) {
+    return;
+  }
+
+  button.style.display = "inline-block";
+
+  button.addEventListener("click", leaveCurrentTask);
+}
+
+// ======================================================================================================
+
+async function leaveCurrentTask() {
+  if (!confirm("Are you sure you want to leave this task?")) {
+    return;
+  }
+
+  try {
+    await api(`/tasks/${taskId}/leave`, {
+      method: "DELETE",
+    });
+
+    alert("You left the task successfully.");
+
+    window.location.href = "dashboard.html";
   } catch (err) {
     alert(err.message);
   }
@@ -478,10 +535,6 @@ function renderMsg(m) {
   `;
 }
 
-// ============================================================================
-// Escape HTML
-// ============================================================================
-
 function escapeHtml(text) {
   const div = document.createElement("div");
 
@@ -489,9 +542,5 @@ function escapeHtml(text) {
 
   return div.innerHTML;
 }
-
-// ============================================================================
-// Logout
-// ============================================================================
 
 document.getElementById("btnLogout")?.addEventListener("click", logout);
