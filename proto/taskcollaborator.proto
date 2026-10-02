@@ -7,6 +7,7 @@ service taskCollaboratorService {
     rpc getCollaborators(getCollaboratorReq) returns (getCollaboratorRes);
     rpc deleteCollaborator(delCollaboratorsReq) returns (delCollaboratorRes);
     rpc getSharedTasks(getSharedTaskReq) returns (getSharesTaskRes);
+    rpc leaveTask(leaveTaskReq) returns (leaveTaskRes);
 
 }
 
@@ -63,4 +64,14 @@ message getSharedTaskReq{
 
 message getSharesTaskRes{
     repeated Task tasks = 1;
+}
+
+message leaveTaskReq {
+    string task_id = 1;
+    string user_id = 2;
+    // string owner_id = 3;
+}
+
+message leaveTaskRes {
+    string message = 1;
 }
