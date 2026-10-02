@@ -11,4 +11,5 @@ taskCollaboratorRouter.post('/:id/collaborators', authMiddleware, validateParams
 taskCollaboratorRouter.get('/:id/collaborators', authMiddleware, validateParams(taskIdParamSchema), taskCollaboratorController.getCollaborator);
 taskCollaboratorRouter.delete('/:id/collaborators/:userId', authMiddleware, validateParams(collaboratorParamsSchema), taskCollaboratorController.deleteCollaborators);
 taskCollaboratorRouter.get('/shared-with-me', authMiddleware, taskCollaboratorController.getSharedTasks);
+taskCollaboratorRouter.delete('/:id/leave',authMiddleware, taskCollaboratorController.leaveTask);
 export default taskCollaboratorRouter;

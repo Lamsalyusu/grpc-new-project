@@ -16,10 +16,8 @@ io = new Server(httpServer,{
 
   chatNamespace.use(socketMiddleware);
   chatNamespace.on('connection',(socket:Socket)=> {
-  //  console.log(`connected successfully ${socket.id}`);
      registerChatHandler(chatNamespace,socket);
    socket.on('disconnect',()=>{
-    // console.log(`disconnected client ${socket.id}`)
    });
 });
 return io;
