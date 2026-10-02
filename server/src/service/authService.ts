@@ -23,7 +23,6 @@ async function registerUser(data:RegisterInput) {
 
 async function loginUser(data: LoginInput) {
   const user = await findByEmail(data.email);
-  // console.log(user)
 
   if (!user) {
     throw { message: "No user found (try registering first) " };

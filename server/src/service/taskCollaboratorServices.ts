@@ -1,7 +1,8 @@
-import { findOne,addCollaborator,findAllByTask,remove } from "../repositories/taskCollaboratorRepository";
+import { findOne,addCollaborator,findAllByTask,remove,leaveTask } from "../repositories/taskCollaboratorRepository";
 import { findById } from "../repositories/taskRepository";
 import { findById as id } from "../repositories/userRepository";
 import { findTasksForUser } from "../repositories/taskCollaboratorRepository";
+import {doubleRequest}  from "../repositories/collaborationRepository";
 
 // Add a colaborator to a task 
 async function createTaskCollaborator(task_id:string,reqid:string,user_id:string){
@@ -71,4 +72,66 @@ async function getTasksSharedWithUser(user_id: string) {
   return findTasksForUser(user_id);
 }
 
-export {createTaskCollaborator,deleteTaskCollaborator,getCollaboratorsByTask,getTasksSharedWithUser}
+// async function leaveTasks(task_id:string,user_id:string){
+//     const task = await findById(task_id);
+
+//     if(!task){
+//         throw {message:'task not found'};
+//     }
+
+//     // Owner cannot leave their own task
+//     if(task.owner_id === user_id){
+//         throw {message:'task owner cannot leave the task'};
+//     }
+
+//     const isCollaborator = await findOne(task_id, user_id);
+
+//     if(!isCollaborator){
+//         throw {message:'not a collaborator on this task'};
+//     }
+
+//     const leave_Task = await leaveTask(task_id, user_id);
+
+//     if(leave_Task === 0){
+//         throw {message:'could not leave the task'};
+//     }
+
+//     return {message:'left the task successfully'};
+// }
+
+
+async function leaveTasks(task_id:string,user_id:string){
+    const task = await findById(task_id);
+
+    if(!task){
+        throw {message:'task not found'};
+    }
+
+    // Owner cannot leave their own task
+    if(task.owner_id === user_id){
+        throw {message:'task owner cannot leave the task'};
+    }
+
+    // User must have an accepted global collaboration
+    const acceptedCollaboration = await doubleRequest(
+        task.owner_id,
+        user_id
+    );
+    if(!acceptedCollaboration){
+        throw {message:'you are not an accepted collaborator with the task owner'};
+    }
+
+    // User must actually be a collaborator on this task
+    const isCollaborator = await findOne(task_id,user_id);
+    if(!isCollaborator){
+        throw {message:'not a collaborator on this task'};
+    }
+    const leave_Task = await leaveTask(task_id,user_id);
+    if(leave_Task === 0){
+        throw {message:'could not leave the task'};
+    }
+
+    return {message:'left the task successfully'};
+}
+
+export {createTaskCollaborator,deleteTaskCollaborator,getCollaboratorsByTask,getTasksSharedWithUser,leaveTasks};

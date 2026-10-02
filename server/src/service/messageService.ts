@@ -4,9 +4,7 @@ import { createMessage, findByTask } from "../repositories/messageRepository";
 
 //yo function chai if owner and collaborator lai access cha ki nai bhanne ko lagi 
 async function checkAccess(task_id:string,user_id:string){
-    // console.log("CHECKING ACCESS:", { task_id, user_id });
     const task = await findTaskById(task_id);
-    //  console.log("TASK FOUND:", task ? { id: task.id, owner_id: task.owner_id } : null);
     if(!task){
         throw { message:'task not found'}
     }
@@ -28,7 +26,6 @@ async function sendMessage(task_id:string,sender_id:string,body:string){
     await checkAccess(task_id,sender_id);    
     // if access chha bhane yahan bata message create bhayo --> message garna milyo 
     const message = await createMessage(task_id,sender_id,body)
-    // console.log(message)
     return message;
 }
 

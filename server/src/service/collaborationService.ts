@@ -130,13 +130,10 @@ async function deleteCollaborator(currentUserId:string,targetUserId:string){
     // return {
     //     message:"collaborators deleted successfully"
     // }
-    // console.log("CURRENT USER ", currentUserId)
-    // console.log("TARGET USER ID",targetUserId)
         const deleted = await deleteCollaborators(
             currentUserId,
             targetUserId
         );
-          console.log("DELETED ROWS:", deleted);
         // destroy in repository returns number of rows that were deleted.
         // so if deleted = 1 1 === 0 is false 
         if (deleted === 0) {
