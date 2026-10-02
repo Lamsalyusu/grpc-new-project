@@ -10,11 +10,9 @@ function getUserFromCall(call: any) {
 const taskHandlers = {
   createTask: async (call: any, callback: any) => {
     try {
-      console.log("call bata matraaako ", call.request)
       const user = getUserFromCall(call);
       const { title, description, priority, due_date,reminder_at,collaborator_ids} = call.request;
       const task = await createTask({ title, description, priority, due_date,reminder_at,collaborator_ids}, user.id);
-      console.log("kk aayo ta console ma ", task)
       logger.info("task created successfully")
       callback(null, task);
     } catch (err: any) {

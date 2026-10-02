@@ -11,7 +11,6 @@ const collaboration_handler = {
   sendRequest: async (call: any, callback: any) => {
     try {
       const user = getUserFromCall(call);
-      // console.log(ca;
       const sender_id = user.id;
       // const {receiver_id} = call.request;
       const { receiver_email } = call.request;
@@ -46,7 +45,6 @@ const collaboration_handler = {
       const receiver_id = user.id;
       const { id } = call.request;
       const request = await acceptReq(id, receiver_id);
-      // console.log(request);
       callback(null, {
         accept: [request],
       });

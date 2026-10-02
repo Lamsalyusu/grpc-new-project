@@ -1,5 +1,5 @@
 import * as grpc from '@grpc/grpc-js';
-import { createTaskCollaborator, getCollaboratorsByTask, deleteTaskCollaborator, getTasksSharedWithUser } from '../service/taskCollaboratorServices';
+import { createTaskCollaborator, getCollaboratorsByTask, deleteTaskCollaborator, getTasksSharedWithUser, leaveTasks } from '../service/taskCollaboratorServices';
 import logger from '../utils/logger';
 
 function getUserFromCall(call: any) {
@@ -10,7 +10,6 @@ function getUserFromCall(call: any) {
 const taskCollaboratorHandlers = {
   createCollaborator: async (call: any, callback: any) => {
     try {
-      console.log("Collaborator ko request yesma aako chha " , call.request)
       const user = getUserFromCall(call);
       // const { task_id, email, requester_id } = call.request;
       const { task_id,user_id } = call.request;
@@ -77,7 +76,6 @@ const taskCollaboratorHandlers = {
       const user = getUserFromCall(call);
       // const tasks = await getTasksSharedWithUser(requester_id);
       const tasksdata = await getTasksSharedWithUser(user.id);
-      // console.log(JSON.stringify(tasksdata[0], null, 2));   // remove this once confirmed
       const tasks = tasksdata.map((row:any)=>({
         id:row.task.id,
         title:row.task.title,
@@ -98,6 +96,23 @@ const taskCollaboratorHandlers = {
         });
     }
   },
+
+  leaveTask: async (call: any, callback: any) => {
+    try {
+      const user = getUserFromCall(call);
+      const { task_id,user_id } = call.request;
+      await leaveTasks(task_id, user_id);
+      logger.info("left the task successfully")
+      callback(null, { message: 'left the task successfully' });
+    } catch (err: any) {
+      logger.error(`leaving task failed ${err.message}`)
+      callback(
+        { 
+        code: grpc.status.INTERNAL, 
+        message: err.message || "Internal server error"
+        });
+    }
+  }
 };
 
 export default taskCollaboratorHandlers;

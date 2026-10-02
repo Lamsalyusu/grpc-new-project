@@ -56,7 +56,6 @@ getMessage: async (call: any, callback: any) => {
         created_at: m.created_at,
       })),
     });
-    // console.log("helloooooooooooo")
   } catch (err: any) {
     logger.warn(`get message failed ${err.message}`)
     callback({ 
