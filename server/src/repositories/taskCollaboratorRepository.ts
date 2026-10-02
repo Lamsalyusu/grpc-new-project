@@ -41,4 +41,16 @@ async function findTasksForUser(user_id: string) {
   ],   // requires the ser,Task↔TaskCollaborator association
   });
 }
-export {findOne,findAllByTask,addCollaborator,remove,findTasksForUser};
+
+async function leaveTask(task_id:string,user_id:string){
+const leave_task = await TaskCollaborator.destroy({
+    where:{
+        task_id,
+        user_id
+        }
+    })
+    return leave_task;
+    }
+
+// }
+export {findOne,findAllByTask,addCollaborator,remove,findTasksForUser,leaveTask};

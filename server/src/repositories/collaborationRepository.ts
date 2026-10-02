@@ -29,7 +29,6 @@ async function seeRequest(
         }
     });
 
-    console.log(requests);
     // const sendername = await findById(requests.map(reqs=>{
     //     reqs.sender_id
     // }));
@@ -57,8 +56,6 @@ async function seeRequest(
             };
         })
     );
-// console.log(sendername)
-// console.log(sendername)
 return senderName;
 
 }
@@ -171,7 +168,6 @@ async function findAcceptedCollaborators(user_id:string){
 }
 
 async function deleteCollaborators(currentUserId:string,targetUserId:string){
-    // console.log(currentUserId,targetUserId)
     // const accepted = findAcceptedCollaborators(currentUserId)
     const deletecolabs = collaboration_request.destroy({
         where: {
@@ -192,5 +188,7 @@ async function deleteCollaborators(currentUserId:string,targetUserId:string){
     return deletecolabs;
 }
 
+
+// async function find
 
 export {createRequest,seeRequest,acceptRequest,rejectRequest,findPendingRequest,findRequestById,doubleRequest,findAcceptedCollaborators,deleteCollaborators};
