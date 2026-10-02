@@ -30,7 +30,6 @@ const collaborationController = {
 
     acceptReq:async(req:Request,res:Response,next:NextFunction)=>{
         // const {receiver_id} = req.body as RequestType;
-        console.log(req);
         const {id} = req.params;
         const md = buildMetadata(req);
         collaborationClient.acceptRequest({id},md,(err:any,response:any)=>{

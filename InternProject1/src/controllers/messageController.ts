@@ -12,8 +12,6 @@ const messageControllers = {
             const page = Number(req.query.page) || 1;
             const limit = Number(req.query.limit) || 10;
             const md = buildMetadata(req);
-            // console.log(req.params)
-            // console.log(md)
             messageClient.getMessage({task_id:task_id,page:page,limit:limit},md,(error:any,result:any) => {
                 if(error){
                     return next(error);

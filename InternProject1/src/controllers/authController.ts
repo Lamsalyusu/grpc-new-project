@@ -8,10 +8,7 @@ import logger from "../utils/logger";
 const authController = {
   register: async (req: Request, res: Response,next:NextFunction) => {
     logger.info("register request received")
-    // console.log("register controller hit")
     const data = req.body as registerInput;
-    // console.log(req.body)
-    // console.log(data);
     authClient.registerUser(data, (err: any, response: any) => {
       if (err) {
         // return res.status(err.code === grpc.status.ALREADY_EXISTS ? 409 : 500).json({
@@ -32,10 +29,6 @@ const authController = {
     logger.info('login request received')
   
     const data = req.body as loginInput;
-    // console.log("req paramteres ko ho hai",req)
-    // console.log(data)
-    // console.log(req.body)
-    // console.log(res)
     authClient.loginUser(data, (err: any, response: any) => {
       if (err) {
         // return res.status(err.code === grpc.status.UNAUTHENTICATED ? 401 : 500).json({
@@ -56,11 +49,7 @@ const authController = {
   me:async (req: Request, res: Response, next: NextFunction) => {
     logger.info('fetch profile request received')
     const user_id = (req as any).user.id;
-    // console.log(req)
     const md = buildMetadata(req);
-    // console.log(user_id)
-    // console.log(md)
-    // console.log(res);
     authClient.seeProfile({ user_id }, md, (err: any, response: any) => {
       if (err) {
         // return res.status(err.code === grpc.status.NOT_FOUND ? 404 : 500).json({
@@ -76,7 +65,6 @@ const authController = {
       return res.status(200).json({ data: response, message: 'User info fetched successfully' });
     });
     
-    // console.log(user_id)
   }
 };
 

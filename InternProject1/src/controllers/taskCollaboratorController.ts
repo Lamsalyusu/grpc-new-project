@@ -8,14 +8,11 @@ import logger from '../utils/logger';
 const taskCollaboratorController = {
 
     create:async(req:Request,res:Response,next:NextFunction) => {
-        console.log("Tori ho yo muji req pani", req)    
             // suruma maile yeta email rakheko the because earlier maile collaborators chai through email add garirako thiye 
             // suruma maile yeta email rakheko the because earlier maile collaborators chai through email add garirako thiye 
             // but now i am adding the collaborators through id thats why i am using user_id
             const {user_id}= req.body as taskcollaboratorvalidation;
             //task id chai parameter bata aauxa hai
-            // console.log(req.params.id)
-            console.log("Req ko jatha parameters haru",req.params)
             const task_id = req.params.id as string;
             //reqid chai new add garne collaborator ko id ho 
             const reqid = (req as any).user.id;
@@ -89,6 +86,23 @@ const taskCollaboratorController = {
                 }
                 logger.info("shared tasks retrieved succesfully")
                 return res.status(200).json({ data: result, message: 'Shared tasks retrieved successfully' });
+        });
+    },
+    leaveTask:async(req:Request,res:Response,next:NextFunction)=>{
+        const task_id = req.params.id as string;
+        const user_id = (req as any).user.id;
+        const md = buildMetadata(req);
+        taskCollaboratorClient.leaveTask({task_id,user_id},md,(err:any,result:any)=>{
+            if(err){
+                // return res.status(err.code === 409 ? 409 : 500).json({error:{message:err.message || "Failed to leave the task"}});
+                // const errorInfo = grpcStatusCode(err.code);
+                // return res.status(errorInfo.status).json({
+                // message:err.details || errorInfo.message
+                // });
+                return next(err);
+            }
+            logger.info("task left successfully")
+            return res.status(200).json({data:result,message:'left the task successfully'});
         });
     }
 }
