@@ -5,66 +5,61 @@ import { findById } from "./userRepository";
 // import { userInfo } from "node:os";
 // import sendRequ from "../service/collaborationService";
 
-async function createRequest(data:{
-    // id:string,
-    // status:'pending'
-    sender_id:string;
-    receiver_id:string
-
-}){
-    return collaboration_request.create(data)
+async function createRequest(data: {
+  // id:string,
+  // status:'pending'
+  sender_id: string;
+  receiver_id: string;
+}) {
+  return collaboration_request.create(data);
 }
 
 async function seeRequest(
-    // id:string,
-    // // status:'pending'
-    // sender_id:string;
-    receiver_id:string
-){
-   const requests = await collaboration_request.findAll({
-    where:{
-        // receiver_id:receiver_id,
-        receiver_id,
-        status:'pending'
-        }
-    });
+  // id:string,
+  // // status:'pending'
+  // sender_id:string;
+  receiver_id: string,
+) {
+  const requests = await collaboration_request.findAll({
+    where: {
+      // receiver_id:receiver_id,
+      receiver_id,
+      status: "pending",
+    },
+  });
 
-    // const sendername = await findById(requests.map(reqs=>{
-    //     reqs.sender_id
-    // }));
+  // const sendername = await findById(requests.map(reqs=>{
+  //     reqs.sender_id
+  // }));
 
-// const sendername = await requests.map(async(req)=>{
-//     const sender = await findById(req.sender_id);
-//     return {
-//         requests:req,
-//         sender_name :sender?.name,
-//     }
-// })
+  // const sendername = await requests.map(async(req)=>{
+  //     const sender = await findById(req.sender_id);
+  //     return {
+  //         requests:req,
+  //         sender_name :sender?.name,
+  //     }
+  // })
 
- const senderName = await Promise.all(
-        requests.map(async (req) => {
-            const senderInfo = await findById(req.sender_id);
+  const senderName = await Promise.all(
+    requests.map(async (req) => {
+      const senderInfo = await findById(req.sender_id);
 
-            return {
-                // request: req,
-                id: req.id,
-                sender_id: req.sender_id,
-                receiver_id: req.receiver_id,
-                status: req.status,
-                sender_name: senderInfo?.name,
-                // sender_name: sender?.name,
-            };
-        })
-    );
-return senderName;
-
+      return {
+        // request: req,
+        id: req.id,
+        sender_id: req.sender_id,
+        receiver_id: req.receiver_id,
+        status: req.status,
+        sender_name: senderInfo?.name,
+        // sender_name: sender?.name,
+      };
+    }),
+  );
+  return senderName;
 }
 
-async function findPendingRequest(
-    sender_id:string,
-    receiver_id:string
-){
-    return collaboration_request.findOne({
+async function findPendingRequest(sender_id: string, receiver_id: string) {
+  return collaboration_request.findOne({
     where: {
       sender_id,
       receiver_id,
@@ -72,7 +67,6 @@ async function findPendingRequest(
     },
   });
 }
-
 
 async function findRequestById(id: string) {
   return collaboration_request.findOne({
@@ -86,109 +80,119 @@ async function findRequestById(id: string) {
 //     const sender_name = await findById(sender_id)
 // }
 
-async function acceptRequest(id:string,receiver_id:string){
-    const [updatedRows] = await  collaboration_request.update(
-        {
-        status:'accepted'
-        },
-        {
-        where:{
-            // sender_id:sender_id,
-            id,
-            // receiver_id:receiver_id,
-            receiver_id,
-            status:'pending'
-        }
-    }
-)
-if(updatedRows === 0){
+async function acceptRequest(id: string, receiver_id: string) {
+  const [updatedRows] = await collaboration_request.update(
+    {
+      status: "accepted",
+    },
+    {
+      where: {
+        // sender_id:sender_id,
+        id,
+        // receiver_id:receiver_id,
+        receiver_id,
+        status: "pending",
+      },
+    },
+  );
+  if (updatedRows === 0) {
     return null;
-}
-// return updatedRows;
-return findRequestById(id);
+  }
+  // return updatedRows;
+  return findRequestById(id);
 }
 
-async function rejectRequest(id:string,receiver_id:string){
-    const[updatedRows]= await collaboration_request.update(
+async function rejectRequest(id: string, receiver_id: string) {
+  const [updatedRows] = await collaboration_request.update(
+    {
+      status: "rejected",
+    },
+    {
+      where: {
+        id,
+        receiver_id,
+        status: "pending",
+      },
+    },
+  );
+  if (updatedRows === 0) {
+    return null;
+  }
+  return findRequestById(id);
+}
+
+async function doubleRequest(user_id1: string, user_id2: string) {
+  return collaboration_request.findOne({
+    where: {
+      status: "accepted",
+      [Op.or]: [
         {
-            status:'rejected'
+          sender_id: user_id1,
+          receiver_id: user_id2,
         },
         {
-            where:{
-            id,
-            receiver_id,
-            status:'pending'
-            }
-        }
-    )
-    if(updatedRows ===0){
-        return null;
-    }
-    return findRequestById(id);
-}
-
-async function doubleRequest(
-    user_id1:string,user_id2:string
-){
-    return collaboration_request.findOne({
-        where:{
-            status:"accepted",
-            [Op.or]:[
-                {
-                    sender_id:user_id1,
-                    receiver_id:user_id2
-                },
-                {
-                    sender_id:user_id2,
-                    receiver_id:user_id1
-                },
-            ],
+          sender_id: user_id2,
+          receiver_id: user_id1,
         },
-    });
+      ],
+    },
+  });
 }
 
-async function findAcceptedCollaborators(user_id:string){
-    // why user_id here beacuse we need to find the accepted requests from this specific user id 
-    const accepted = collaboration_request.findAll({
-        where:{
-            status:"accepted",
-            [Op.or]:[
-                {
-                    sender_id:user_id,
-                    // receiver_id: user_id2
-                },
-                {
-                    // sender_id:user_id2,
-                    receiver_id:user_id
-                }
-            ]
-        }
-    })
-    return accepted;
-}
-
-async function deleteCollaborators(currentUserId:string,targetUserId:string){
-    // const accepted = findAcceptedCollaborators(currentUserId)
-    const deletecolabs = collaboration_request.destroy({
-        where: {
-        status: "accepted",
-        [Op.or]: [
-            // This means either A ---> B or B ---> A
-                {
-                sender_id: currentUserId,
-                receiver_id: targetUserId,
-                },
-                {
-                sender_id: targetUserId,
-                receiver_id: currentUserId,
-                },
-            ],
+async function findAcceptedCollaborators(user_id: string) {
+  // why user_id here beacuse we need to find the accepted requests from this specific user id
+  const accepted = collaboration_request.findAll({
+    where: {
+      status: "accepted",
+      [Op.or]: [
+        {
+          sender_id: user_id,
+          // receiver_id: user_id2
         },
-    });
-    return deletecolabs;
+        {
+          // sender_id:user_id2,
+          receiver_id: user_id,
+        },
+      ],
+    },
+  });
+  return accepted;
 }
 
+async function deleteCollaborators(
+  currentUserId: string,
+  targetUserId: string,
+) {
+  // const accepted = findAcceptedCollaborators(currentUserId)
+  const deletecolabs = collaboration_request.destroy({
+    where: {
+      status: "accepted",
+      [Op.or]: [
+        // This means either A ---> B or B ---> A
+        {
+          sender_id: currentUserId,
+          receiver_id: targetUserId,
+        },
+        {
+          sender_id: targetUserId,
+          receiver_id: currentUserId,
+        },
+      ],
+    },
+  });
+  return deletecolabs;
+}
 
 // async function find
 
-export {createRequest,seeRequest,acceptRequest,rejectRequest,findPendingRequest,findRequestById,doubleRequest,findAcceptedCollaborators,deleteCollaborators};
+export {
+  createRequest,
+  seeRequest,
+  acceptRequest,
+  rejectRequest,
+  findPendingRequest,
+  findRequestById,
+  doubleRequest,
+  findAcceptedCollaborators,
+  deleteCollaborators,
+};

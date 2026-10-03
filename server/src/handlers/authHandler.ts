@@ -1,65 +1,67 @@
-import * as  grpc from '@grpc/grpc-js';
-import { registerUser,loginUser } from '../service/authService';
-import { findById } from '../repositories/userRepository';
-import logger from "../utils/logger"
+import * as grpc from "@grpc/grpc-js";
+import { registerUser, loginUser } from "../service/authService";
+import { findById } from "../repositories/userRepository";
+import logger from "../utils/logger";
 
 function getUserFromCall(call: any) {
-  const raw = call.metadata.get('user')[0] as string;
+  const raw = call.metadata.get("user")[0] as string;
   return JSON.parse(raw);
 }
 
 const authHandlers = {
-    registerUser :async (call:any, callback:any) => {
-        try{
-            const { name,email,password } = call.request;
-            const result = await registerUser({name,email,password});  
-            logger.info("gRPC registration successful")        
-            callback(null,result);
-        
-          }catch(err:any){
-            logger.error(`gRPC registation failed: ${err.message}`);
-            callback({
-                code: grpc.status.INTERNAL, 
-                message: err.message || "Internal server error during registration."
-            })
-        }
-    },
+  registerUser: async (call: any, callback: any) => {
+    try {
+      const { name, email, password } = call.request;
+      const result = await registerUser({ name, email, password });
+      logger.info("gRPC registration successful");
+      callback(null, result);
+    } catch (err: any) {
+      logger.error(`gRPC registation failed: ${err.message}`);
+      callback({
+        code: grpc.status.INTERNAL,
+        message: err.message || "Internal server error during registration.",
+      });
+    }
+  },
 
-    loginUser: async(call: any, callback:any) =>{
-        try {
+  loginUser: async (call: any, callback: any) => {
+    try {
+      console.log(call.request);
+      const { email, password } = call.request;
+      const result = await loginUser({ email, password });
+      logger.info("gRPC login successful");
+      callback(null, result);
+    } catch (err: any) {
+      logger.error(`gRPC login failed ${err.message}`);
+      callback({
+        code: grpc.status.UNAUTHENTICATED,
+        message: err.message,
+      });
+    }
+  },
 
-            const {email,password }= call.request;
-            const result = await loginUser({email,password});
-            logger.info("gRPC login successful");
-            callback(null,result);
-        } catch(err:any){
-          logger.error(`gRPC login failed ${err.message}`);
-            callback({
-                code: grpc.status.UNAUTHENTICATED,
-                message: err.message 
-            })
-          }
-    },
-
-    seeProfile: async (call: any, callback: any) => {
+  seeProfile: async (call: any, callback: any) => {
     try {
       const user = getUserFromCall(call);
       const result = await findById(user.id);
       if (!result) {
         logger.warn("User profile not found");
-        return callback({ code: grpc.status.NOT_FOUND, message: "user not found" });
+        return callback({
+          code: grpc.status.NOT_FOUND,
+          message: "user not found",
+        });
       }
-      logger.info("user profile fetched successfully")
+      logger.info("user profile fetched successfully");
       callback(null, result);
-    }
-    catch (err: any) {
+    } catch (err: any) {
       logger.error(`user profile not fetched ${err.message}`);
       callback({
         code: grpc.status.INTERNAL,
-        message: err.message || "Internal server error during fetching user info."
-      })
-        }
+        message:
+          err.message || "Internal server error during fetching user info.",
+      });
     }
-}   
+  },
+};
 
 export default authHandlers;

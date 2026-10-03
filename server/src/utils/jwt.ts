@@ -1,13 +1,13 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 // import jwt from 'jsonwebtoken';
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
 dotenv.config();
 
 const jwtSecret = process.env.JWT_SECRET as string;
 
 function signInToken(payload: object): string {
-  return jwt.sign(payload, jwtSecret, { expiresIn: '1d' });
+  return jwt.sign(payload, jwtSecret, { expiresIn: "1d" });
 }
 
 function verifyToken(token: string) {

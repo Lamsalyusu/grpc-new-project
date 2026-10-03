@@ -1,4 +1,11 @@
-import { sendRequest,acceptReq,rejectReq,viewRequest,deleteCollaborator,viewCollaborationRequest } from "../service/collaborationService";
+import {
+  sendRequest,
+  acceptReq,
+  rejectReq,
+  viewRequest,
+  deleteCollaborator,
+  viewCollaborationRequest,
+} from "../service/collaborationService";
 // import createRequest from "../repositories/collaborationRepository";
 import * as grpc from "@grpc/grpc-js";
 
@@ -10,6 +17,7 @@ function getUserFromCall(call: any) {
 const collaboration_handler = {
   sendRequest: async (call: any, callback: any) => {
     try {
+      console.log("proto loader options",call.request);
       const user = getUserFromCall(call);
       const sender_id = user.id;
       // const {receiver_id} = call.request;
@@ -74,15 +82,15 @@ const collaboration_handler = {
     }
   },
 
-  viewCollaborators:async(call:any,callback:any)=>{
+  viewCollaborators: async (call: any, callback: any) => {
     const user = getUserFromCall(call);
     const currentuser = user.id;
-    try{
+    try {
       const result = await viewCollaborationRequest(currentuser);
-      callback(null,{
-        collaborators:result
-      })
-    }catch(err:any){
+      callback(null, {
+        collaborators: result,
+      });
+    } catch (err: any) {
       callback({
         code: grpc.status.INTERNAL,
         message: err.message || "couldnot view request",
@@ -90,21 +98,19 @@ const collaboration_handler = {
     }
   },
 
-  removeCollaborators:async(call:any, callback:any)=>{
+  removeCollaborators: async (call: any, callback: any) => {
     const user = getUserFromCall(call);
-    try{
+    try {
       const currentUserId = user.id;
-      const {targetUserId} = call.request;
-      const result = await deleteCollaborator(currentUserId,targetUserId)
-      callback(null,result)
-    }
-    catch(err:any){
+      const { targetUserId } = call.request;
+      const result = await deleteCollaborator(currentUserId, targetUserId);
+      callback(null, result);
+    } catch (err: any) {
       callback({
-        code:grpc.status.INTERNAL,
-        message:err.message || "couldnot delete collaborators"
-      })
+        code: grpc.status.INTERNAL,
+        message: err.message || "couldnot delete collaborators",
+      });
     }
-
-  }
+  },
 };
 export default collaboration_handler;

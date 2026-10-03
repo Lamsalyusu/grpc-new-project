@@ -1,4 +1,7 @@
-import { findDueReminders, markReminderAsSent } from "../repositories/reminderRepository";
+import {
+  findDueReminders,
+  markReminderAsSent,
+} from "../repositories/reminderRepository";
 import { findAllByTask } from "../repositories/taskCollaboratorRepository";
 import { createNotification } from "../service/notificationService";
 
@@ -18,11 +21,11 @@ async function processReminder() {
       due_date: reminder.due_date,
     };
 
-    await createNotification(reminder.owner_id, 'reminder', payload);
+    await createNotification(reminder.owner_id, "reminder", payload);
 
     const collaborators = await findAllByTask(reminder.id);
     for (const collab of collaborators) {
-      await createNotification(collab.user_id, 'reminder', payload);
+      await createNotification(collab.user_id, "reminder", payload);
     }
 
     await markReminderAsSent(reminder.id);

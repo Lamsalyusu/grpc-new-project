@@ -1,44 +1,47 @@
-import {Notification} from "../db/models";
+import { Notification } from "../db/models";
 
-//yo chai notification create garna ko lagi 
-async function create(user_id:string,type:string,payload:object){
-    return Notification.create({user_id,type,payload});
+//yo chai notification create garna ko lagi
+async function create(user_id: string, type: string, payload: object) {
+  return Notification.create({ user_id, type, payload });
 }
-async function findByUser(user_id:string,page:number,limit:number,unreadOnly:boolean=false){
-    const where:any = {user_id};
-    if (unreadOnly) {
-        where.read_at = null;
-    }
-    return Notification.findAndCountAll({
-        where,
-        limit,
-        offset: (page - 1) * limit,
-        order: [['created_at', 'DESC']] 
-    });
+async function findByUser(
+  user_id: string,
+  page: number,
+  limit: number,
+  unreadOnly: boolean = false,
+) {
+  const where: any = { user_id };
+  if (unreadOnly) {
+    where.read_at = null;
+  }
+  return Notification.findAndCountAll({
+    where,
+    limit,
+    offset: (page - 1) * limit,
+    order: [["created_at", "DESC"]],
+  });
 }
-
 
 async function markAsRead(notification_id: string, user_id: string) {
-    const notification = await Notification.findOne({
-        where: {
-            id: notification_id,
-            user_id,
-        },
-    });
-    if (!notification) {
-        throw {status :404,message:'Notification not found'};
-    }
-    if (notification.read_at) {
-        return notification;
-    }
-    notification.read_at = new Date();
-    await notification.save();
+  const notification = await Notification.findOne({
+    where: {
+      id: notification_id,
+      user_id,
+    },
+  });
+  if (!notification) {
+    throw { status: 404, message: "Notification not found" };
+  }
+  if (notification.read_at) {
     return notification;
+  }
+  notification.read_at = new Date();
+  await notification.save();
+  return notification;
 }
 
-async function countUnread(user_id:string) {
-    return Notification.count({where: {user_id, read_at: null}});
+async function countUnread(user_id: string) {
+  return Notification.count({ where: { user_id, read_at: null } });
 }
-
 
 export { create, findByUser, markAsRead, countUnread };

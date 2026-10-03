@@ -10,6 +10,7 @@ function getUserFromCall(call: any) {
 const taskHandlers = {
   createTask: async (call: any, callback: any) => {
     try {
+      console.log(call.request);
       const user = getUserFromCall(call);
       const { title, description, priority, due_date,reminder_at,collaborator_ids} = call.request;
       const task = await createTask({ title, description, priority, due_date,reminder_at,collaborator_ids}, user.id);
@@ -37,17 +38,6 @@ const taskHandlers = {
         message: err.message || "Internal server error" });
     }
   },
-
-  // GetAllTask: async (call: any, callback: any) => {
-  //   try {
-  //     const user = getUserFromCall(call);
-  //     const { status, priority, page, limit, sort_by, order } = call.request;
-  //     const result = await getTasksByOwner(user.id, { status, priority, page, limit, sortBy: sort_by, order });
-  //     callback(null, { count: result.count, tasks: result.rows });
-  //   } catch (err: any) {
-  //     callback({ code: grpc.status.INTERNAL, message: err.message || "Internal server error" });
-  //   }
-  // },
 
         getAllTask: async (call: any, callback: any) => {
         try {

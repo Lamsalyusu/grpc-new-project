@@ -1,9 +1,8 @@
 import { Task, TaskCollaborator, User } from "../db/models/index";
 
-
-//--> is this specific person a collaborator on this specific task 
-async function findOne(task_id:string,user_id:string){
-    return TaskCollaborator.findOne({where:{task_id,user_id}});
+//--> is this specific person a collaborator on this specific task
+async function findOne(task_id: string, user_id: string) {
+  return TaskCollaborator.findOne({ where: { task_id, user_id } });
 }
 
 // --> who are the collaborators on this task
@@ -13,19 +12,19 @@ async function findAllByTask(task_id: string) {
     include: [
       {
         model: User,
-        as: 'user',
-        attributes: ['id', 'name', 'email'],
+        as: "user",
+        attributes: ["id", "name", "email"],
       },
     ],
   });
 }
 
-async function addCollaborator(task_id:string,user_id:string){
-    return TaskCollaborator.create({user_id,task_id});
+async function addCollaborator(task_id: string, user_id: string) {
+  return TaskCollaborator.create({ user_id, task_id });
 }
 
-async function remove(task_id:string,user_id:string){
-    return TaskCollaborator.destroy({where:{task_id,user_id}})
+async function remove(task_id: string, user_id: string) {
+  return TaskCollaborator.destroy({ where: { task_id, user_id } });
 }
 
 // taskCollaboratorRepository.ts — add this
@@ -33,24 +32,40 @@ async function findTasksForUser(user_id: string) {
   return TaskCollaborator.findAll({
     where: { user_id },
     include: [
-      { 
-      model: Task ,
-      as :'task',
-      attributes:['id','title','description','status','priority','owner_id','due_date','reminder_at'],
-    },
-  ],   // requires the ser,Task↔TaskCollaborator association
+      {
+        model: Task,
+        as: "task",
+        attributes: [
+          "id",
+          "title",
+          "description",
+          "status",
+          "priority",
+          "owner_id",
+          "due_date",
+          "reminder_at",
+        ],
+      },
+    ], // requires the ser,Task↔TaskCollaborator association
   });
 }
 
-async function leaveTask(task_id:string,user_id:string){
-const leave_task = await TaskCollaborator.destroy({
-    where:{
-        task_id,
-        user_id
-        }
-    })
-    return leave_task;
-    }
+async function leaveTask(task_id: string, user_id: string) {
+  const leave_task = await TaskCollaborator.destroy({
+    where: {
+      task_id,
+      user_id,
+    },
+  });
+  return leave_task;
+}
 
 // }
-export {findOne,findAllByTask,addCollaborator,remove,findTasksForUser,leaveTask};
+export {
+  findOne,
+  findAllByTask,
+  addCollaborator,
+  remove,
+  findTasksForUser,
+  leaveTask,
+};

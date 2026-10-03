@@ -1,3 +1,4 @@
+import { Op } from "sequelize/lib/operators";
 import { Task } from "../db/models/index";
 import { taskqueryschema, Taskrequire } from "../validators/taskValidator";
 
@@ -18,7 +19,18 @@ async function findByOwner(owner_id: string, filters: TaskFilters) {
   const { status, priority, page, limit, sortBy, order } = filters;
 
   const where: any = { owner_id };
-  if (status) where.status = status;
+  if (status === 'missing') {
+  where.status = { [Op.in]: ['pending', 'in_progress'] };
+  where.due_date = { [Op.lt]: new Date() };
+    } else if (status) {
+      where.status = status;
+    }
+  
+  if (status === 'pending') {
+  where.status = 'pending';
+  where.due_date = { [Op.or]: [{ [Op.gt]: new Date() }, { [Op.is]: null }] };
+  }
+  
   if (priority) where.priority = priority;
 
   const offset = (page - 1) * limit;
