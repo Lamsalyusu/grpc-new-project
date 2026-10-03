@@ -1,61 +1,3 @@
-// const statuscode = (code: number) => {
-//     switch (code) {
-//         case 0:
-//             return 200;
-
-//         case 1:
-//             return 400;
-
-//         case 2:
-//             return 500;
-
-//         case 3:
-//             return 400;
-
-//         case 4:
-//             return 408;
-
-//         case 5:
-//             return 404;
-
-//         case 6:
-//             return 409;
-
-//         case 7:
-//             return 403;
-
-//         case 8:
-//             return 429;
-
-//         case 9:
-//             return 400;
-
-//         case 10:
-//             return 409;
-
-//         case 11:
-//             return 400;
-
-//         case 12:
-//             return 501;
-
-//         case 13:
-//             return 500;
-
-//         case 14:
-//             return 503;
-
-//         case 15:
-//             return 500;
-
-//         case 16:
-//             return 401;
-
-//         default:
-//             return 500;
-//     }
-// };
-
 import * as grpc from "@grpc/grpc-js";
 export const grpcStatusCode = (code: grpc.status) => {
   switch (code) {
@@ -107,8 +49,8 @@ export const grpcStatusCode = (code: grpc.status) => {
     case grpc.status.DATA_LOSS:
       return { status: 500, message: "Data loss" };
 
-    // case grpc.status.UNAUTHENTICATED:
-    //   return { status: 401, message: "Unauthenticated" };
+    case grpc.status.UNAUTHENTICATED:
+      return { status: 401, message: "Unauthenticated" };
 
     default:
       return { status: 500, message: "Unknown error" };

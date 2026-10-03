@@ -1,52 +1,50 @@
-import { Taskrequire} from "../validators/taskValidator";
-import taskClient from '../grpc-client/taskClient'
+import { Taskrequire } from "../validators/taskValidator";
+import taskClient from "../grpc-client/taskClient";
 import { NextFunction, Request, Response } from "express";
 import { buildMetadata } from "./grpcMetadata";
 import logger from "../utils/logger";
 // import { grpcStatusCode } from "../utils/statuscode";
 
 const taskControllers = {
-  create: async (req: Request, res: Response,next:NextFunction) => {
-    const crtdata = req.body as Taskrequire;
+  create: async (req: Request, res: Response, next: NextFunction) => {
+    const createData = req.body as Taskrequire;
     const owner_id = (req as any).user.id;
     const md = buildMetadata(req);
-    taskClient.createTask({ ...crtdata, owner_id }, md,(err: any, result: any) => {
-      if(err) {        
-        // return res.status(err.code === 409 ? 409 : 500).json({ 
-        //   error: { message: err.message || "task creation failed" } 
-        // });
-      // const errorInfo = grpcStatusCode(err.code);
-      // return res.status(errorInfo.status).json({
-      //   message:err.details || errorInfo.message
-      //   });
-        return next(err)
-      }      
-      logger.info("created task successfully")
-        return res.status(201).json({ data: result, message: 'task created successfully' });
-    });
+    taskClient.createTask(
+      { ...createData, owner_id },
+      md,
+      (err: any, result: any) => {
+        if (err) {
+          return next(err);
+        }
+        logger.info("created task successfully");
+        return res
+          .status(201)
+          .json({ data: result, message: "task created successfully" });
+      },
+    );
   },
 
-  getone: async (req: Request, res: Response,next:NextFunction) => {
+  getone: async (req: Request, res: Response, next: NextFunction) => {
     const taskid = req.params.id as string;
     const userid = (req as any).user.id;
     const md = buildMetadata(req);
-    taskClient.getOne({ id: taskid, user_id: userid }, md, (err: any, result: any) => {
-      if (err) {        
-        // return res.status(err.code === 404 ? 404 : 500).json({ 
-        //   error: { message: err.message || "task retrieval failed" } 
-        // });
-        // const errorInfo = grpcStatusCode(err.code);
-        // return res.status(errorInfo.status).json({
-        //   message:err.details || errorInfo.message
-        // });
-        return next(err);  
-      }  
-      logger.info("created task successfully")    
-    return res.status(200).json({ data: result, message: 'task retrieved successfully' });
-    });
+    taskClient.getOne(
+      { id: taskid, user_id: userid },
+      md,
+      (err: any, result: any) => {
+        if (err) {
+          return next(err);
+        }
+        logger.info("task retrieved successfully");
+        return res
+          .status(200)
+          .json({ data: result, message: "task retrieved successfully" });
+      },
+    );
   },
 
-  getAll: async (req: Request, res: Response,next:NextFunction) => {
+  getAll: async (req: Request, res: Response, next: NextFunction) => {
     const query = (req as any).validatedQuery;
     const userid = (req as any).user.id;
     const md = buildMetadata(req);
@@ -62,55 +60,54 @@ const taskControllers = {
       },
       md,
       (err: any, result: any) => {
-        if (err) { 
-          // return res.status(500).json({ 
-          //   error: { code: err.code, message: err.message || "task retrieval failed" } 
-          // });
-        //   const errorInfo = grpcStatusCode(err.code);
-        //   return res.status(errorInfo.status).json({
-        //   message:err.details || errorInfo.message
-        // });
-        return next(err);
-      }        
-      logger.info("retrieved all tasks successfully")
-      return res.status(200).json({ data: result, message: "retrieved all tasks" });
-      }
+        if (err) {
+          return next(err);
+        }
+        logger.info("retrieved all tasks successfully");
+        return res
+          .status(200)
+          .json({ data: result, message: "retrieved all tasks" });
+      },
     );
   },
 
-  update: async (req: Request, res: Response,next:NextFunction) => {
+  update: async (req: Request, res: Response, next: NextFunction) => {
     const data = req.body;
     const taskid = req.params.id as string;
     const userid = (req as any).user.id;
     const md = buildMetadata(req);
-    taskClient.updateTask({ id: taskid, user_id: userid, ...data }, md, (err: any, result: any) => {
-      if (err) {
-        // const errorInfo = grpcStatusCode(err.code);
-        // return res.status(errorInfo.status).json({
-        //   message:err.details || errorInfo.message
-        // });
-       return  next(err);
-      }
-      logger.info("task updated successfully")
-      return res.status(200).json({ data: result, message: 'task updated successfully' });
-    });
+    taskClient.updateTask(
+      { id: taskid, user_id: userid, ...data },
+      md,
+      (err: any, result: any) => {
+        if (err) {
+          return next(err);
+        }
+        logger.info("task updated successfully");
+        return res
+          .status(200)
+          .json({ data: result, message: "task updated successfully" });
+      },
+    );
   },
 
-  remove: async (req: Request, res: Response,next:NextFunction) => {
+  remove: async (req: Request, res: Response, next: NextFunction) => {
     const taskid = req.params.id as string;
     const userid = (req as any).user.id;
     const md = buildMetadata(req);
-    taskClient.removeTask({ id: taskid, user_id: userid }, md, (err: any, result: any) => {
-      if (err) {
-        // const errorInfo = grpcStatusCode(err.code);
-        // return res.status(errorInfo.status).json({
-        // message:err.details || errorInfo.message
-        // });
-        return next(err);
-      }
-      logger.info("task removed successfully")
-      return res.status(200).json({ data: result, message: 'task deleted successfully' });
-    });
+    taskClient.removeTask(
+      { id: taskid, user_id: userid },
+      md,
+      (err: any, result: any) => {
+        if (err) {
+          return next(err);
+        }
+        logger.info("task removed successfully");
+        return res
+          .status(200)
+          .json({ data: result, message: "task deleted successfully" });
+      },
+    );
   },
-}
+};
 export default taskControllers;

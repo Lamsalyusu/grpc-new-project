@@ -1,9 +1,9 @@
 import rateLimiter from "express-rate-limit";
-import { Request,Response } from "express";
-const limit= rateLimiter({
-  windowMs: 1 * 60 * 1000,   /// 1 MINUTE 
-  // 3 choti maximum request garna payo 1 minute bhitra ma user le yo chai testing ko lagi yeti rakheko maile 
-  max: 15,                     // limit each IP to 10 requests per window
+import { Request, Response } from "express";
+const limit = rateLimiter({
+  windowMs: 1 * 60 * 1000, /// 1 MINUTE
+  // 3 choti maximum request garna payo 1 minute bhitra ma user le yo chai testing ko lagi yeti rakheko maile
+  max: 15, // limit each IP to 10 requests per window
   message: {
     error: {
       code: 429,
@@ -15,21 +15,21 @@ const limit= rateLimiter({
   // RateLimit-Remaining: How many requests the user has left before getting blocked.
   // RateLimit-Reset: The exact number of seconds remaining until the current time window resets.
   //RateLimit-Limit: 3
-// RateLimit-Remaining: 1
-// RateLimit-Reset: 45
-//reset chai kasari gara?????????????? 
-  keyGenerator:(req:Request):string =>{
-    return req.ip || req.headers['x-forwarded-for'] as string || 'unknown-ip';
-  }  
+  // RateLimit-Remaining: 1
+  // RateLimit-Reset: 45
+  //reset chai kasari gara??????????????
+  keyGenerator: (req: Request): string => {
+    return req.ip || (req.headers["x-forwarded-for"] as string) || "unknown-ip";
+  },
 });
 
 export default limit;
 
-// in case of somone is hiding their ips track their account ID rather than their IP address. It does not matter if they switch VPN locations 100 times; if they are logged into the user account user_9876, they still only get 
+// in case of somone is hiding their ips track their account ID rather than their IP address. It does not matter if they switch VPN locations 100 times; if they are logged into the user account user_9876, they still only get
 
 // keyGenerator: (req: Request) => {
 //   // If logged in, lock the rate limit to their database ID
-//   return req.user?.id || req.ip; 
+//   return req.user?.id || req.ip;
 // }
 
 // ------------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ export default limit;
 //   // Use the User ID as the tracking key
 //   keyGenerator: (req: AuthenticatedRequest): string => {
 //     if (req.user && req.user.id) {
-//       return `user:${req.user.id}`; 
+//       return `user:${req.user.id}`;
 //     }
 //     // Fallback to IP ONLY for public endpoints (like login page)
 //     return `ip:${req.ip || 'unknown'}`;

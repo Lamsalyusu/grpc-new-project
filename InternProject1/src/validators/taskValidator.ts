@@ -23,7 +23,6 @@ export const taskSchema = z.object({
     collaborator_ids: z.array(z.uuid()).optional(),
 });
 
-// taskQuery --> are the instructions for fetching.filtering a list of tasks valid?
 export const taskQuery = z.object({
     status:z.enum([ "pending","completed","in_progress"]).optional(),
     priority: z.enum(["low", "medium", "high"]).optional(),
@@ -32,5 +31,6 @@ export const taskQuery = z.object({
     sortBy: z.enum(["due_date", "priority", "created_at"]).optional().default("created_at"),
     order: z.enum(["asc", "desc"]).optional().default("desc"),
 })
+
 export type Taskrequire = z.infer<typeof taskSchema>;
 export type taskqueryschema = z.infer<typeof taskQuery>;

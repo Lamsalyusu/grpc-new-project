@@ -2,7 +2,7 @@
 
 // const {Request , Response, NextFunction } = require('express');
 // const {ZodSchema} = require('zod');
-// // import {ZodSchema} from 
+// // import {ZodSchema} from
 
 // function validation(schema: ZodSchema){
 //     return (req:Request,res:Response,next:NextFunction) => {
@@ -14,11 +14,11 @@
 //             message:"Invalid input",
 //             details:result.error.flatten().fieldErrors,
 //         },
-    
+
 //     });
 
 // }
-    
+
 // req.body = result.data;
 // next();
 
@@ -70,11 +70,15 @@ function validateParams(schema: ZodSchema) {
     const result = schema.safeParse(req.params);
     if (!result.success) {
       return res.status(400).json({
-        error: { code: 400, message: "Invalid input", details: result.error.flatten().fieldErrors },
+        error: {
+          code: 400,
+          message: "Invalid input",
+          details: result.error.flatten().fieldErrors,
+        },
       });
     }
     next();
   };
 }
 
-export { validation, validateQuery,validateParams};
+export { validation, validateQuery, validateParams };

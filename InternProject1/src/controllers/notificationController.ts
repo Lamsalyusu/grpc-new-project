@@ -12,38 +12,34 @@ const notificationController = {
     const unread_only = req.query.unreadOnly === "true";
     const md = buildMetadata(req);
     notificationClient.getNotificationByUser(
-      { user_id, page, limit, unread_only },md,(err: any, result: any) => {
+      { user_id, page, limit, unread_only },
+      md,
+      (err: any, result: any) => {
         if (err) {
-          // return res.status(500).json({error: { message: err.message || "notification fetching failed" },
-          // const errorInfo = grpcStatusCode(err.code);
-          // return res.status(errorInfo.status).json({
-          // message:err.details || errorInfo.message                
-        // });
-        // });
-        return next(err);
-    }
-    logger.info("notification loaded by user")
-      return res.status(200).json({ 
-        data: result.notifications,meta: { page,limit,total: result.count,},
-        message: "notifications fetched successfully",
-      });
-    });
-},
+          return next(err);
+        }
+        logger.info("notification loaded by user");
+        return res.status(200).json({
+          data: result.notifications,
+          meta: { page, limit, total: result.count },
+          message: "notifications fetched successfully",
+        });
+      },
+    );
+  },
 
   MarkAsRead: async (req: Request, res: Response, next: NextFunction) => {
     const notification_id = req.params.id as string;
     const md = buildMetadata(req);
-    notificationClient.markAsRead({ id: notification_id,},md,(err: any, result: any) => {
-        if (err) { 
-          // return res.status(500).json({ error: { message: err.message || "notification marking failed",},});
-        //   const errorInfo = grpcStatusCode(err.code);
-        //   return res.status(errorInfo.status).json({
-        //   message:err.details || errorInfo.message
-        // });
-        return next(err);
-      }
-      logger.info("notification marked as read")
-        return res.status(200).json({ 
+    notificationClient.markAsRead(
+      { id: notification_id },
+      md,
+      (err: any, result: any) => {
+        if (err) {
+          return next(err);
+        }
+        logger.info("notification marked as read");
+        return res.status(200).json({
           data: result,
           message: "notification marked as read successfully",
         });
@@ -54,21 +50,18 @@ const notificationController = {
   GetUnreadCount: async (req: Request, res: Response, next: NextFunction) => {
     const user_id = (req as any).user.id;
     const md = buildMetadata(req);
-    notificationClient.getUnreadCount({user_id,},md,(err: any, result: any) => {
+    notificationClient.getUnreadCount(
+      { user_id },
+      md,
+      (err: any, result: any) => {
         if (err) {
-          // return res.status(500).json({ 
-          //   error: {message:err.message || "unread notifications count fetching failed",}
-          // });
-          // const errorInfo = grpcStatusCode(err.code);
-          // return res.status(errorInfo.status).json({
-          // message:err.details || errorInfo.message
-          // });
           return next(err);
         }
-        logger.info("unread notification fetched successfully")
-        return res.status(200).json({ 
-          data: result, 
-          message: "unread notifications count fetched successfully"});
+        logger.info("unread notification fetched successfully");
+        return res.status(200).json({
+          data: result,
+          message: "unread notifications count fetched successfully",
+        });
       },
     );
   },
