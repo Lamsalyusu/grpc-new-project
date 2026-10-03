@@ -1,42 +1,43 @@
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import router from './routes/authRoutes';
-import taskrouter from './routes/taskRoutes';
-import taskCollaboratorRouter from './routes/taskCollaboratorRoutes';
-import messageRoutes from './routes/messageRoutes';
-import errorHandler from './middlewares/errormiddleware';
-import notifroutes from './routes/notificationRoutes';
-import collaborationRoutes from './routes/collaborationRoutes';
-import path from 'path';
-import morgan from 'morgan'
-
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import router from "./routes/authRoutes";
+import taskrouter from "./routes/taskRoutes";
+import taskCollaboratorRouter from "./routes/taskCollaboratorRoutes";
+import messageRoutes from "./routes/messageRoutes";
+import errorHandler from "./middlewares/errormiddleware";
+import notifroutes from "./routes/notificationRoutes";
+import collaborationRoutes from "./routes/collaborationRoutes";
+import path from "path";
+// import morgan from 'morgan'
 
 const app = express();
 
-
-const allowedOrigins = ['http://127.0.0.1:5500','http://localhost:5500','http://127.0.0.1:3000','http://localhost:3000'];
+const allowedOrigins = [
+  "http://127.0.0.1:5500",
+  "http://localhost:5500",
+  "http://127.0.0.1:3000",
+  "http://localhost:3000",
+];
 const corsOptions: cors.CorsOptions = {
-    // 1. Only allow specific frontend domains
-         origin: (origin, callback) => {
-        // !origin allows server-to-server or tools like Postman to work
-        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true);
-        } else {
-        callback(new Error('Blocked by CORS policy'));
-        }
-    },
-    //this allows frontend to send cookies or authorization headers
-    credentials:true,
-    //limit the methods to the requirements only
-    methods:['GET','PUT','POST','PATCH','DELETE'],
-    //Headers the client is allowed to send
-    allowedHeaders:['Content-Type','Authorization','X-Device-ID'],
-    //headers the client browser is allowed to read from the server response
-    exposedHeaders:['RateLimit-Limit','RateLimit-Remaining','RateLimit-Reset']
-    
-}
-
+  // 1. Only allow specific frontend domains
+  origin: (origin, callback) => {
+    // !origin allows server-to-server or tools like Postman to work
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Blocked by CORS policy"));
+    }
+  },
+  //this allows frontend to send cookies or authorization headers
+  credentials: true,
+  //limit the methods to the requirements only
+  methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
+  //Headers the client is allowed to send
+  allowedHeaders: ["Content-Type", "Authorization", "X-Device-ID"],
+  //headers the client browser is allowed to read from the server response
+  exposedHeaders: ["RateLimit-Limit", "RateLimit-Remaining", "RateLimit-Reset"],
+};
 
 // Configure custom Helmet security policies
 // app.use(
@@ -56,17 +57,17 @@ const corsOptions: cors.CorsOptions = {
 //                                 "wss://127.0.0.1:3000",],
 //                     objectSrc: ["'none'"], // Blocks vulnerable flash/plugins
 //                     upgradeInsecureRequests: [], // Automatically forces HTTP links to upgrade to HTTPS
-                      
+
 //                 },
 //                 },
-                
+
 //                 // 2. Cross-Origin configurations (Adjust if external images/scripts break)
-//                 crossOriginEmbedderPolicy: false, 
+//                 crossOriginEmbedderPolicy: false,
 //     crossOriginOpenerPolicy: { policy: "same-origin" },
 
 //     // 3. Prevent Clickjacking
 //     xFrameOptions: { action: "deny" },
-    
+
 //     // 4. Force HTTPS (Lasts for 1 year)
 //     strictTransportSecurity: {
 //           maxAge: 31536000,
@@ -79,16 +80,23 @@ const corsOptions: cors.CorsOptions = {
 //       })
 //     );
 
-
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'","https://cdn.socket.io"],
+        scriptSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "'unsafe-eval'",
+          "https://cdn.socket.io",
+        ],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
-        scriptSrcAttr: ["'unsafe-hashes'","'sha256-B2kKObP1ttXxP4bc+z1ri7AcQKmY+Pws7G9VEvdlfHI='"],
+        scriptSrcAttr: [
+          "'unsafe-hashes'",
+          "'sha256-B2kKObP1ttXxP4bc+z1ri7AcQKmY+Pws7G9VEvdlfHI='",
+        ],
         imgSrc: ["'self'", "data:", "blob:"],
         connectSrc: [
           "'self'",
@@ -99,31 +107,30 @@ app.use(
         ],
       },
     },
-  })
+  }),
 );
- 
+
 app.use(express.json());
-app.use(cors(corsOptions))
+app.use(cors(corsOptions));
 
 // app.use(morgan('dev'))
 // Outputs: GET /api/users 200 - 12.345 ms / 15.120 ms
-app.use(morgan(':method :url :status - :response-time ms / :total-time ms'));
+// app.use(morgan(':method :url :status - :response-time ms / :total-time ms'));
 
 // Serve static frontend files
-app.use(express.static(path.join(__dirname, '../client')));
-
+app.use(express.static(path.join(__dirname, "../client")));
 
 // Routes
-app.use('/api/v1/auth', router);
-app.use('/api/v1/tasks', taskCollaboratorRouter);
-app.use('/api/v1/tasks', messageRoutes);
-app.use('/api/v1/tasks', taskrouter);
-app.use('/api/v1/notifications', notifroutes);
-app.use('/api/v1/collaboration', collaborationRoutes);// Health check
-app.get('/health', (req,res) => {
-    res.status(200).json({ status: 'ok', message: 'app running smoothly' });
+app.use("/api/v1/auth", router);
+app.use("/api/v1/tasks", taskCollaboratorRouter);
+app.use("/api/v1/tasks", messageRoutes);
+app.use("/api/v1/tasks", taskrouter);
+app.use("/api/v1/notifications", notifroutes);
+app.use("/api/v1/collaboration", collaborationRoutes); // Health check
+app.get("/health", (_req, res) => {
+  res.status(200).json({ status: "ok", message: "app running smoothly" });
 });
 
-// Error handling middleware 
+// Error handling middleware
 app.use(errorHandler);
 export default app;
