@@ -1,6 +1,5 @@
 syntax = "proto3";
 package authPackage;
-
 service authService{
     rpc registerUser (registerRequest) returns (registerResponse);
     rpc loginUser (loginRequest) returns (loginResponse);

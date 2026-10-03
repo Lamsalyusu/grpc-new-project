@@ -1,8 +1,9 @@
 syntax = "proto3";
 package collaborationPackage;
+// import "auth.proto";
 
 service collaborationService{
-    rpc sendRequest(Friendrequest) returns (requestStatus);
+    rpc sendRequest(friendRequest) returns (requestStatus);
     rpc seeRequest(seeReq) returns (requests);
     rpc acceptRequest(acceptReq) returns (acceptResponse);
     rpc rejectRequest(rejectReq) returns (rejectResponse);
@@ -12,7 +13,7 @@ service collaborationService{
 
 
 // ----------------------------------------------
-message Friendrequest{
+message friendRequest{
     // string sender_id=1;
     // string receiver_id=1;
     string receiver_email = 1;
