@@ -1,18 +1,29 @@
 const params = new URLSearchParams(window.location.search);
-
 const taskId = params.get("id");
-
 let currentUserId = null;
-
 let currentTask = null;
-
 let taskCollaborators = [];
-
 let availableCollaborators = [];
 
-// ============================================================================
-// Message time
-// ============================================================================
+function isOverdue(dueDate, status) {
+  if (!dueDate || status === "completed") {
+    return false;
+  }
+
+  return new Date(dueDate) < new Date();
+}
+
+function getDisplayStatus(task) {
+  if (task.status === "completed") {
+    return "completed";
+  }
+
+  if (isOverdue(task.due_date, task.status)) {
+    return "missing";
+  }
+
+  return task.status;
+}
 
 function formatMsgTime(dateStr) {
   const d = new Date(dateStr);
@@ -24,13 +35,8 @@ function formatMsgTime(dateStr) {
   });
 
   const timePart = d.toLocaleTimeString();
-
   return `${datePart}, ${timePart}`;
 }
-
-// ============================================================================
-// Initialize
-// ============================================================================
 
 async function initTaskDetail() {
   if (!taskId) {
@@ -39,35 +45,27 @@ async function initTaskDetail() {
     return;
   }
 
-  // --------------------------------------------------------------------------
-  // Current user
-  // --------------------------------------------------------------------------
-
   try {
     const meRes = await api("/auth/me");
-
     currentUserId = meRes.data.id;
   } catch (err) {
     logout();
-
     return;
   }
 
-  // --------------------------------------------------------------------------
-  // Load task
-  // --------------------------------------------------------------------------
 
   try {
     const res = await api(`/tasks/${taskId}`);
 
     currentTask = res.data.task;
+    // console.log("Current task:", currentTask);
+    const displayStatus = getDisplayStatus(currentTask)
+    // console.log("Display status:", displayStatus);
 
     // Only owner can manage
     // task collaborators.
-
     // if (currentUserId !== currentTask.owner_id) {
     //   const collabSection = document.getElementById("collabSection");
-
     //   if (collabSection) {
     //     collabSection.style.display = "none";
     //   }
@@ -83,7 +81,6 @@ async function initTaskDetail() {
         picker.style.display = "none";
       }
     }
-
     document.getElementById("taskInfo").innerHTML = `
 
       <h1>
@@ -97,9 +94,9 @@ async function initTaskDetail() {
       <div class="task-meta">
 
         <span
-          class="badge badge-${currentTask.status}"
+          class="badge badge-${displayStatus}"
         >
-          ${currentTask.status}
+          ${displayStatus}
         </span>
 
         <span
@@ -135,9 +132,7 @@ async function initTaskDetail() {
   initChat(taskId);
 }
 
-// ============================================================================
 // Load task collaborators
-// ============================================================================
 
 async function loadCollaborators() {
   try {
@@ -264,9 +259,7 @@ async function loadCollaborators() {
   }
 }
 
-// ============================================================================
 // Load accepted global collaborators
-// ============================================================================
 
 async function loadAvailableCollaborators() {
   try {
@@ -280,9 +273,7 @@ async function loadAvailableCollaborators() {
   }
 }
 
-// ============================================================================
 // Render collaborator picker
-// ============================================================================
 
 function renderCollaboratorPicker() {
   const picker = document.getElementById("collaboratorPicker");
@@ -370,9 +361,9 @@ function renderCollaboratorPicker() {
   });
 }
 
-// ============================================================================
+// 
 // Open collaborator picker
-// ============================================================================
+// 
 
 document.getElementById("btnAddCollaborator")?.addEventListener("click", () => {
   const picker = document.getElementById("collaboratorPicker");
@@ -384,9 +375,7 @@ document.getElementById("btnAddCollaborator")?.addEventListener("click", () => {
   picker.style.display = isOpen ? "none" : "block";
 });
 
-// ============================================================================
 // Add collaborator to task
-// ============================================================================
 
 async function addCollaborator(userId) {
   try {
@@ -417,9 +406,7 @@ async function addCollaborator(userId) {
   }
 }
 
-// ============================================================================
 // Remove collaborator
-// ============================================================================
 
 async function removeCollab(userId) {
   if (!confirm("Remove this collaborator?")) {
@@ -439,9 +426,7 @@ async function removeCollab(userId) {
   }
 }
 
-// ============================================================================
 // Leave Task
-// ============================================================================
 
 function setupLeaveTask() {
   const button = document.getElementById("btnLeaveTask");
@@ -461,13 +446,9 @@ function setupLeaveTask() {
   if (!isCollaborator) {
     return;
   }
-
   button.style.display = "inline-block";
-
   button.addEventListener("click", leaveCurrentTask);
 }
-
-// ======================================================================================================
 
 async function leaveCurrentTask() {
   if (!confirm("Are you sure you want to leave this task?")) {
@@ -487,60 +468,40 @@ async function leaveCurrentTask() {
   }
 }
 
-// ============================================================================
-// Messages
-// ============================================================================
-
 async function loadMessages() {
   try {
     const res = await api(`/tasks/${taskId}/messages?page=1&limit=50`);
-
     const msgs = res.data.message;
-
     const box = document.getElementById("chatMessages");
-
     box.innerHTML = msgs.map((m) => renderMsg(m)).join("");
-
     box.scrollTop = box.scrollHeight;
   } catch (err) {
     console.error(err);
   }
 }
 
-// ============================================================================
-// Render message
-// ============================================================================
-
 function renderMsg(m) {
   const sender = m.sender_name || "Unknown";
 
   return `
-
     <div class="msg">
-
       <strong>
         ${escapeHtml(sender)}
       </strong>
-
       <time>
         ${m.created_at ? formatMsgTime(m.created_at) : ""}
       </time>
-
       <p>
         ${escapeHtml(m.body)}
       </p>
 
     </div>
-
   `;
 }
 
 function escapeHtml(text) {
   const div = document.createElement("div");
-
   div.textContent = text || "";
-
   return div.innerHTML;
 }
-
 document.getElementById("btnLogout")?.addEventListener("click", logout);

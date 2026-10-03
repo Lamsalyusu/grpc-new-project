@@ -1,11 +1,8 @@
 redirectIfNotAuth();
 
-// =========================================================
-// TASK STATUS HELPERS
-// =========================================================
-
 function isOverdue(dueDate, status) {
-  if (!dueDate || status === "completed") return false;
+  if (!dueDate || status === "completed") 
+    return false;
 
   return new Date(dueDate) < new Date();
 }
@@ -464,29 +461,19 @@ if (editReminderInput) {
   editReminderInput.setAttribute("min", currentDateTime);
 }
 
-// =========================================================
-// CREATE TASK
-// =========================================================
-
 const createForm = document.getElementById("createTaskForm");
 
 if (createForm) {
   createForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-
     const dueDateVal = document.getElementById("due_date").value;
-
     const reminderVal = document.getElementById("reminder_at").value;
 
     const body = {
       title: document.getElementById("title").value,
-
       description: document.getElementById("description").value,
-
       status: "pending",
-
       priority: document.getElementById("priority").value,
-
       due_date: dueDateVal ? new Date(dueDateVal).toISOString() : undefined,
 
       reminder_at: reminderVal
@@ -501,15 +488,10 @@ if (createForm) {
         method: "POST",
         body: JSON.stringify(body),
       });
-
       closeModal();
-
       createForm.reset();
-
       selectedTaskCollaborators = [];
-
       renderSelectedTaskCollaborators();
-
       await loadTasks();
       await loadTaskCollaborators();
     } catch (err) {
@@ -518,31 +500,19 @@ if (createForm) {
   });
 }
 
-// =========================================================
-// EDIT TASK
-// =========================================================
-
 function toLocalInputValue(dateStr) {
   if (!dateStr) return "";
-
   const date = new Date(dateStr);
-
   const offset = date.getTimezoneOffset() * 60000;
-
   return new Date(date - offset).toISOString().slice(0, 16);
 }
 
 function openEditModal(task) {
   document.getElementById("editId").value = task.id;
-
   document.getElementById("editTitle").value = task.title || "";
-
   document.getElementById("editDescription").value = task.description || "";
-
   document.getElementById("editStatus").value = task.status || "pending";
-
   document.getElementById("editPriority").value = task.priority || "medium";
-
   document.getElementById("editDueDate").value = toLocalInputValue(
     task.due_date,
   );
@@ -552,11 +522,8 @@ function openEditModal(task) {
   );
 
   const completed = task.status === "completed";
-
   const dueInput = document.getElementById("editDueDate");
-
   const reminderInput = document.getElementById("editReminderAt");
-
   dueInput.disabled = completed;
   reminderInput.disabled = completed;
 
@@ -567,17 +534,10 @@ function closeEditModal() {
   document.getElementById("editModal")?.classList.remove("active");
 }
 
-// =========================================================
-// EDIT STATUS CHANGE
-// =========================================================
-
 document.getElementById("editStatus")?.addEventListener("change", (e) => {
   const completed = e.target.value === "completed";
-
   const dueInput = document.getElementById("editDueDate");
-
   const reminderInput = document.getElementById("editReminderAt");
-
   dueInput.disabled = completed;
   reminderInput.disabled = completed;
 
@@ -591,33 +551,21 @@ document.getElementById("editStatus")?.addEventListener("change", (e) => {
   }
 });
 
-// =========================================================
-// UPDATE TASK
-// =========================================================
-
 const editForm = document.getElementById("editTaskForm");
 
 if (editForm) {
   editForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-
     const id = document.getElementById("editId").value;
-
     const dueDateVal = document.getElementById("editDueDate").value;
-
     const reminderVal = document.getElementById("editReminderAt").value;
 
     const body = {
       title: document.getElementById("editTitle").value,
-
       description: document.getElementById("editDescription").value,
-
       status: document.getElementById("editStatus").value,
-
       priority: document.getElementById("editPriority").value,
-
       due_date: dueDateVal ? new Date(dueDateVal).toISOString() : null,
-
       reminder_at: reminderVal ? new Date(reminderVal).toISOString() : null,
     };
 
@@ -638,10 +586,6 @@ if (editForm) {
   });
 }
 
-// =========================================================
-// DELETE TASK
-// =========================================================
-
 async function deleteTask(id) {
   const confirmed = confirm("Are you sure you want to delete this task?");
 
@@ -660,23 +604,13 @@ async function deleteTask(id) {
   }
 }
 
-// =========================================================
-// BUTTONS
-// =========================================================
-
 document.getElementById("btnFilter")?.addEventListener("click", loadTasks);
-
 document.getElementById("btnOpenModal")?.addEventListener("click", openModal);
-
 document.getElementById("btnCloseModal")?.addEventListener("click", closeModal);
 
 document
   .getElementById("btnCloseEditModal")
   ?.addEventListener("click", closeEditModal);
-
-// =========================================================
-// INITIAL LOAD
-// =========================================================
 
 loadTasks();
 loadSharedTasks();
