@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import authClient from "../grpc-client/authClient";
 import { loginInput, registerInput } from "../validators/authValidator";
-import { buildMetadata } from "./grpcMetadata";
+import { buildMetadata } from "../utils/grpcMetadata";
 import logger from "../utils/logger";
 
 const authController = {
@@ -40,7 +40,7 @@ const authController = {
     const md = buildMetadata(req);
     authClient.seeProfile({ user_id }, md, (err: any, response: any) => {
       if (err) {
-        next(err);
+        return next(err);
       }
       logger.info("profile fetched successfully");
       return res

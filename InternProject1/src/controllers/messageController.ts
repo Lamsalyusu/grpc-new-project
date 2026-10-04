@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import messageClient from "../grpc-client/messageClient";
 import { messageValidation } from "../validators/messageValidators";
-import { buildMetadata } from "./grpcMetadata";
+import { buildMetadata } from "../utils/grpcMetadata";
 import logger from "../utils/logger";
 
 const messageControllers = {

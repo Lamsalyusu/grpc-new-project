@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { requestType } from "../validators/collaborationReqvalidation";
-import { buildMetadata } from "./grpcMetadata";
+import { buildMetadata } from "../utils/grpcMetadata";
 import collaborationClient from "../grpc-client/collaborationClient";
 
 const collaborationController = {

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { taskcollaboratorvalidation } from "../validators/taskCollaboratorValidator";
 import taskCollaboratorClient from "../grpc-client/taskCollaboratorClient";
-import { buildMetadata } from "./grpcMetadata";
+import { buildMetadata } from "../utils/grpcMetadata";
 import logger from "../utils/logger";
 
 const taskCollaboratorController = {

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import notificationClient from "../grpc-client/notificationClient";
-import { buildMetadata } from "./grpcMetadata";
+import { buildMetadata } from "../utils/grpcMetadata";
 import logger from "../utils/logger";
 // import { grpcStatusCode } from "../utils/statuscode";
 

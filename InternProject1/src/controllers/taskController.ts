@@ -1,7 +1,7 @@
 import { Taskrequire } from "../validators/taskValidator";
 import taskClient from "../grpc-client/taskClient";
 import { NextFunction, Request, Response } from "express";
-import { buildMetadata } from "./grpcMetadata";
+import { buildMetadata } from "../utils/grpcMetadata";
 import logger from "../utils/logger";
 // import { grpcStatusCode } from "../utils/statuscode";
 
