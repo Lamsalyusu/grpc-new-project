@@ -1,15 +1,7 @@
 import * as grpc from "@grpc/grpc-js";
-import {
-  sendMessage,
-  getMessage,
-  checkAccess,
-} from "../service/messageService";
+import { sendMessage,getMessage,checkAccess } from "../service/messageService";
 import logger from "../utils/logger";
-
-function getUserFromCall(call: any) {
-  const raw = call.metadata.get("user")[0] as string; // ← "user", not "decodedToken"
-  return JSON.parse(raw);
-}
+import getUserFromCall from "../utils/getUser";
 
 const messageHandlers = {
   sendMessage: async (call: any, callback: any) => {

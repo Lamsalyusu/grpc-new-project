@@ -3,7 +3,7 @@ import processReminder from "../service/reminderService";
 import logger from "../utils/logger";
 
 const reminderHandlers = {
-  checkDueReminders: async (call: any, callback: any) => {
+  checkDueReminders: async (_call: any, callback: any) => {
     try {
       const fired = await processReminder();
       const reminders = fired.map((f: any) => ({

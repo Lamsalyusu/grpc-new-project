@@ -1,23 +1,11 @@
-import {
-  sendRequest,
-  acceptReq,
-  rejectReq,
-  viewRequest,
-  deleteCollaborator,
-  viewCollaborationRequest,
-} from "../service/collaborationService";
-// import createRequest from "../repositories/collaborationRepository";
+import {sendRequest,acceptReq,rejectReq,viewRequest,deleteCollaborator,viewCollaborationRequest} from "../service/collaborationService";
 import * as grpc from "@grpc/grpc-js";
-
-function getUserFromCall(call: any) {
-  const raw = call.metadata.get("user")[0] as string;
-  return JSON.parse(raw);
-}
+import getUserFromCall from "../utils/getUser";
 
 const collaboration_handler = {
   sendRequest: async (call: any, callback: any) => {
     try {
-      console.log("proto loader options",call.request);
+      console.log("proto loader options", call.request);
       const user = getUserFromCall(call);
       const sender_id = user.id;
       // const {receiver_id} = call.request;

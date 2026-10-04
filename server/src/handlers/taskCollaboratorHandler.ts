@@ -1,23 +1,12 @@
 import * as grpc from "@grpc/grpc-js";
-import {
-  createTaskCollaborator,
-  getCollaboratorsByTask,
-  deleteTaskCollaborator,
-  getTasksSharedWithUser,
-  leaveTasks,
-} from "../service/taskCollaboratorServices";
+import { createTaskCollaborator,getCollaboratorsByTask,deleteTaskCollaborator,getTasksSharedWithUser,leaveTasks } from "../service/taskCollaboratorServices";
 import logger from "../utils/logger";
-
-function getUserFromCall(call: any) {
-  const raw = call.metadata.get("user")[0] as string;
-  return JSON.parse(raw);
-}
+import getUserFromCall from "../utils/getUser";
 
 const taskCollaboratorHandlers = {
   createCollaborator: async (call: any, callback: any) => {
     try {
       const user = getUserFromCall(call);
-      // const { task_id, email, requester_id } = call.request;
       const { task_id, user_id } = call.request;
       // const result = await createTaskCollaborator(task_id, requester_id, email);
       const result = await createTaskCollaborator(task_id, user.id, user_id);
@@ -35,7 +24,6 @@ const taskCollaboratorHandlers = {
   getCollaborators: async (call: any, callback: any) => {
     try {
       const user = getUserFromCall(call);
-      // const { task_id, requester_id } = call.request;
       const { task_id } = call.request;
       // const collaborators = await getCollaboratorsByTask(task_id, requester_id);
       const collaboratorsdata = await getCollaboratorsByTask(task_id, user.id);
@@ -60,7 +48,6 @@ const taskCollaboratorHandlers = {
       const user = getUserFromCall(call);
       // const { task_id, user_id, requester_id } = call.request;
       const { task_id, user_id } = call.request;
-      // await deleteTaskCollaborator(task_id, requester_id, user_id);
       await deleteTaskCollaborator(task_id, user.id, user_id);
       logger.info("task collbaorator removed");
       callback(null, { message: "Collaborator removed successfully" });
@@ -77,7 +64,6 @@ const taskCollaboratorHandlers = {
     try {
       // const { requester_id } = call.request;
       const user = getUserFromCall(call);
-      // const tasks = await getTasksSharedWithUser(requester_id);
       const tasksdata = await getTasksSharedWithUser(user.id);
       const tasks = tasksdata.map((row: any) => ({
         id: row.task.id,
@@ -101,7 +87,7 @@ const taskCollaboratorHandlers = {
 
   leaveTask: async (call: any, callback: any) => {
     try {
-      const user = getUserFromCall(call);
+      const user = getUserFromCall(call)
       const { task_id, user_id } = call.request;
       await leaveTasks(task_id, user_id);
       logger.info("left the task successfully");
@@ -115,5 +101,4 @@ const taskCollaboratorHandlers = {
     }
   },
 };
-
 export default taskCollaboratorHandlers;

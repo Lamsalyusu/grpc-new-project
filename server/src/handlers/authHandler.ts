@@ -2,11 +2,7 @@ import * as grpc from "@grpc/grpc-js";
 import { registerUser, loginUser } from "../service/authService";
 import { findById } from "../repositories/userRepository";
 import logger from "../utils/logger";
-
-function getUserFromCall(call: any) {
-  const raw = call.metadata.get("user")[0] as string;
-  return JSON.parse(raw);
-}
+import getUserFromCall from "../utils/getUser";
 
 const authHandlers = {
   registerUser: async (call: any, callback: any) => {
@@ -43,6 +39,8 @@ const authHandlers = {
   seeProfile: async (call: any, callback: any) => {
     try {
       const user = getUserFromCall(call);
+      // console.log("get call from user le k aaune raixa ta kanxa ", user)
+      // console.log("call.metadata:", call.metadata);
       const result = await findById(user.id);
       if (!result) {
         logger.warn("User profile not found");
