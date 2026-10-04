@@ -16,7 +16,7 @@ export const taskSchema = z.object({
     .optional()
     .transform((val) => (val ? validator.escape(val) : val)),
     status:z.
-    enum(["pending","completed","in_progress"]).optional(),
+    enum(["pending","completed","in_progress","missing"]).optional(),
     priority:z.enum(["low","medium","high"]).optional(),
     due_date: z.string().datetime().optional(),
     reminder_at: z.string().datetime().optional(),
@@ -24,7 +24,7 @@ export const taskSchema = z.object({
 });
 
 export const taskQuery = z.object({
-    status:z.enum([ "pending","completed","in_progress"]).optional(),
+    status:z.enum([ "pending","completed","in_progress","missing"]).optional(),
     priority: z.enum(["low", "medium", "high"]).optional(),
     page: z.coerce.number().int().positive().optional().default(1),
     limit: z.coerce.number().int().positive().max(100).optional().default(10),
