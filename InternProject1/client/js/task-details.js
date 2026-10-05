@@ -56,11 +56,8 @@ async function initTaskDetail() {
 
   try {
     const res = await api(`/tasks/${taskId}`);
-
     currentTask = res.data.task;
-    // console.log("Current task:", currentTask);
     const displayStatus = getDisplayStatus(currentTask)
-    // console.log("Display status:", displayStatus);
 
     // Only owner can manage
     // task collaborators.
