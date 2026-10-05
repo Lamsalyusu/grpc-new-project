@@ -49,7 +49,7 @@ function registerChatHandler(io: Namespace, socket: Socket) {
     }
     const { body } = parsed.data;
     const md = buildSocketMetadata(socket);
-    messageClient.SendMessage(
+    messageClient.sendMessage(
       { task_id: taskid, body },
       md,
       (err: any, result: any) => {
