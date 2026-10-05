@@ -22,7 +22,6 @@ const authHandlers = {
 
   loginUser: async (call: any, callback: any) => {
     try {
-      console.log(call.request);
       const { email, password } = call.request;
       const result = await loginUser({ email, password });
       logger.info("gRPC login successful");
@@ -39,8 +38,6 @@ const authHandlers = {
   seeProfile: async (call: any, callback: any) => {
     try {
       const user = getUserFromCall(call);
-      // console.log("get call from user le k aaune raixa ta kanxa ", user)
-      // console.log("call.metadata:", call.metadata);
       const result = await findById(user.id);
       if (!result) {
         logger.warn("User profile not found");

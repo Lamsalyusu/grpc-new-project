@@ -5,7 +5,6 @@ import getUserFromCall from "../utils/getUser";
 const collaboration_handler = {
   sendRequest: async (call: any, callback: any) => {
     try {
-      console.log("proto loader options", call.request);
       const user = getUserFromCall(call);
       const sender_id = user.id;
       // const {receiver_id} = call.request;
