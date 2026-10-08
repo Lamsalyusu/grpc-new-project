@@ -10,6 +10,7 @@ class messages extends Model {
   declare sender?: User;
   declare created_at: Date;
   declare updated_at: Date;
+  declare image_url:string|null;
 }
 
 messages.init(
@@ -31,6 +32,10 @@ messages.init(
     body: {
       type: DataTypes.TEXT,
       allowNull: false,
+    },
+    image_url:{
+      type:DataTypes.TEXT,
+      allowNull:true,
     },
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE,
