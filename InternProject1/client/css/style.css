@@ -581,7 +581,7 @@ button:hover {
 .chat-input input {
   flex: 1;
 
-  margin: 0 8px 0 0;
+  margin: 0 8px 0 97px;
 }
 
 .chat-input button {
@@ -1217,4 +1217,13 @@ button:hover {
   .btn-remove-collaborator {
     width: 100%;
   }
+}
+
+.chat-image {
+  display: block;
+  width: 200px;
+  max-width: 50%;
+  height: auto;
+  margin-top: 8px;
+  border-radius: 8px;
 }

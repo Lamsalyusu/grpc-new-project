@@ -458,7 +458,6 @@ async function leaveCurrentTask() {
     });
 
     alert("You left the task successfully.");
-
     window.location.href = "dashboard.html";
   } catch (err) {
     alert(err.message);
@@ -491,6 +490,14 @@ function renderMsg(m) {
       <p>
         ${escapeHtml(m.body)}
       </p>
+      ${
+        m.image_url? `<img
+               src="${escapeHtml(m.image_url)}"
+               alt="attachment"
+               class="chat-image"
+             >`
+          : ""
+      }
 
     </div>
   `;

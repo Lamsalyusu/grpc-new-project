@@ -23,7 +23,7 @@
       <div>
         <a href="profile.html"> 👤 Profile </a>
 
-        <a href="notifications.html"> 🔔 Notifications </a>
+        <a href="notifications.html"> Notifications </a>
 
         <button id="btnLogout">Logout</button>
       </div>
@@ -82,22 +82,18 @@
       <!-- ================================================================ -->
 
       <h3 style="margin-top: 24px">Chat</h3>
-
-      <div class="chat-box">
-        <div class="chat-messages" id="chatMessages"></div>
-
-        <div class="chat-input">
-          <input type="text" id="chatInput" placeholder="Type a message..." />
-
-          <button id="btnSendChat">Send</button>
-        </div>
+    <div class="chat-box">
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-input">
+        <!-- FOR IMAGE -->
+        <input type="file" id="chatImage" accept="image/*" />
+        <input type="text" id="chatInput" placeholder="Type a message..."/>
+        <button id="btnSendChat">Send</button>
       </div>
     </div>
 
     <script src="js/api.js"></script>
-
     <script src="js/task-details.js"></script>
-
     <script src="js/chat.js"></script>
 
     <script>
