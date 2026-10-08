@@ -1,6 +1,7 @@
 import { findById as findTaskById } from "../repositories/taskRepository";
 import { findOne as findCollaborator } from "../repositories/taskCollaboratorRepository";
 import { createMessage, findByTask } from "../repositories/messageRepository";
+import uploadImage from "../utils/uploadImage";
 
 //yo function chai if owner and collaborator lai access cha ki nai bhanne ko lagi
 async function checkAccess(task_id: string, user_id: string) {
@@ -20,11 +21,16 @@ async function checkAccess(task_id: string, user_id: string) {
 }
 
 // yo function chai message sending ko lagi
-async function sendMessage(task_id: string, sender_id: string, body: string) {
+async function sendMessage(task_id: string, sender_id: string, body: string,image:Buffer) {
   // yahan check hunxa yo taks ko access chha ki nai bhanera ani mathi ko condition ma check hunxa yo function bata
   await checkAccess(task_id, sender_id);
+
+  let image_url:string|null = null;
+  if(image && image.length>0){
+    image_url=await uploadImage(image)
+  }
   // if access chha bhane yahan bata message create bhayo --> message garna milyo
-  const message = await createMessage(task_id, sender_id, body);
+  const message = await createMessage(task_id, sender_id, body,image_url);
   return message;
 }
 

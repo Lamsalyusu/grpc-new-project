@@ -2,8 +2,16 @@
 import { Op } from "sequelize";
 import collaboration_request from "../db/models/collaborationRequestModel";
 import { findById } from "./userRepository";
-// import { userInfo } from "node:os";
-// import sendRequ from "../service/collaborationService";
+import  sequelize  from "../db/connection";
+import {QueryTypes} from "sequelize";
+import {v4 as uuidv4} from "uuid";
+
+type collaborationRow = {
+  id:string,
+  sender_id:string,
+  receiver_id:string,
+  status:string
+}
 
 async function createRequest(data: {
   // id:string,
@@ -11,7 +19,21 @@ async function createRequest(data: {
   sender_id: string;
   receiver_id: string;
 }) {
-  return collaboration_request.create(data);
+  // return collaboration_request.create(data);
+  const id = uuidv4();
+  await sequelize.query(
+    `INSERT INTO collaboration_requests (id,sender_id, receiver_id, status,created_at,updated_at) VALUES (:id, :sender_id, :receiver_id, 'pending', NOW(), NOW())`,
+    {
+      replacements: {
+        id,
+        sender_id: data.sender_id,
+        receiver_id: data.receiver_id,
+      },
+      type: QueryTypes.INSERT,
+    },
+  )
+  return findRequestById(id);
+  // return request;
 }
 
 async function seeRequest(
@@ -59,21 +81,37 @@ async function seeRequest(
 }
 
 async function findPendingRequest(sender_id: string, receiver_id: string) {
-  return collaboration_request.findOne({
-    where: {
-      sender_id,
-      receiver_id,
-      status: "pending",
+  // return collaboration_request.findOne({
+  //   where: {
+  //     sender_id,
+  //     receiver_id,
+  //     status: "pending",
+  //   },
+  // });
+  const pendingRequest = await sequelize.query(
+    "SELECT * FROM collaboration_requests WHERE sender_id = :sender_id AND receiver_id = :receiver_id AND status = 'pending'",
+    {
+      replacements: { sender_id, receiver_id },
+      type: QueryTypes.SELECT,
     },
-  });
+  );
+  return pendingRequest[0] || null;
 }
 
 async function findRequestById(id: string) {
-  return collaboration_request.findOne({
-    where: {
-      id,
+  // return collaboration_request.findOne({
+  //   where: {
+  //     id,
+  //   },
+  // });
+  const request = await sequelize.query<collaborationRow>(
+    "SELECT * FROM collaboration_requests WHERE id = :id",
+    {
+      replacements: { id },
+      type: QueryTypes.SELECT,
     },
-  });
+  );
+  return request[0] || null;
 }
 
 // async function sendername(sender_id:string){

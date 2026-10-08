@@ -23,11 +23,13 @@ async function registerUser(data:RegisterInput) {
 
 async function loginUser(data: LoginInput) {
   const user = await findByEmail(data.email);
+  // console.log("issue fixing ho hai ",user);
 
   if (!user) {
     throw { message: "No user found (try registering first) " };
   }
   const isMatch = await bcrypt.compare(data.password, user.password_hash);
+  // console.log(isMatch)
   if (!isMatch) {
     throw { message: "Invalid email or password" };
   }

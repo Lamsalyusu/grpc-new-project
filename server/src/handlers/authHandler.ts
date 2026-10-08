@@ -7,7 +7,7 @@ import getUserFromCall from "../utils/getUser";
 const authHandlers = {
   registerUser: async (call: any, callback: any) => {
     try {
-      const { name, email, password } = call.request;
+      const { name,email, password } = call.request;
       const result = await registerUser({ name, email, password });
       logger.info("gRPC registration successful");
       callback(null, result);

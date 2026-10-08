@@ -1,8 +1,8 @@
 import { Message, User } from "../db/models/index";
 
-async function createMessage(task_id: string, sender_id: string, body: string) {
+async function createMessage(task_id: string, sender_id: string, body: string,image_url:string|null) {
   // return Message.create({task_id,sender_id,body})
-  const message = await Message.create({ task_id, sender_id, body });
+  const message = await Message.create({ task_id, sender_id, body ,image_url});
   return Message.findByPk(message.id, {
     include: [
       { model: User, as: "sender", attributes: ["id", "name", "email"] },

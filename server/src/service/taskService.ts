@@ -1,4 +1,3 @@
-// import messages from "../models/messageModel";
 import { findOne as findCollaborator } from "../repositories/taskCollaboratorRepository";
 import { findById,create,findByOwner,remove,update} from "../repositories/taskRepository";
 import { taskqueryschema, Taskrequire } from "../validators/taskValidator";
@@ -6,9 +5,7 @@ import {addCollaborator as addTaskCollaborator} from "../repositories/taskCollab
 import { doubleRequest } from "../repositories/collaborationRepository";
 
 async function createTask(data:Taskrequire,owner_id:string){
-
 const collaborator_ids = data.collaborator_ids || [];
-
 for(const collaborator_id of collaborator_ids){
      if (collaborator_id === owner_id) {
         throw {
@@ -22,7 +19,6 @@ for(const collaborator_id of collaborator_ids){
         }
     }
 }
-
     const Tasks = await create({
         priority : data.priority || 'medium',
         description:data.description,
@@ -58,12 +54,10 @@ async function getTaskById(id:string,reqid:string){
     return getTask;
 }
 
-
 async function getTasksByOwner(owner_id:string,filter:taskqueryschema){
 const getownertask = await findByOwner(owner_id,filter);
 return getownertask;
 }
-
 
 async function updateTask(data:Taskrequire,reqid:string,id:string){
     // const uptask = await update(data,id)
@@ -90,13 +84,12 @@ async function updateTask(data:Taskrequire,reqid:string,id:string){
             
     //     }
     // }
-    const updateData = reminder_changed ? {...data,reminder_status:"pending"} : {...data}
+    const updateData:Taskrequire = reminder_changed ? {...data,reminder_status:"pending"} : {...data}
     if(updateData.status === "completed"){
         updateData.reminder_status = "sent";
-        // return updateData;
     }
     // update the task based on the id and updatedata so that after the the reminder is changed we can fire the reminer again 
-    const newUpdateTask = update(id,updateData);
+    const newUpdateTask = await update(id,updateData);
     return newUpdateTask;
 }
 

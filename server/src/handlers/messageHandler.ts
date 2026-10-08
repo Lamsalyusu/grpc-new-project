@@ -7,8 +7,9 @@ const messageHandlers = {
   sendMessage: async (call: any, callback: any) => {
     try {
       const user = getUserFromCall(call);
-      const { task_id, body } = call.request;
-      const message = await sendMessage(task_id, user.id, body);
+      const { task_id, body,image } = call.request;
+      // const image = call.request.image
+      const message = await sendMessage(task_id, user.id, body,image);
       if (!message) {
         logger.warn("sent message failed");
         return callback({
@@ -25,6 +26,7 @@ const messageHandlers = {
           sender_name: message.sender?.name,
           body: message.body,
           created_at: message.created_at,
+          image_url:message.image_url
         },
       });
     } catch (err: any) {
@@ -43,7 +45,7 @@ const messageHandlers = {
       const result = await getMessage(task_id, user.id, page, limit);
       if (!result) {
         logger.warn("get message failed");
-        callback({
+        return callback({
           code: grpc.status.INTERNAL,
           message: "message loading failed",
         });
@@ -57,6 +59,7 @@ const messageHandlers = {
           sender_name: m.sender?.name || m.sender?.email || "Unknown",
           body: m.body,
           created_at: m.created_at,
+          image_url:m.image_url
         })),
       });
     } catch (err: any) {

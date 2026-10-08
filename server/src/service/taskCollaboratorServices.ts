@@ -76,10 +76,10 @@ async function deleteTaskCollaborator(
   if (deltask.owner_id !== reqid) {
     throw { message: "only the task owner can remove the task" };
   }
-  const delCollaborator = await remove(task_id, user_id);
-  if (delCollaborator === 0) {
-    throw { message: "no collaborator found on this task" };
-  }
+ await remove(task_id, user_id);
+  // if (delCollaborator === 0) {
+  //   throw { message: "no collaborator found on this task" };
+  // }
 }
 async function getTasksSharedWithUser(user_id: string) {
   return findTasksForUser(user_id);
@@ -137,10 +137,10 @@ async function leaveTasks(task_id: string, user_id: string) {
   if (!isCollaborator) {
     throw { message: "not a collaborator on this task" };
   }
-  const leave_Task = await leaveTask(task_id, user_id);
-  if (leave_Task === 0) {
-    throw { message: "could not leave the task" };
-  }
+  await leaveTask(task_id, user_id);
+  // if (leave_Task === 0) {
+  //   throw { message: "could not leave the task" };
+  // }
 
   return { message: "left the task successfully" };
 }
