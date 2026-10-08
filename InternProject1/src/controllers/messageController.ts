@@ -28,11 +28,16 @@ const messageControllers = {
 
   send: async (req: Request, res: Response, next: NextFunction) => {
     const { body } = req.body as messageValidation;
-    const senderid = (req as any).user.id;
+    // const senderid = (req as any).user.id;
     const task_id = req.params.id as string;
+    const image = (req as any).file
+    console.log("IMage ko request hereko la guyz haru maile ",image);
     const md = buildMetadata(req);
     messageClient.sendMessage(
-      { task_id: task_id, sender_id: senderid, body },
+      { task_id,
+        body,
+        image:image?image.buffer:Buffer.alloc(0) 
+      },
       md,
       (error: any, result: any) => {
         if (error) {
@@ -46,5 +51,4 @@ const messageControllers = {
     );
   },
 };
-
 export default messageControllers;

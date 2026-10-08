@@ -97,7 +97,7 @@ app.use(
           "'unsafe-hashes'",
           "'sha256-B2kKObP1ttXxP4bc+z1ri7AcQKmY+Pws7G9VEvdlfHI='",
         ],
-        imgSrc: ["'self'", "data:", "blob:"],
+        imgSrc: ["'self'", "data:", "blob:", "https://rkqvvzwjesujnjleskda.supabase.co"," https://rkqvvzwjesujnjleskda.storage.supabase.co"],
         connectSrc: [
           "'self'",
           "http://127.0.0.1:3000",
