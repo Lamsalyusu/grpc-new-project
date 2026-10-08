@@ -1,0 +1,73 @@
+syntax = "proto3";
+package adminPackage;
+
+service adminService{
+    rpc registerAdmin (registerAdminRequest) returns (registerAdminResponse);
+    rpc loginAdmin (loginAdminRequest) returns (loginAdminResponse);
+    rpc seeAllUsers (emptyRequest) returns (allUsersResponse);
+    rpc deleteUser (deleteUserRequest) returns (deleteUserResponse);
+    rpc updateUser (updateUserRequest) returns (updateUserResponse);
+    rpc seeUser (SeeUserRequest) returns (userResponse);
+}
+
+message registerAdminRequest{
+  string name = 1;
+  string email = 2;
+  string password = 3; 
+}
+
+message registerAdminResponse{
+    userResponse user = 1;
+}
+
+message loginAdminRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message loginAdminResponse {
+    userResponse user = 1;
+    string token = 2;
+}
+// ==========  ---> yo maile yesso seperate hos bhanera matra rakheko jo hai AI le generate gareko chai haina la
+// ======================================
+
+message emptyRequest {
+}
+
+message allUsersResponse {
+    repeated userResponse users = 1;
+}
+// =======================================
+message SeeUserRequest {
+    string user_id = 1;
+}
+
+message userResponse {
+    string id = 1;
+    string name = 2;
+    string email =3;
+}
+
+// =================================================
+message deleteUserRequest {
+    string user_id = 1;
+}
+
+message deleteUserResponse {
+    string message = 1;
+}
+
+//=========================================
+message updateUserRequest {
+    string user_id = 1;
+    string name = 2;
+    string email = 3;
+    string role = 4;
+}
+
+message updateUserResponse {
+    userResponse user = 1;
+}
+// ===========================================================
+
