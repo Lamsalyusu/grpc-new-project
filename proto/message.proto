@@ -5,7 +5,6 @@ service messageService {
   rpc sendMessage(sendMessageReq) returns (sendMessageRes);
   rpc getMessage(getMessageReq) returns (getMessageRes);
   rpc checkAccess(checkAccessReq) returns (checkAccessRes);
-
 }
 
 message Message {
@@ -15,6 +14,7 @@ message Message {
   string sender_name = 4;
   string body = 5;
   string created_at = 6;
+  string image_url = 7;
 }
 
 message getMessageReq {
@@ -32,6 +32,8 @@ message getMessageRes {
 message sendMessageReq {
   string task_id = 1;
   string body = 2;
+  bytes image = 3;
+  // string image = 3;
 }
 
 message sendMessageRes {
