@@ -8,8 +8,9 @@ import messageRoutes from "./routes/messageRoutes";
 import errorHandler from "./middlewares/errormiddleware";
 import notifroutes from "./routes/notificationRoutes";
 import collaborationRoutes from "./routes/collaborationRoutes";
+import adminRoutes from "./routes/adminRoutes";
 import path from "path";
-// import morgan from 'morgan'
+import morgan from 'morgan'
 
 const app = express();
 
@@ -113,7 +114,7 @@ app.use(
 app.use(express.json());
 app.use(cors(corsOptions));
 
-// app.use(morgan('dev'))
+app.use(morgan('dev'))
 // Outputs: GET /api/users 200 - 12.345 ms / 15.120 ms
 // app.use(morgan(':method :url :status - :response-time ms / :total-time ms'));
 
@@ -127,6 +128,7 @@ app.use("/api/v1/tasks", messageRoutes);
 app.use("/api/v1/tasks", taskrouter);
 app.use("/api/v1/notifications", notifroutes);
 app.use("/api/v1/collaboration", collaborationRoutes); // Health check
+app.use("/api/v1/admin", adminRoutes);
 app.get("/health", (_req, res) => {
   res.status(200).json({ status: "ok", message: "app running smoothly" });
 });

@@ -1,8 +1,10 @@
 import { findOne as findCollaborator } from "../repositories/taskCollaboratorRepository";
-import { findById,create,findByOwner,remove,update} from "../repositories/taskRepository";
+import { findById,create,findByOwner,remove,update,findTasksAssignedByAdmin} from "../repositories/taskRepository";
 import { taskqueryschema, Taskrequire } from "../validators/taskValidator";
 import {addCollaborator as addTaskCollaborator} from "../repositories/taskCollaboratorRepository";
 import { doubleRequest } from "../repositories/collaborationRepository";
+import { createAdminTask,findTasksCreatedByAdmin } from "../repositories/taskRepository";
+import { findById as findUserById } from "../repositories/userRepository";
 
 async function createTask(data:Taskrequire,owner_id:string){
 const collaborator_ids = data.collaborator_ids || [];
@@ -106,9 +108,66 @@ async function deleteTask(id:string,reqid:string){
 }
 
 
+async function createTaskForAdmin(
+  data: {
+    owner_id: string;
+    title: string;
+    description?: string;
+    priority?: string;
+    due_date?: string;
+    reminder_at?: string;
+  },
+  admin_id: string,
+) {
+  const user = await findUserById(data.owner_id);
+
+  if (!user) {
+    throw { message: "Selected user does not exist" };
+  }
+
+  return createAdminTask({
+    ...data,
+    created_by_admin: admin_id,
+  });
+}
 
 // export {createTask,deleteTask,updateTask,getTaskById,getTasksByOwner}
 
 // export {createTask}
 
-export {deleteTask,updateTask,createTask,getTasksByOwner,getTaskById}
+
+async function getTasksCreatedByAdmin(adminId: string) {
+  const tasks = await findTasksCreatedByAdmin(adminId);
+
+  return {
+    tasks: tasks.map((task: any) => ({
+      id: String(task.id ?? ""),
+      owner_id: String(task.owner_id ?? ""),
+      created_by_admin: String(task.created_by_admin ?? ""),
+      title: String(task.title ?? ""),
+      description: String(task.description ?? ""),
+      status: String(task.status ?? ""),
+      priority: String(task.priority ?? ""),
+      due_date: task.due_date
+        ? new Date(task.due_date).toISOString()
+        : "",
+      reminder_at: task.reminder_at
+        ? new Date(task.reminder_at).toISOString()
+        : "",
+      reminder_status: String(task.reminder_status ?? ""),
+      created_at: task.created_at
+        ? new Date(task.created_at).toISOString()
+        : "",
+      updated_at: task.updated_at
+        ? new Date(task.updated_at).toISOString()
+        : "",
+    })),
+  };
+}
+
+async function getTasksAssignedByAdmin(owner_id: string) {
+  const tasks = await findTasksAssignedByAdmin(owner_id);
+  return { tasks };
+}
+
+export {deleteTask,updateTask,createTask,getTasksByOwner,getTaskById,createTaskForAdmin,getTasksCreatedByAdmin,getTasksAssignedByAdmin}

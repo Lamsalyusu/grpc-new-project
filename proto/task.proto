@@ -1,24 +1,13 @@
 syntax = "proto3";
 package taskPackage;
 
-// enum Status {
-//     Pending = 0;
-//     InProgress = 1;
-//     Completed = 2;
-// }
-
-// enum Priority {
-//     Medium =0;
-//     Low =1;
-//     High =2;
-// }
-
 service taskService{
     rpc createTask (createReq) returns (createRes);
     rpc getAllTask (getAllReq) returns (getAllRes);
     rpc getOne (getOneReq) returns (getOneRes);
     rpc updateTask (updateReq) returns (updateRes);
     rpc removeTask (removeReq) returns (removeRes);
+    rpc getTasksAssignedByAdmin (getTasksAssignedByAdminReq) returns (getAllRes);
 }
 
 message createReq {
@@ -97,4 +86,8 @@ message removeReq {
 
 message removeRes {
 string message = 1;
+}
+
+message getTasksAssignedByAdminReq {
+    string owner_id = 1;
 }

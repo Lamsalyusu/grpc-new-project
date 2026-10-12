@@ -40,8 +40,7 @@ async function findById(id: string) {
 
 async function findByOwner(owner_id: string, filters: TaskFilters) {
   const { status, priority, page, limit, sortBy, order } = filters;
-
-  const where: any = { owner_id };
+  const where: any = { owner_id ,created_by_admin: { [Op.is]: null },};
  
   if (status === 'missing') {
   where.status = { [Op.in]: ['pending', 'in_progress'] };
@@ -92,4 +91,65 @@ async function remove(id: string) {
   )
 }
 
-export { findById, findByOwner, create, update, remove };
+async function createAdminTask(data: {
+  owner_id: string;
+  created_by_admin: string;
+  title: string;
+  description?: string;
+  priority?: string;
+  due_date?: string;
+  reminder_at?: string;
+}) {
+  return Task.create({
+    owner_id: data.owner_id,
+    created_by_admin: data.created_by_admin,
+    title: data.title,
+    description: data.description,
+    priority: data.priority || "medium",
+    status: "pending",
+    due_date: data.due_date,
+    reminder_at: data.reminder_at,
+    reminder_status: "pending",
+  });
+}
+
+
+
+async function findTasksCreatedByAdmin(adminId: string) {
+  const tasks = await sequelize.query(
+    `SELECT
+      id,
+      owner_id,
+      created_by_admin,
+      title,
+      description,
+      status,
+      priority,
+      due_date,
+      reminder_at,
+      reminder_status,
+      created_at,
+      updated_at
+    FROM tasks
+    WHERE created_by_admin = ?
+    ORDER BY created_at DESC`,
+    {
+      replacements: [adminId],
+      type: QueryTypes.SELECT,
+    }
+  );
+
+  return tasks;
+}
+
+async function findTasksAssignedByAdmin(owner_id: string) {
+  return Task.findAll({
+    where: {
+      owner_id,
+      created_by_admin: { [Op.not]: null },
+    },
+    order: [["created_at", "DESC"]],
+  });
+}
+
+export { findById, findByOwner, create, update, remove,createAdminTask,findTasksCreatedByAdmin ,findTasksAssignedByAdmin};

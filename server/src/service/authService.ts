@@ -36,7 +36,7 @@ async function loginUser(data: LoginInput) {
   // const existingUser = await findByEmail(data.email);
   // if(!existing)
 
-  const token = signInToken({ id: user.id, email: user.email });
+  const token = signInToken({ id: user.id, email: user.email ,role:"user"});
   return {
     user: { id: user.id, name: user.name, email: user.email, role: user.role },
     token,

@@ -9,8 +9,9 @@ import { taskIdParamSchema } from '../validators/paramValidator';
 
 taskrouter.post('/', authMiddleware, validation(taskSchema), taskController.create);
 taskrouter.get('/', authMiddleware, validateQuery(taskQuery), taskController.getAll);
+taskrouter.get("/assigned-by-admin",authMiddleware,taskController.getAssignedByAdmin); 
 taskrouter.get('/:id', authMiddleware,validateParams(taskIdParamSchema), taskController.getone);
 taskrouter.put('/:id', authMiddleware, validation(taskSchema),validateParams(taskIdParamSchema), taskController.update);
-taskrouter.delete('/:id', authMiddleware, validateParams(taskIdParamSchema),taskController.remove);   
+taskrouter.delete('/:id', authMiddleware, validateParams(taskIdParamSchema),taskController.remove);  
 
 export default taskrouter;

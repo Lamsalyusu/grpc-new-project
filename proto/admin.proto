@@ -5,9 +5,11 @@ service adminService{
     rpc registerAdmin (registerAdminRequest) returns (registerAdminResponse);
     rpc loginAdmin (loginAdminRequest) returns (loginAdminResponse);
     rpc seeAllUsers (emptyRequest) returns (allUsersResponse);
-    rpc deleteUser (deleteUserRequest) returns (deleteUserResponse);
-    rpc updateUser (updateUserRequest) returns (updateUserResponse);
+    // rpc deleteUser (deleteUserRequest) returns (deleteUserResponse);
+    // rpc updateUser (updateUserRequest) returns (updateUserResponse);
     rpc seeUser (SeeUserRequest) returns (userResponse);
+    rpc createTaskForUser (adminCreateTaskRequest) returns (adminCreateTaskResponse);
+    rpc seeAdminTasks (emptyRequest) returns (adminTasksResponse);
 }
 
 message registerAdminRequest{
@@ -17,7 +19,7 @@ message registerAdminRequest{
 }
 
 message registerAdminResponse{
-    userResponse user = 1;
+    userResponse admin = 1;
 }
 
 message loginAdminRequest {
@@ -26,7 +28,7 @@ message loginAdminRequest {
 }
 
 message loginAdminResponse {
-    userResponse user = 1;
+    userResponse admin = 1;
     string token = 2;
 }
 // ==========  ---> yo maile yesso seperate hos bhanera matra rakheko jo hai AI le generate gareko chai haina la
@@ -69,5 +71,35 @@ message updateUserRequest {
 message updateUserResponse {
     userResponse user = 1;
 }
+
+
 // ===========================================================
+
+message adminCreateTaskRequest {
+    string owner_id = 1;
+    string title = 2;
+    string description = 3;
+    string priority = 4;
+    string due_date = 5;
+    string reminder_at = 6;
+}
+
+message adminCreateTaskResponse {
+    string id = 1;
+    string owner_id = 2;
+    string created_by_admin = 3;
+    string title = 4;
+    string description = 5;
+    string status = 6;
+    string priority = 7;
+    string due_date = 8;
+    string reminder_at = 9;
+    string reminder_status = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+message adminTasksResponse {
+    repeated adminCreateTaskResponse tasks = 1;
+}
 
