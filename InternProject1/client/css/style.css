@@ -1227,3 +1227,49 @@ button:hover {
   margin-top: 8px;
   border-radius: 8px;
 }
+
+/* Dashboard navigation cards */
+.dashboard-sections {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.dashboard-section-card {
+  display: block;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dashboard-section-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-section-card h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.dashboard-section-card p {
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.dashboard-section-card span {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .dashboard-sections {
+    grid-template-columns: 1fr;
+  }
+}
+

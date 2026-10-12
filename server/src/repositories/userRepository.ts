@@ -2,7 +2,7 @@ import { User } from "../db/models/index";
 // import { Sequelize } from "sequelize";
 import sequelize from "../db/connection";
 import { QueryTypes } from "sequelize";
-import user from "../db/models/userModel";
+
 
 
 type userRow = {
@@ -36,7 +36,7 @@ async function findByEmail(email: string) {
 async function findById(id: string) {
   // return User.findByPk(id);
   const users = await sequelize.query<userRow>(
-    "SELECT * FROM users where id = ?",
+    "SELECT id,name,email FROM users where id = ?",
     {
       replacements: [id],
       type: QueryTypes.SELECT
@@ -52,4 +52,40 @@ async function createUser(data: {
 }) {
   return User.create(data);
 }
-export { findByEmail, createUser, findById };
+
+
+// this one is used by admin for seeing all the users 
+
+async function findAllUsers(){
+  const users = await sequelize.query<userRow>(
+    "SELECT id,name,email,role FROM users ",
+    {
+      type:QueryTypes.SELECT
+    }
+
+  )
+  return users;
+}
+
+async function deleteUsers(user_id: string) {
+  const user = await findById(user_id);
+
+  if (!user) {
+    return null;
+  }
+
+  await sequelize.query(
+    "DELETE FROM users WHERE id = ?",
+    {
+      replacements: [user_id],
+      type: QueryTypes.DELETE
+    }
+  );
+
+  return user;
+}
+
+
+
+
+export { findByEmail, createUser, findById, findAllUsers,deleteUsers};

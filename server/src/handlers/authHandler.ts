@@ -23,6 +23,7 @@ const authHandlers = {
   loginUser: async (call: any, callback: any) => {
     try {
       const { email, password } = call.request;
+      console.log(call.request)
       const result = await loginUser({ email, password });
       logger.info("gRPC login successful");
       callback(null, result);

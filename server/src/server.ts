@@ -7,6 +7,8 @@ import taskCollaboratorHandlers from "./handlers/taskCollaboratorHandler";
 import messageHandlers from "./handlers/messageHandler";
 import notificationHandlers from "./handlers/notificationHandler";
 import reminderHandlers from "./handlers/reminderHandler";
+import collaboration_handler from "./handlers/collaboration_handler";
+import adminHandler from "./handlers/adminHandler"
 import PROTO_PATHS from "./index";
 import authInterceptor from "./interceptors/authInterceptors";
 
@@ -14,7 +16,6 @@ import * as grpc from "@grpc/grpc-js";
 import * as protoloader from "@grpc/proto-loader";
 import sequelize from "./db/connection";
 import logger from "./utils/logger";
-import collaboration_handler from "./handlers/collaboration_handler";
 
 // import morgan from 'morgan'
 // const AuthServ
@@ -27,6 +28,7 @@ const packageDefinition = protoloader.loadSync(
     PROTO_PATHS.TASK_PROTO_PATH,
     PROTO_PATHS.REMINDER_PROTO_PATH,
     PROTO_PATHS.COLLABORATION_PROTO_PATH,
+    PROTO_PATHS.ADMIN_PROTO_PATH
   ],
   PROTO_PATHS.PROTO_LOADER_OPTIONS,
 );
@@ -64,6 +66,10 @@ server.addService(
   protoDescriptor.collaborationPackage.collaborationService.service,
   collaboration_handler,
 );
+server.addService(
+  protoDescriptor.adminPackage.adminService.service,
+  adminHandler
+)
 
 async function connectDB() {
   try {

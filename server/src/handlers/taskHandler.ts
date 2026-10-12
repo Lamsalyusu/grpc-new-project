@@ -1,5 +1,5 @@
 import * as grpc from "@grpc/grpc-js";
-import {createTask,getTaskById,getTasksByOwner,updateTask,deleteTask} from "../service/taskService";
+import {createTask,getTaskById,getTasksByOwner,updateTask,deleteTask, getTasksAssignedByAdmin} from "../service/taskService";
 import logger from "../utils/logger";
 import getUserFromCall from "../utils/getUser";
 
@@ -93,6 +93,20 @@ const taskHandlers = {
       });
     }
   },
+  getTasksAssignedByAdmin: async (call: any, callback: any) => {
+  try {
+    const user = getUserFromCall(call);
+    const result = await getTasksAssignedByAdmin(user.id);
+
+    callback(null, result);
+  } catch (err: any) {
+    logger.error(`Failed to retrieve admin-assigned tasks: ${err.message}`);
+    callback({
+      code: grpc.status.INTERNAL,
+      message: err.message || "Internal server error",
+    });
+  }
+},
 };
 
 export default taskHandlers;

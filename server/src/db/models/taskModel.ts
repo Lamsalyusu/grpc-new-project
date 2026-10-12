@@ -10,6 +10,7 @@ class task extends Model{
   declare due_date: Date;
   declare reminder_at: Date;
   declare reminder_status: string;
+  declare created_by_admin: string | null;
 }
 
 task.init(
@@ -62,6 +63,11 @@ task.init(
       type: DataTypes.STRING,
       allowNull: false,
       defaultValue: "pending",
+    },
+
+    created_by_admin: {
+      type: DataTypes.UUID,
+      allowNull: true,
     },
 
     created_at: DataTypes.DATE,

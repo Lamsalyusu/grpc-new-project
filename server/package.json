@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev": "ts-node-dev --transpile-only src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
     "migrate": "sequelize-cli db:migrate",
@@ -22,6 +22,7 @@
   "dependencies": {
     "@grpc/grpc-js": "^1.14.4",
     "@grpc/reflection": "^1.0.4",
+    "@supabase/supabase-js": "^2.117.2",
     "bcrypt": "^6.0.0",
     "dotenv": "^17.4.2",
     "grpc-health-check": "^2.1.0",
@@ -40,6 +41,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
     "@types/node": "^26.2.0",
+    "@types/uuid": "^10.0.0",
     "sequelize-cli": "^6.6.5",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",

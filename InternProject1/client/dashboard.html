@@ -11,7 +11,7 @@
 
   <body>
     <nav class="navbar">
-      <h2><a href = "">Task Manager</a></h2>
+      <h2><a href="">Task Manager</a></h2>
       <div>
         <a href="collaboration.html">Collaborators</a>
         <a href="profile.html">Profile</a>
@@ -21,6 +21,21 @@
     </nav>
 
     <div class="container">
+      <!-- Additional task sections -->
+      <div class="dashboard-sections">
+        <a href="admin-tasks.html" class="dashboard-section-card">
+          <h3>Tasks Created by Admin</h3>
+          <p>View tasks assigned to you by an administrator.</p>
+          <span>View Tasks →</span>
+        </a>
+
+        <a href="shared-tasks.html" class="dashboard-section-card">
+          <h3>Shared With Me</h3>
+          <p>View tasks shared with you by collaborators.</p>
+          <span>View Shared Tasks →</span>
+        </a>
+      </div>
+
       <div
         style="
           display: flex;
@@ -54,7 +69,7 @@
       </div>
 
       <div id="tasksList"></div>
-      <h2 style="margin-top: 32px">Shared With Me</h2>
+      <!-- <h2 style="margin-top: 32px">Shared With Me</h2> -->
       <div id="sharedTasksList"></div>
     </div>
 
@@ -184,9 +199,9 @@
 
       loadTasks();
 
-      loadSharedTasks();
+      // loadSharedTasks();
 
-      loadTaskCollaborators();
+      // loadTaskCollaborators();
     </script>
   </body>
 </html>

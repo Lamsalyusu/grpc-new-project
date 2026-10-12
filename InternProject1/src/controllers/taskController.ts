@@ -109,5 +109,22 @@ const taskControllers = {
       },
     );
   },
+
+  getAssignedByAdmin: async (req: Request,res: Response,next: NextFunction) => {
+  const owner_id = (req as any).user.id;
+  const md = buildMetadata(req);
+
+    taskClient.getTasksAssignedByAdmin({ owner_id },md,(err: any, result: any) => {
+        if (err) {
+          return next(err);
+        }
+        logger.info("Retrieved tasks assigned by admin successfully");
+        return res.status(200).json({
+          data: result,
+          message: "Admin-assigned tasks retrieved successfully",
+        });
+      },
+    );
+  },
 };
 export default taskControllers;

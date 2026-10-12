@@ -4,10 +4,12 @@ import { verifyToken } from "../utils/jwt";
 const EXEMPT_PATHS = [
   "/authPackage.authService/registerUser",
   "/authPackage.authService/loginUser",
+  "/adminPackage.adminService/loginAdmin",
   "/reminderPackage.reminderService/checkDueReminders",
 ];
 
 const authInterceptor = (methodDescriptor: any, call: any) => {
+    console.log("gRPC interceptor reached:", methodDescriptor.path);
   // 1. If the path is exempt, completely bypass interception
   if (EXEMPT_PATHS.includes(methodDescriptor.path)) {
     return new grpc.ServerInterceptingCall(call);
@@ -16,6 +18,10 @@ const authInterceptor = (methodDescriptor: any, call: any) => {
   const listener = new grpc.ServerListenerBuilder()
     .withOnReceiveMetadata((metadata: any, next: any) => {
       const authorization = metadata.get("authorization");
+      console.log(
+          "Authorization metadata present:",
+          authorization.length > 0
+        );
 
       if (!authorization || authorization.length === 0) {
         return call.sendStatus({

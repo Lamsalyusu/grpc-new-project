@@ -34,5 +34,16 @@ export const taskQuery = z.object({
     sortBy: z.enum(["due_date", "priority", "created_at"]).optional().default("created_at"),
     order: z.enum(["asc", "desc"]).optional().default("desc"),
 })
+
+
+export const adminCreateTaskSchema = z.object({
+  owner_id: z.uuid("A valid user ID is required"),
+  title: z.string().trim().min(1).max(20),
+  description: z.string().trim().min(20).max(100).optional(),
+  priority: z.enum(["low", "medium", "high"]).optional(),
+  due_date: z.iso.datetime().optional(),
+  reminder_at: z.iso.datetime().optional(),
+});
+
 export type Taskrequire = z.infer<typeof taskSchema>;
 export type taskqueryschema = z.infer<typeof taskQuery>;
