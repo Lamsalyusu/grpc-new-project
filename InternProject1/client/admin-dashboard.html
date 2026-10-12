@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard | Task Manager</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 24px;
+        font-family: Arial, sans-serif;
+        background: #f5f7fb;
+        color: #222;
+      }
+
+      main {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .admin-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 28px;
+      }
+
+      .admin-header h1 {
+        margin: 0;
+      }
+
+      .admin-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      }
+
+      .admin-card h2 {
+        margin-top: 0;
+        margin-bottom: 8px;
+      }
+
+      .admin-card > p {
+        color: #666;
+      }
+
+      .admin-form {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 24px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+      }
+
+      .form-group.full-width {
+        grid-column: 1 / -1;
+      }
+
+      label {
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      input,
+      select,
+      textarea,
+      button {
+        font: inherit;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 11px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        background: #fff;
+      }
+
+      textarea {
+        min-height: 90px;
+        resize: vertical;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: 2px solid #bfdbfe;
+        border-color: #2563eb;
+      }
+
+      button {
+        border: none;
+        border-radius: 6px;
+        padding: 11px 16px;
+        cursor: pointer;
+        background: #2563eb;
+        color: #fff;
+        font-weight: 600;
+      }
+
+      button:hover {
+        background: #1d4ed8;
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .secondary-button {
+        background: #4b5563;
+      }
+
+      .secondary-button:hover {
+        background: #374151;
+      }
+
+      .logout-button {
+        background: #dc2626;
+      }
+
+      .logout-button:hover {
+        background: #b91c1c;
+      }
+
+      .form-actions {
+        grid-column: 1 / -1;
+      }
+
+      .message {
+        margin-top: 14px;
+        font-size: 14px;
+      }
+
+      .message.success {
+        color: #15803d;
+      }
+
+      .message.error {
+        color: #dc2626;
+      }
+
+      .message.info {
+        color: #4b5563;
+      }
+
+      .task-filters {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin: 20px 0;
+      }
+
+      .task-filters input {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .task-filters select {
+        min-width: 150px;
+        width: auto;
+      }
+
+      .task-filters button {
+        white-space: nowrap;
+      }
+
+      .admin-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      .admin-task-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+      }
+
+      .admin-task-table th,
+      .admin-task-table td {
+        padding: 13px 12px;
+        border-bottom: 1px solid #e5e7eb;
+        white-space: nowrap;
+      }
+
+      .admin-task-table th {
+        background: #f3f4f6;
+        font-size: 13px;
+      }
+
+      .admin-task-table tbody tr:hover {
+        background: #f9fafb;
+      }
+
+      .task-status {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 5px;
+        background: #e5e7eb;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .task-priority {
+        font-weight: 600;
+      }
+
+      #taskCount {
+        margin-bottom: 0;
+        color: #555;
+        font-size: 14px;
+      }
+
+      @media (max-width: 650px) {
+        body {
+          padding: 12px;
+        }
+
+        .admin-header {
+          align-items: flex-start;
+        }
+
+        .admin-card {
+          padding: 16px;
+        }
+
+        .admin-form {
+          grid-template-columns: 1fr;
+        }
+
+        .form-group.full-width,
+        .form-actions {
+          grid-column: auto;
+        }
+
+        .task-filters {
+          flex-direction: column;
+        }
+
+        .task-filters input,
+        .task-filters select,
+        .task-filters button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main>
+      <header class="admin-header">
+        <div>
+          <h1>Admin Dashboard</h1>
+          <p>Manage users and the tasks you assign.</p>
+        </div>
+
+        <button type="button" id="btnLogout" class="logout-button">
+          Logout
+        </button>
+      </header>
+
+      <!-- Create task section -->
+      <section class="admin-card">
+        <h2>Create Task for User</h2>
+        <p>Assign a new task to an existing user.</p>
+
+        <form id="adminTaskForm" class="admin-form">
+          <div class="form-group full-width">
+            <label for="owner_id">Select User</label>
+            <select id="owner_id" name="owner_id" required>
+              <option value="">Loading users...</option>
+            </select>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="title">Task Title</label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              placeholder="Enter task title"
+              required
+            />
+          </div>
+
+          <div class="form-group full-width">
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Enter task description"
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="priority">Priority</label>
+            <select id="priority" name="priority" required>
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="due_date">Due Date</label>
+            <input type="datetime-local" id="due_date" name="due_date" />
+          </div>
+
+          <div class="form-group full-width">
+            <label for="reminder_at">Reminder Date and Time</label>
+            <input type="datetime-local" id="reminder_at" name="reminder_at" />
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" id="createTaskBtn">Create Task</button>
+
+            <p id="adminMessage" class="message" role="status"></p>
+          </div>
+        </form>
+      </section>
+
+      <!-- Tasks created by this admin -->
+      <section class="admin-card" id="adminTaskTracking">
+        <h2>Tasks Created by Me</h2>
+        <p>Track the tasks you have assigned to users.</p>
+
+        <div class="task-filters">
+          <input
+            type="search"
+            id="taskSearch"
+            placeholder="Search by task title or owner..."
+            aria-label="Search tasks by title or owner"
+          />
+
+          <select id="taskStatusFilter" aria-label="Filter by status">
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="in_progress">In Progress</option>
+            <option value="completed">Completed</option>
+          </select>
+
+          <select id="taskPriorityFilter" aria-label="Filter by priority">
+            <option value="">All priorities</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+
+          <button type="button" id="refreshAdminTasks" class="secondary-button">
+            Refresh
+          </button>
+        </div>
+
+        <p id="taskTrackingMessage" class="message" role="status"></p>
+
+        <div class="admin-table-wrapper">
+          <table class="admin-task-table">
+            <thead>
+              <tr>
+                <th>Task</th>
+                <th>Owner</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Due Date</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+
+            <tbody id="adminTasksBody">
+              <tr>
+                <td colspan="6">Loading tasks...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p id="taskCount">Loading task count...</p>
+      </section>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/admin-dashboard.js"></script>
+  </body>
+</html>
+

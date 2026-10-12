@@ -161,6 +161,77 @@ async function loadTasks() {
   }
 }
 
+
+
+async function loadAdminTasks() {
+  try {
+    const response = await api("/tasks/assigned-by-admin");
+
+    console.log("Admin tasks response:", response);
+
+    const tasks =
+      response.data?.data?.tasks ??
+      response.data?.tasks ??
+      response.data ??
+      [];
+
+    const container = document.getElementById("adminTasksList");
+
+    if (!container) {
+      console.error("Element #adminTasksList not found");
+      return;
+    }
+
+    container.innerHTML = "";
+
+    if (!Array.isArray(tasks) || tasks.length === 0) {
+      container.innerHTML = "<p>No tasks assigned by admin yet.</p>";
+      return;
+    }
+
+    tasks.forEach((task) => {
+      const card = document.createElement("div");
+      card.className = "task-card";
+
+      const displayStatus = getDisplayStatus(task);
+
+      card.innerHTML = `
+        <div class="task-card-header">
+          <div class="task-content">
+            <h3>${escapeHtml(task.title)}</h3>
+            <p class="task-description">
+              ${escapeHtml(task.description || "")}
+            </p>
+            <div class="task-meta">
+              <span class="badge badge-${escapeHtml(displayStatus)}">
+                ${escapeHtml(displayStatus)}
+              </span>
+              <span class="badge badge-${escapeHtml(task.priority || "")}">
+                ${escapeHtml(task.priority || "")}
+              </span>
+              <span class="task-due">
+                Due: ${
+                  task.due_date
+                    ? new Date(task.due_date).toLocaleString()
+                    : "—"
+                }
+              </span>
+            </div>
+          </div>
+        </div>
+      `;
+
+      card.querySelector(".task-content").addEventListener("click", () => {
+        window.location.href = `task-detail.html?id=${task.id}`;
+      });
+
+      container.appendChild(card);
+    });
+  } catch (error) {
+    console.error("Failed to load admin-assigned tasks:", error);
+  }
+}
+
 // =========================================================
 // LOAD SHARED TASKS
 // =========================================================
@@ -612,6 +683,16 @@ document
   .getElementById("btnCloseEditModal")
   ?.addEventListener("click", closeEditModal);
 
-loadTasks();
-loadSharedTasks();
-loadTaskCollaborators();
+const currentPage = window.location.pathname.split("/").pop();
+
+if (currentPage === "dashboard.html") {
+  loadTasks();
+  loadTaskCollaborators();
+} else if (currentPage === "admin-tasks.html") {
+  loadAdminTasks();
+} else if (currentPage === "shared-tasks.html") {
+  loadSharedTasks();
+}
+
+console.log("Current page:", window.location.pathname);
+console.log("loadAdminTasks exists:", typeof loadAdminTasks);
