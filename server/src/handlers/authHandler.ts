@@ -21,6 +21,7 @@ const authHandlers = {
   },
 
   loginUser: async (call: any, callback: any) => {
+    // console.log("server side ko call ", call)
     try {
       const { email, password } = call.request;
       console.log(call.request)
@@ -30,6 +31,7 @@ const authHandlers = {
     } catch (err: any) {
       logger.error(`gRPC login failed ${err.message}`);
       callback({
+        // error milaunu paryo(INTERNAL HUNCHHA)
         code: grpc.status.UNAUTHENTICATED,
         message: err.message,
       });
@@ -37,7 +39,9 @@ const authHandlers = {
   },
 
   seeProfile: async (call: any, callback: any) => {
+    console.log(call.request.metadata)
     try {
+
       const user = getUserFromCall(call);
       const result = await findById(user.id);
       if (!result) {
