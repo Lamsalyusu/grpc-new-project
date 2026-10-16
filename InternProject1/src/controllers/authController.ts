@@ -20,7 +20,9 @@ const authController = {
   },
 
   login: async (req: Request, res: Response, next: NextFunction) => {
-    logger.info("login request received");
+    // logger.info("login request received");
+    // console.log("controllers ko request login ko lagi ", req.headers)
+    console.log(req.body)
 
     const data = req.body as loginInput;
     authClient.loginUser(data, (err: any, response: any) => {
@@ -35,6 +37,7 @@ const authController = {
   },
 
   me: async (req: Request, res: Response, next: NextFunction) => {
+    console.log("controllers ko request login ko lagi ", req.headers)
     logger.info("fetch profile request received");
     const user_id = (req as any).user.id;
     const md = buildMetadata(req);
