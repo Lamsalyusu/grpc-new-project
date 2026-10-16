@@ -3,8 +3,6 @@ import { User } from "../db/models/index";
 import sequelize from "../db/connection";
 import { QueryTypes } from "sequelize";
 
-
-
 type userRow = {
   id:string,
   name :string,

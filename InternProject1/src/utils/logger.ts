@@ -33,7 +33,7 @@ const logger = winston.createLogger({
         format.simple()
       ),
     }),
-
+// gatewise file rotate for logs
     new winston.transports.File({
         // Server started
         // User logged in

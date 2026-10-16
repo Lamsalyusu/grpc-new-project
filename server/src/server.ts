@@ -1,5 +1,11 @@
 import dotenv from "dotenv";
-dotenv.config();
+import path from 'path';
+// console.log(path.join(__dirname,".env"))
+const envpath = path.join(__dirname,"/config/.env")
+console.log("env ko path",envpath)
+dotenv.config({path:envpath});
+
+// import .env
 
 import authHandlers from "./handlers/authHandler";
 import taskHandlers from "./handlers/taskHandler";
@@ -77,12 +83,11 @@ async function connectDB() {
     logger.info("DB connected successfully");
     console.log("DB connected Successfully");
   } catch (error: any) {
-    logger.error(`db connection failed ${error.message}`);
+    // logger.error(`db connection failed ${error.message}`);
     console.log("Error while connecting to DB ", error);
   }
 }
-connectDB();
-// server.unregister()
+
 const PORT = process.env.GRPC_PORT || "0.0.0.0:50051";
 
 server.bindAsync(PORT, grpc.ServerCredentials.createInsecure(), (err, PORT) => {
@@ -94,6 +99,7 @@ server.bindAsync(PORT, grpc.ServerCredentials.createInsecure(), (err, PORT) => {
 
   logger.info(`gRPC server running on port ${PORT}`);
   console.log(`Server running on port ${PORT}`);
+  connectDB();
 });
 
 export default server;
