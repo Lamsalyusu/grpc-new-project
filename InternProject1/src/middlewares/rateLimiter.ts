@@ -1,29 +1,46 @@
 import rateLimiter from "express-rate-limit";
-import { Request, Response } from "express";
-const limit = rateLimiter({
-  windowMs: 1 * 60 * 1000, /// 1 MINUTE
-  // 3 choti maximum request garna payo 1 minute bhitra ma user le yo chai testing ko lagi yeti rakheko maile
-  max: 15, // limit each IP to 10 requests per window
+import logger from "../utils/logger";
+
+const baseLimiterOptions = {
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req: any, res: any, _next: any, options: any) => {
+    logger.warn({
+      message: "HTTP rate limit exceeded",
+      method: req.method,
+      path: req.path,
+      ip: req.ip,
+    });
+    res.status(options.statusCode).json(options.message);
+  },
   message: {
     error: {
       code: 429,
       message: "Too many requests, please try again later",
     },
   },
-  standardHeaders: true, // modern, official guidelines standardized by the IETF
-  // RateLimit-Limit: The maximum number of requests allowed inside the time window (e.g., 3).
-  // RateLimit-Remaining: How many requests the user has left before getting blocked.
-  // RateLimit-Reset: The exact number of seconds remaining until the current time window resets.
-  //RateLimit-Limit: 3
-  // RateLimit-Remaining: 1
-  // RateLimit-Reset: 45
-  //reset chai kasari gara??????????????
-  keyGenerator: (req: Request): string => {
-    return req.ip || (req.headers["x-forwarded-for"] as string) || "unknown-ip";
-  },
+};
+
+const authLimiter = rateLimiter({
+  ...baseLimiterOptions,
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
 });
 
-export default limit;
+const adminLimiter = rateLimiter({
+  ...baseLimiterOptions,
+  windowMs: 15 * 60 * 1000,
+  limit: 60,
+});
+
+const apiLimiter = rateLimiter({
+  ...baseLimiterOptions,
+  windowMs: 60 * 1000,
+  limit: 120,
+});
+
+export { authLimiter, adminLimiter, apiLimiter };
+export default apiLimiter;
 
 // in case of somone is hiding their ips track their account ID rather than their IP address. It does not matter if they switch VPN locations 100 times; if they are logged into the user account user_9876, they still only get
 
