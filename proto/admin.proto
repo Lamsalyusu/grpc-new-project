@@ -5,8 +5,8 @@ service adminService{
     rpc registerAdmin (registerAdminRequest) returns (registerAdminResponse);
     rpc loginAdmin (loginAdminRequest) returns (loginAdminResponse);
     rpc seeAllUsers (emptyRequest) returns (allUsersResponse);
-    // rpc deleteUser (deleteUserRequest) returns (deleteUserResponse);
-    // rpc updateUser (updateUserRequest) returns (updateUserResponse);
+    rpc deleteUser (deleteUserRequest) returns (deleteUserResponse);
+    rpc updateUser (updateUserRequest) returns (updateUserResponse);
     rpc seeUser (SeeUserRequest) returns (userResponse);
     rpc createTaskForUser (adminCreateTaskRequest) returns (adminCreateTaskResponse);
     rpc seeAdminTasks (emptyRequest) returns (adminTasksResponse);
