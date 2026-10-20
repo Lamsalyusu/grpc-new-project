@@ -38,8 +38,8 @@ function notifvisible(n){
         content = `
           <div>
             <strong>Reminder: ${escapeHtml(payload.title || 'Task')}</strong>
-            <p style="font-size:13px;color:#666;margin-top:4px;">${escapeHtml(payload.description || '')}</p>
-            <p style="font-size:12px;color:#ef4444;">Due: ${payload.due_date ? new Date(payload.due_date).toLocaleString() : '—'}</p>
+            <p class="notification-copy">${escapeHtml(payload.description || '')}</p>
+            <p class="notification-due">Due: ${payload.due_date ? new Date(payload.due_date).toLocaleString() : '—'}</p>
           </div>
         `;
       } else if (n.type === 'TASK_COLLABORATOR_ADDED') {
@@ -50,21 +50,21 @@ function notifvisible(n){
 
       // Read = blurred/faded, Unread = normal
       const cardClass = isRead ? 'notification-read' : 'notification-unread';
-      const badgeHtml = isRead 
-        ? '<span style="font-size:11px;color:#666;background:#e5e5e5;padding:2px 8px;border-radius:4px;">Read</span>'
-        : '<span style="font-size:11px;color:#fff;background:#2563eb;padding:2px 8px;border-radius:4px;">New</span>';
+      const badgeHtml = isRead
+        ? '<span class="notification-state is-read">Read</span>'
+        : '<span class="notification-state is-new">New</span>';
 
       return `
-        <div class="task-card ${cardClass}" style="display:flex;justify-content:space-between;align-items:center;">
-          <div style="flex:1;">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+        <div class="task-card notification-item ${cardClass}">
+          <div class="notification-content">
+            <div class="notification-meta">
               ${badgeHtml}
-              <time style="font-size:12px;color:#999;">${new Date(n.created_at).toLocaleString()}</time>
+              <time class="notification-time">${new Date(n.created_at).toLocaleString()}</time>
             </div>
             ${content}
           </div>
           ${!isRead ? `
-            <button class="btn-mark-read" data-id="${n.id}" style="width:auto;padding:6px 12px;background:#2563eb;color:white;border:none;border-radius:6px;cursor:pointer;margin-left:12px;">Mark Read</button>
+            <button class="btn-mark-read" data-id="${n.id}">Mark read</button>
           ` : ''}
         </div>
       `;

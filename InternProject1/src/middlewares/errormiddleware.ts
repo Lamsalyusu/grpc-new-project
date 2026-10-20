@@ -1,27 +1,40 @@
-// import { Request, Response, NextFunction } from "express";
-
-// function errorHandler(error: any, req: Request, res: Response, _next: NextFunction) {
-//   const status = error.status || 500;
-//   const message = error.message || "Something went wrong";
-//   res.status(status).json({ error: { message } });
-// }
-// export default errorHandler;
-
-//
 import { Request, Response, NextFunction } from "express";
+import logger from "../utils/logger";
 import { grpcStatusCode } from "../utils/statuscode";
 
 function errorHandler(
   err: any,
-  _req: Request,
+  req: Request,
   res: Response,
-  _next: NextFunction,
+  next: NextFunction,
 ) {
-  console.log(err.details, err.code);
-  const errorInfo = grpcStatusCode(err.code);
-  console.log(errorInfo);
-  return res.status(errorInfo.status).json({
-    message: err.details || errorInfo.message,
+  if (res.headersSent) {
+    return next(err);
+  }
+
+  const grpcCode = typeof err?.code === "number" ? err.code : undefined;
+  const mappedError = grpcCode ? grpcStatusCode(grpcCode) : { status: err?.status || 500, message: "Internal server error" };
+  const statusCode = Number(mappedError.status || err?.statusCode || 500);
+  const message = err?.details || err?.message || mappedError.message || "Something went wrong";
+  const details = err?.details || err?.errors || undefined;
+
+  logger.error({
+    level: "error",
+    message: "Request failed",
+    method: req.method,
+    url: req.originalUrl,
+    statusCode,
+    grpcCode,
+    errorMessage: message,
+    details,
+  });
+
+  return res.status(statusCode).json({
+    error: {
+      code: statusCode,
+      message,
+      ...(details ? { details } : {}),
+    },
   });
 }
 

@@ -10,7 +10,8 @@ import notifroutes from "./routes/notificationRoutes";
 import collaborationRoutes from "./routes/collaborationRoutes";
 import adminRoutes from "./routes/adminRoutes";
 import path from "path";
-import morgan from 'morgan'
+import logger from "./utils/logger";
+import { apiLimiter } from "./middlewares/rateLimiter";
 
 const app = express();
 
@@ -111,12 +112,26 @@ app.use(
   }),
 );
 
-app.use(express.json());
-app.use(cors(corsOptions));
+app.use((req, res, next) => {
+  const startedAt = Date.now();
 
-app.use(morgan('dev'))
-// Outputs: GET /api/users 200 - 12.345 ms / 15.120 ms
-// app.use(morgan(':method :url :status - :response-time ms / :total-time ms'));
+  res.on("finish", () => {
+    logger.info({
+      message: "HTTP request completed",
+      method: req.method,
+      path: req.path,
+      statusCode: res.statusCode,
+      durationMs: Date.now() - startedAt,
+      ip: req.ip,
+    });
+  });
+
+  next();
+});
+
+app.use(cors(corsOptions));
+app.use("/api/v1", apiLimiter);
+app.use(express.json({ limit: "1mb" }));
 
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, "../client")));
@@ -127,12 +142,11 @@ app.use("/api/v1/tasks", taskCollaboratorRouter);
 app.use("/api/v1/tasks", messageRoutes);
 app.use("/api/v1/tasks", taskrouter);
 app.use("/api/v1/notifications", notifroutes);
-app.use("/api/v1/collaboration", collaborationRoutes); // Health check
+app.use("/api/v1/collaboration", collaborationRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.get("/health", (_req, res) => {
   res.status(200).json({ status: "ok", message: "app running smoothly" });
 });
 
-// Error handling middleware
 app.use(errorHandler);
 export default app;

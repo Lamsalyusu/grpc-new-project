@@ -1,7 +1,27 @@
 import { Socket } from "socket.io";
 import { verifyToken } from "../utils/jwt";
+import logger from "../utils/logger";
+
+const handshakeWindows = new Map<string, { startedAt: number; count: number }>();
+const HANDSHAKE_LIMIT = 30;
+const HANDSHAKE_WINDOW_MS = 60 * 1000;
+
 // Middleware to authenticate incoming connections
 function socketMiddleware(socket: Socket, next: (err?: Error) => void) {
+  const address = socket.handshake.address || "unknown-address";
+  const now = Date.now();
+  const current = handshakeWindows.get(address);
+
+  if (!current || now - current.startedAt >= HANDSHAKE_WINDOW_MS) {
+    handshakeWindows.set(address, { startedAt: now, count: 1 });
+  } else if (current.count >= HANDSHAKE_LIMIT) {
+    logger.warn({ message: "Socket handshake rate limit exceeded", address });
+    next(new Error("Too many connection attempts. Please try again shortly."));
+    return;
+  } else {
+    current.count += 1;
+  }
+
   // Extract data passed from the client during handshake
   const token = socket.handshake.auth.token;
   if (!token) {

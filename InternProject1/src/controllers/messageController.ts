@@ -31,7 +31,7 @@ const messageControllers = {
     // const senderid = (req as any).user.id;
     const task_id = req.params.id as string;
     const image = (req as any).file
-    console.log("IMage ko request hereko la guyz haru maile ",image);
+    logger.info({ message: "Message image received", hasImage: Boolean(image) });
     const md = buildMetadata(req);
     messageClient.sendMessage(
       { task_id,

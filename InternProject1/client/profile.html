@@ -2,16 +2,16 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>My Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Profile | TaskFlow</title>
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/ui.css" />
     <script src="js/redirect.js"></script>
   </head>
   <body>
     <nav class="navbar">
       <h2>
-        <a href="dashboard.html" style="text-decoration: none; color: inherit"
-          >← Dashboard</a
-        >
+        <a href="dashboard.html">Dashboard</a>
       </h2>
       <div>
         <a href="notifications.html">Notifications</a>
@@ -20,9 +20,10 @@
     </nav>
 
     <div class="container">
-      <div class="auth-container" style="margin-top: 40px">
-        <h1>My Profile</h1>
-        <div id="profileCard" style="margin-top: 20px">
+      <div class="profile-panel">
+        <p class="page-kicker">Account</p>
+        <h1>My profile</h1>
+        <div id="profileCard">
           <p><strong>Name:</strong> <span id="pName">Loading...</span></p>
           <p><strong>Email:</strong> <span id="pEmail">Loading...</span></p>
           <p><strong>Role:</strong> <span id="pRole">Loading...</span></p>

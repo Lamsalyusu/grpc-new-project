@@ -4,6 +4,11 @@ import { Namespace, Socket } from "socket.io";
 import messageClient from "../grpc-client/messageClient";
 import { messageValidationSchema } from "../validators/messageValidators";
 import * as grpc from "@grpc/grpc-js";
+import logger from "../utils/logger";
+
+const eventWindows = new Map<string, { startedAt: number; count: number }>();
+const EVENT_LIMIT = 120;
+const EVENT_WINDOW_MS = 60 * 1000;
 
 function buildSocketMetadata(socket: Socket): grpc.Metadata {
   const md = new grpc.Metadata();
@@ -15,6 +20,36 @@ function buildSocketMetadata(socket: Socket): grpc.Metadata {
 }
 
 function registerChatHandler(io: Namespace, socket: Socket) {
+  const rateKey = String(socket.data.user?.id || socket.handshake.address);
+
+  socket.use(([eventName], next) => {
+    const now = Date.now();
+    const current = eventWindows.get(rateKey);
+
+    if (!current || now - current.startedAt >= EVENT_WINDOW_MS) {
+      eventWindows.set(rateKey, { startedAt: now, count: 1 });
+    } else if (current.count >= EVENT_LIMIT) {
+      logger.warn({
+        message: "Socket event rate limit exceeded",
+        eventName,
+        userId: socket.data.user?.id,
+        socketId: socket.id,
+      });
+      next(new Error("Too many chat events. Please try again shortly."));
+      return;
+    } else {
+      current.count += 1;
+    }
+
+    logger.info({
+      message: "Socket event received",
+      eventName,
+      userId: socket.data.user?.id,
+      socketId: socket.id,
+    });
+    next();
+  });
+
   socket.on("join_task", (data) => {
     const taskid = data.task_id;
     const md = buildSocketMetadata(socket);
