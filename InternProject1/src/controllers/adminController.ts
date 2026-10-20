@@ -6,10 +6,12 @@ import logger from "../utils/logger";
 const adminController = {
   register: (req: Request, res: Response, next: NextFunction) => {
     const data = req.body;
+    logger.info("Admin registration request received");
 
     adminClient.registerAdmin(data, (err: any, response: any) => {
       if (err) return next(err);
 
+      logger.info("Admin registration successful");
       return res.status(201).json({
         data: response,
         message: "Admin registered successfully",
@@ -19,10 +21,12 @@ const adminController = {
 
   login: (req: Request, res: Response, next: NextFunction) => {
     const data = req.body;
+    logger.info("Admin login request received");
 
     adminClient.loginAdmin(data, (err: any, response: any) => {
       if (err) return next(err);
 
+      logger.info("Admin login successful");
       return res.status(200).json({
         data: response,
         message: "Admin logged in successfully",
@@ -32,10 +36,12 @@ const adminController = {
 
   seeAllUsers: (req: Request, res: Response, next: NextFunction) => {
     const md = buildMetadata(req);
+    logger.info("Admin fetch-all-users request received");
 
     adminClient.seeAllUsers({}, md, (err: any, response: any) => {
       if (err) return next(err);
 
+      logger.info("Users fetched successfully for admin");
       return res.status(200).json({
         data: response,
         message: "Users fetched successfully",
@@ -60,10 +66,12 @@ const adminController = {
   deleteUser: (req: Request, res: Response, next: NextFunction) => {
     const { user_id } = req.params;
     const md = buildMetadata(req);
+    logger.warn({ message: "Admin delete-user request", userId: user_id });
 
     adminClient.deleteUser({ user_id }, md, (err: any, response: any) => {
       if (err) return next(err);
 
+      logger.info({ message: "Admin deleted user", userId: user_id });
       return res.status(200).json({
         data: response,
         message: "User deleted successfully",
@@ -82,6 +90,7 @@ const adminController = {
       (err: any, response: any) => {
         if (err) return next(err);
 
+        logger.info({ message: "Admin updated user", userId: user_id });
         return res.status(200).json({
           data: response,
           message: "User updated successfully",
@@ -90,19 +99,18 @@ const adminController = {
     );
   },
 
-
-  createTaskForUser: (req: Request,res: Response,next: NextFunction) => {
-    console.log("1. Admin task controller reached");
+  createTaskForUser: (req: Request, res: Response, next: NextFunction) => {
     const data = req.body;
     const md = buildMetadata(req);
-      console.log("2. Calling createTaskForUser RPC");
+    logger.info("Admin create-task request received");
+
     adminClient.createTaskForUser(data, md, (err: any, response: any) => {
-      console.log("3. RPC callback reached");
-      if (err){ 
-        console.error("RPC error:", err);
+      if (err) {
+        logger.error({ message: "Admin task creation failed", error: err?.message || err });
         return next(err);
-        }
-        console.log("RPC response:", response);
+      }
+
+      logger.info({ message: "Admin created task", taskId: response?.id || null });
       return res.status(201).json({
         data: response,
         message: "Task created successfully for user",
@@ -110,12 +118,14 @@ const adminController = {
     });
   },
 
-
-seeAdminTasks: (req: Request, res: Response, next: NextFunction) => {
+  seeAdminTasks: (req: Request, res: Response, next: NextFunction) => {
     const md = buildMetadata(req);
+    logger.info("Admin fetch tasks request received");
+
     adminClient.seeAdminTasks({}, md, (err: any, response: any) => {
       if (err) return next(err);
 
+      logger.info("Admin tasks fetched successfully");
       return res.status(200).json({
         data: response,
         message: "Admin tasks fetched successfully",
