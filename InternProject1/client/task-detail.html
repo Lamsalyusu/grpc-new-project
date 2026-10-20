@@ -2,10 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Task Detail</title>
+    <title>Task Details | TaskFlow</title>
 
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/ui.css" />
 
     <script src="js/redirect.js"></script>
 
@@ -15,9 +17,7 @@
   <body>
     <nav class="navbar">
       <h2>
-        <a href="dashboard.html" style="text-decoration: none; color: inherit">
-          ← Back
-        </a>
+        <a href="dashboard.html">Dashboard</a>
       </h2>
 
       <div>
@@ -37,29 +37,21 @@
       <!-- ================================================================ -->
 
       <div id="collabSection">
-        <h3 style="margin-top: 24px">Collaborators</h3>
+        <h3>Collaborators</h3>
 
         <div id="collaborators"></div>
 
         <button
           type="button"
           id="btnAddCollaborator"
-          style="margin-top: 10px; background: #2563eb"
+          class="secondary-btn"
         >
           + Add Collaborator
         </button>
 
         <div
           id="collaboratorPicker"
-          style="
-            display: none;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 10px;
-            margin-top: 10px;
-            max-height: 220px;
-            overflow-y: auto;
-          "
+          class="collaborator-picker"
         ></div>
       </div>
 
@@ -67,12 +59,6 @@
       <button
         type="button"
         id="btnLeaveTask"
-        style="
-          display: none;
-          margin-top: 16px;
-          background: #ef4444;
-          color: white;
-        "
       >
         Leave Task
       </button>
@@ -81,7 +67,7 @@
       <!-- Chat -->
       <!-- ================================================================ -->
 
-      <h3 style="margin-top: 24px">Chat</h3>
+      <h3>Chat</h3>
     <div class="chat-box">
       <div class="chat-messages" id="chatMessages"></div>
       <div class="chat-input">

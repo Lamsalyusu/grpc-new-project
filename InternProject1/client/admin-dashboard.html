@@ -3,396 +3,516 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard | Task Manager</title>
-
+    <title>Admin Dashboard | TaskFlow</title>
     <style>
-      * {
-        box-sizing: border-box;
+      :root {
+        --bg: #f2f6f5;
+        --panel: #ffffff;
+        --border: #dce7e4;
+        --text: #162a2a;
+        --muted: #657877;
+        --primary: #087e78;
+        --primary-dark: #075e5a;
+        --success: #16815c;
+        --warning: #bd690e;
+        --danger: #bd493f;
+        --shadow: 0 8px 22px rgba(20, 48, 45, 0.055);
       }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
 
       body {
         margin: 0;
+        font-family: "Aptos", "Segoe UI", sans-serif;
+        background: #f2f6f5;
+        color: var(--text);
+      }
+
+      button, input, select, textarea { font: inherit; }
+      button { cursor: pointer; }
+
+      .admin-page-shell {
+        min-height: 100vh;
         padding: 24px;
-        font-family: Arial, sans-serif;
-        background: #f5f7fb;
-        color: #222;
       }
 
-      main {
-        max-width: 1200px;
+      .admin-layout {
+        max-width: 1400px;
         margin: 0 auto;
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        gap: 24px;
       }
 
-      .admin-header {
+      .sidebar-panel,
+      .admin-card,
+      .stat-card,
+      .drawer-form {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        box-shadow: var(--shadow);
+      }
+
+      .sidebar-panel {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        height: fit-content;
+        position: sticky;
+        top: 24px;
+      }
+
+      .brand-block {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .brand-mark {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: var(--primary);
+        color: white;
+        font-weight: 800;
+      }
+
+      .eyebrow {
+        margin: 0 0 4px;
+        color: var(--muted);
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .brand-block h2, .topbar h1, .section-header h2 { margin: 0; }
+
+      .sidebar-nav { display: grid; gap: 8px; }
+
+      .nav-link {
+        text-decoration: none;
+        color: var(--text);
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: rgba(148, 163, 184, 0.08);
+        font-weight: 600;
+      }
+
+      .nav-link.active {
+        background: #d8eeea;
+        color: var(--primary-dark);
+      }
+
+      .logout-button,
+      .primary-btn,
+      .secondary-btn,
+      .action-edit,
+      .action-delete,
+      .close-btn {
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        transition: transform 0.15s ease;
+      }
+
+      .logout-button,
+      .primary-btn {
+        background: var(--primary);
+        color: white;
+        box-shadow: 0 16px 32px rgba(79, 70, 229, 0.2);
+      }
+
+      .secondary-btn {
+        background: rgba(15, 23, 42, 0.06);
+        color: var(--text);
+      }
+
+      .logout-button { margin-top: auto; }
+
+      .primary-btn, .secondary-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 16px;
+      }
+
+      .primary-btn:hover,
+      .secondary-btn:hover,
+      .logout-button:hover {
+        transform: translateY(-1px);
+      }
+
+      .admin-main { display: grid; gap: 24px; }
+      .topbar { padding: 10px 6px 0; }
+      .topbar h1 { font-size: clamp(2rem, 2vw, 3rem); }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .stat-card {
+        padding: 22px 20px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .stat-card span {
+        font-size: 0.8rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .stat-card strong { font-size: clamp(2rem, 2vw, 2.5rem); }
+      .stat-card small { color: var(--muted); }
+
+      .accent-blue { background: #edf4f3; }
+      .accent-purple { background: #f6efec; }
+      .accent-green { background: #edf4ef; }
+
+      .admin-card { padding: 24px; }
+
+      .section-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 16px;
-        margin-bottom: 28px;
+        margin-bottom: 16px;
       }
 
-      .admin-header h1 {
-        margin: 0;
-      }
+      .inline-controls, .task-filters { display: flex; gap: 12px; flex-wrap: wrap; }
 
-      .admin-card {
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 10px;
-        padding: 24px;
-        margin-bottom: 24px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-      }
-
-      .admin-card h2 {
-        margin-top: 0;
-        margin-bottom: 8px;
-      }
-
-      .admin-card > p {
-        color: #666;
-      }
-
-      .admin-form {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 16px;
-        margin-top: 24px;
-      }
-
-      .form-group {
-        display: flex;
-        flex-direction: column;
-        gap: 7px;
-      }
-
-      .form-group.full-width {
-        grid-column: 1 / -1;
-      }
-
-      label {
-        font-weight: 600;
-        font-size: 14px;
-      }
-
-      input,
-      select,
-      textarea,
-      button {
-        font: inherit;
-      }
-
-      input,
-      select,
-      textarea {
+      .inline-controls input,
+      .task-filters input,
+      .task-filters select,
+      .admin-form input,
+      .admin-form select,
+      .admin-form textarea,
+      .drawer-form input,
+      .drawer-form select {
         width: 100%;
-        padding: 11px 12px;
-        border: 1px solid #d1d5db;
-        border-radius: 6px;
-        background: #fff;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(148, 163, 184, 0.45);
+        background: rgba(255, 255, 255, 0.82);
+        color: var(--text);
       }
 
-      textarea {
-        min-height: 90px;
-        resize: vertical;
-      }
+      .admin-form, .drawer-form { display: grid; gap: 14px; }
+      .admin-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .form-group { display: grid; gap: 8px; }
+      .full-width { grid-column: 1 / -1; }
+      .form-actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; }
+      label { font-size: 0.82rem; font-weight: 700; }
+      textarea { min-height: 120px; resize: vertical; }
 
-      input:focus,
-      select:focus,
-      textarea:focus {
-        outline: 2px solid #bfdbfe;
-        border-color: #2563eb;
-      }
+      .task-filters { margin-bottom: 18px; }
+      .task-filters input, .task-filters select { flex: 1; max-width: 260px; }
+      .task-count { color: var(--muted); margin-bottom: 12px; }
 
-      button {
-        border: none;
-        border-radius: 6px;
-        padding: 11px 16px;
-        cursor: pointer;
-        background: #2563eb;
-        color: #fff;
-        font-weight: 600;
-      }
-
-      button:hover {
-        background: #1d4ed8;
-      }
-
-      button:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-      }
-
-      .secondary-button {
-        background: #4b5563;
-      }
-
-      .secondary-button:hover {
-        background: #374151;
-      }
-
-      .logout-button {
-        background: #dc2626;
-      }
-
-      .logout-button:hover {
-        background: #b91c1c;
-      }
-
-      .form-actions {
-        grid-column: 1 / -1;
-      }
-
-      .message {
-        margin-top: 14px;
-        font-size: 14px;
-      }
-
-      .message.success {
-        color: #15803d;
-      }
-
-      .message.error {
-        color: #dc2626;
-      }
-
-      .message.info {
-        color: #4b5563;
-      }
-
-      .task-filters {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin: 20px 0;
-      }
-
-      .task-filters input {
-        flex: 1;
-        min-width: 200px;
-      }
-
-      .task-filters select {
-        min-width: 150px;
-        width: auto;
-      }
-
-      .task-filters button {
-        white-space: nowrap;
-      }
-
-      .admin-table-wrapper {
-        width: 100%;
-        overflow-x: auto;
-      }
-
-      .admin-task-table {
-        width: 100%;
-        border-collapse: collapse;
+      .admin-table-wrapper { overflow-x: auto; }
+      .admin-task-table { width: 100%; border-collapse: collapse; }
+      .admin-task-table th, .admin-task-table td {
+        padding: 14px 10px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.18);
         text-align: left;
       }
 
-      .admin-task-table th,
-      .admin-task-table td {
-        padding: 13px 12px;
-        border-bottom: 1px solid #e5e7eb;
-        white-space: nowrap;
-      }
-
       .admin-task-table th {
-        background: #f3f4f6;
-        font-size: 13px;
+        color: var(--muted);
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
       }
 
-      .admin-task-table tbody tr:hover {
-        background: #f9fafb;
-      }
+      .admin-task-table tbody tr:hover { background: rgba(79, 70, 229, 0.04); }
 
       .task-status {
-        display: inline-block;
-        padding: 5px 9px;
-        border-radius: 5px;
-        background: #e5e7eb;
-        font-size: 12px;
-        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.06);
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: capitalize;
       }
 
-      .task-priority {
-        font-weight: 600;
+      .task-priority { font-weight: 700; text-transform: capitalize; }
+
+      .user-actions { display: flex; gap: 8px; }
+
+      .action-edit, .action-delete {
+        padding: 8px 10px;
+        color: var(--text);
       }
 
-      #taskCount {
-        margin-bottom: 0;
-        color: #555;
-        font-size: 14px;
+      .action-edit { background: rgba(79, 70, 229, 0.08); color: var(--primary-dark); }
+      .action-delete { background: rgba(239, 68, 68, 0.08); color: #b91c1c; }
+
+      .drawer {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        width: min(100%, 360px);
+        transform: translateY(120%);
+        opacity: 0;
+        pointer-events: none;
+        transition: transform 0.25s ease, opacity 0.25s ease;
       }
 
-      @media (max-width: 650px) {
-        body {
-          padding: 12px;
-        }
+      .drawer.visible {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+      }
 
-        .admin-header {
-          align-items: flex-start;
-        }
+      .drawer-form { padding: 20px; }
+      .drawer-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
 
-        .admin-card {
-          padding: 16px;
-        }
+      .close-btn {
+        width: 32px;
+        height: 32px;
+        background: rgba(148, 163, 184, 0.12);
+        font-size: 1.4rem;
+      }
 
-        .admin-form {
-          grid-template-columns: 1fr;
-        }
+      .inline-message { margin-top: 12px; font-size: 0.95rem; }
+      .inline-message.success { color: var(--success); }
+      .inline-message.error { color: var(--danger); }
+      .inline-message.info { color: var(--muted); }
 
-        .form-group.full-width,
-        .form-actions {
-          grid-column: auto;
-        }
+      @media (max-width: 980px) {
+        .admin-layout { grid-template-columns: 1fr; }
+        .sidebar-panel { position: relative; top: 0; }
+        .stats-grid { grid-template-columns: 1fr; }
+      }
 
-        .task-filters {
-          flex-direction: column;
-        }
-
-        .task-filters input,
-        .task-filters select,
-        .task-filters button {
-          width: 100%;
-        }
+      @media (max-width: 640px) {
+        .admin-page-shell { padding: 16px; }
+        .admin-card, .sidebar-panel { padding: 16px; }
+        .admin-form { grid-template-columns: 1fr; }
+        .task-filters, .inline-controls, .section-header { flex-direction: column; align-items: stretch; }
       }
     </style>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/ui.css" />
   </head>
 
-  <body>
-    <main>
-      <header class="admin-header">
-        <div>
-          <h1>Admin Dashboard</h1>
-          <p>Manage users and the tasks you assign.</p>
+  <body class="admin-page-shell">
+    <div class="admin-layout">
+      <aside class="sidebar-panel">
+        <div class="brand-block">
+          <span class="brand-mark">TF</span>
+          <div>
+            <p class="eyebrow">Workspace</p>
+            <h2>TaskFlow</h2>
+          </div>
         </div>
 
-        <button type="button" id="btnLogout" class="logout-button">
-          Logout
-        </button>
-      </header>
+        <nav class="sidebar-nav">
+          <a href="#overview" class="nav-link active">Overview</a>
+          <a href="#users" class="nav-link">Users</a>
+          <a href="#assign" class="nav-link">Create task</a>
+          <a href="#tracking" class="nav-link">Tracking</a>
+        </nav>
 
-      <!-- Create task section -->
-      <section class="admin-card">
-        <h2>Create Task for User</h2>
-        <p>Assign a new task to an existing user.</p>
+        <button class="logout-button" id="btnLogout" type="button">Logout</button>
+      </aside>
 
-        <form id="adminTaskForm" class="admin-form">
-          <div class="form-group full-width">
-            <label for="owner_id">Select User</label>
-            <select id="owner_id" name="owner_id" required>
-              <option value="">Loading users...</option>
+      <main class="admin-main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Operations center</p>
+            <h1>Admin Dashboard</h1>
+          </div>
+        </header>
+
+        <section id="overview" class="stats-grid">
+          <article class="stat-card accent-blue">
+            <span>Total users</span>
+            <strong id="statUsers">0</strong>
+            <small>Active workspace members</small>
+          </article>
+
+          <article class="stat-card accent-purple">
+            <span>Tasks assigned</span>
+            <strong id="statTasks">0</strong>
+            <small>Tasks managed this cycle</small>
+          </article>
+
+          <article class="stat-card accent-green">
+            <span>Pending</span>
+            <strong id="statPending">0</strong>
+            <small>Need attention</small>
+          </article>
+        </section>
+
+        <section class="admin-card" id="users">
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">People</p>
+              <h2>User management</h2>
+            </div>
+
+            <div class="inline-controls">
+              <input id="userSearch" type="search" placeholder="Search user" />
+              <button id="refreshUsers" type="button" class="secondary-btn">Refresh</button>
+            </div>
+          </div>
+
+          <div class="admin-table-wrapper">
+            <table class="admin-task-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="userTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="admin-card" id="assign">
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Workflow</p>
+              <h2>Assign a task</h2>
+            </div>
+          </div>
+
+          <form id="adminTaskForm" class="admin-form">
+            <div class="form-group full-width">
+              <label for="owner_id">Select user</label>
+              <select id="owner_id" required></select>
+            </div>
+
+            <div class="form-group">
+              <label for="title">Task title</label>
+              <input id="title" type="text" placeholder="Quarterly planning" required />
+            </div>
+
+            <div class="form-group">
+              <label for="priority">Priority</label>
+              <select id="priority">
+                <option value="low">Low</option>
+                <option value="medium" selected>Medium</option>
+                <option value="high">High</option>
+                <option value="urgent">Urgent</option>
+              </select>
+            </div>
+
+            <div class="form-group full-width">
+              <label for="description">Description</label>
+              <textarea id="description" placeholder="Add details, goals, and constraints..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="due_date">Due date</label>
+              <input id="due_date" type="datetime-local" />
+            </div>
+
+            <div class="form-group">
+              <label for="reminder_at">Reminder date</label>
+              <input id="reminder_at" type="datetime-local" />
+            </div>
+
+            <div class="form-actions">
+              <button id="createTaskBtn" type="submit" class="primary-btn">Create task</button>
+            </div>
+          </form>
+
+          <div id="adminMessage" class="inline-message info" aria-live="polite"></div>
+        </section>
+
+        <section class="admin-card" id="tracking">
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Monitoring</p>
+              <h2>Task tracking</h2>
+            </div>
+          </div>
+
+          <div class="task-filters">
+            <input id="taskSearch" type="search" placeholder="Search by task or owner" />
+            <select id="taskStatusFilter">
+              <option value="">All statuses</option>
+              <option value="pending">Pending</option>
+              <option value="in_progress">In progress</option>
+              <option value="completed">Completed</option>
             </select>
-          </div>
-
-          <div class="form-group full-width">
-            <label for="title">Task Title</label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              placeholder="Enter task title"
-              required
-            />
-          </div>
-
-          <div class="form-group full-width">
-            <label for="description">Description</label>
-            <textarea
-              id="description"
-              name="description"
-              placeholder="Enter task description"
-            ></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="priority">Priority</label>
-            <select id="priority" name="priority" required>
+            <select id="taskPriorityFilter">
+              <option value="">All priorities</option>
               <option value="low">Low</option>
-              <option value="medium" selected>Medium</option>
+              <option value="medium">Medium</option>
               <option value="high">High</option>
+              <option value="urgent">Urgent</option>
             </select>
+            <button id="refreshAdminTasks" type="button" class="secondary-btn">Refresh tasks</button>
           </div>
 
-          <div class="form-group">
-            <label for="due_date">Due Date</label>
-            <input type="datetime-local" id="due_date" name="due_date" />
+          <p id="taskCount" class="task-count"></p>
+
+          <div class="admin-table-wrapper">
+            <table class="admin-task-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Owner</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                  <th>Due</th>
+                  <th>Created</th>
+                </tr>
+              </thead>
+              <tbody id="adminTasksBody"></tbody>
+            </table>
           </div>
 
-          <div class="form-group full-width">
-            <label for="reminder_at">Reminder Date and Time</label>
-            <input type="datetime-local" id="reminder_at" name="reminder_at" />
-          </div>
+          <div id="taskTrackingMessage" class="inline-message info" aria-live="polite"></div>
+        </section>
+      </main>
+    </div>
 
-          <div class="form-actions">
-            <button type="submit" id="createTaskBtn">Create Task</button>
-
-            <p id="adminMessage" class="message" role="status"></p>
-          </div>
-        </form>
-      </section>
-
-      <!-- Tasks created by this admin -->
-      <section class="admin-card" id="adminTaskTracking">
-        <h2>Tasks Created by Me</h2>
-        <p>Track the tasks you have assigned to users.</p>
-
-        <div class="task-filters">
-          <input
-            type="search"
-            id="taskSearch"
-            placeholder="Search by task title or owner..."
-            aria-label="Search tasks by title or owner"
-          />
-
-          <select id="taskStatusFilter" aria-label="Filter by status">
-            <option value="">All statuses</option>
-            <option value="pending">Pending</option>
-            <option value="in_progress">In Progress</option>
-            <option value="completed">Completed</option>
-          </select>
-
-          <select id="taskPriorityFilter" aria-label="Filter by priority">
-            <option value="">All priorities</option>
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-          </select>
-
-          <button type="button" id="refreshAdminTasks" class="secondary-button">
-            Refresh
-          </button>
+    <div class="drawer" id="userEditorDrawer">
+      <form id="userEditForm" class="drawer-form">
+        <div class="drawer-head">
+          <h3>Edit user</h3>
+          <button type="button" class="close-btn" id="closeUserEditor">×</button>
         </div>
 
-        <p id="taskTrackingMessage" class="message" role="status"></p>
+        <input type="hidden" id="editUserId" />
 
-        <div class="admin-table-wrapper">
-          <table class="admin-task-table">
-            <thead>
-              <tr>
-                <th>Task</th>
-                <th>Owner</th>
-                <th>Priority</th>
-                <th>Status</th>
-                <th>Due Date</th>
-                <th>Created</th>
-              </tr>
-            </thead>
+        <label for="editName">Full name</label>
+        <input id="editName" type="text" />
 
-            <tbody id="adminTasksBody">
-              <tr>
-                <td colspan="6">Loading tasks...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <label for="editEmail">Email</label>
+        <input id="editEmail" type="email" />
 
-        <p id="taskCount">Loading task count...</p>
-      </section>
-    </main>
+        <label for="editRole">Role</label>
+        <select id="editRole">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+
+        <button type="submit" class="primary-btn">Save changes</button>
+      </form>
+    </div>
 
     <script src="js/api.js"></script>
     <script src="js/admin-dashboard.js"></script>

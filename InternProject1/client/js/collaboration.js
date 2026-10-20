@@ -119,7 +119,7 @@ async function loadCollaborationRequests() {
 
     if (list) {
       list.innerHTML = `
-        <p style="color:#ef4444;">
+        <p class="collaboration-error-state">
           Could not load collaboration requests.
         </p>
       `;
@@ -313,7 +313,7 @@ async function loadCollaborators() {
 
     if (list) {
       list.innerHTML = `
-        <p style="color:#ef4444;">
+        <p class="collaboration-error-state">
           Could not load collaborators.
         </p>
       `;

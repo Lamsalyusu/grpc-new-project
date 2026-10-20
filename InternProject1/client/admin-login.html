@@ -4,36 +4,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Login | Task Manager</title>
+  <title>Admin Login | TaskFlow</title>
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/ui.css" />
 </head>
-<body>
-  <div class="auth-container">
-    <h1>Admin Login</h1>
+<body class="auth-shell">
+  <div class="auth-card">
+    <div class="brand-badge">TaskFlow Admin</div>
+    <h1>Welcome back</h1>
+    <p class="auth-subtext">Secure access for workspace administrators.</p>
 
-    <form id="adminLoginForm">
-      <input
-        type="email"
-        id="email"
-        placeholder="Admin email"
-        required
-      />
+    <form id="adminLoginForm" class="auth-form">
+      <label class="field-label" for="email">Email</label>
+      <input type="email" id="email" placeholder="admin@company.com" required />
 
-      <input
-        type="password"
-        id="password"
-        placeholder="Password"
-        required
-      />
+      <label class="field-label" for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter your password" required />
 
-      <button type="submit">Login as Admin</button>
+      <button type="submit" class="primary-btn">Login as Admin</button>
     </form>
 
-    <p id="error" class="error"></p>
+    <p id="error" class="error-message"></p>
 
-    <p>
+    <div class="text-link-row">
       <a href="index.html">Back to user login</a>
-    </p>
+    </div>
   </div>
 
   <script src="js/api.js"></script>

@@ -2,16 +2,18 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Tasks | TaskFlow</title>
 
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/ui.css" />
 
     <script src="js/redirect.js"></script>
   </head>
 
   <body>
     <nav class="navbar">
-      <h2><a href="">Task Manager</a></h2>
+          <h2><a href="">TaskFlow</a></h2>
       <div>
         <a href="collaboration.html">Collaborators</a>
         <a href="profile.html">Profile</a>
@@ -22,7 +24,7 @@
 
     <div class="container">
       <!-- Additional task sections -->
-      <div class="dashboard-sections">
+      <div class="dashboard-sections" aria-label="Task views">
         <a href="admin-tasks.html" class="dashboard-section-card">
           <h3>Tasks Created by Admin</h3>
           <p>View tasks assigned to you by an administrator.</p>
@@ -36,20 +38,15 @@
         </a>
       </div>
 
-      <div
-        style="
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 16px;
-        "
-      >
-        <h2>My Tasks</h2>
-
-        <button id="btnOpenModal">+ New Task</button>
+      <div class="page-section-heading">
+        <div>
+          <p class="page-kicker">Your workspace</p>
+          <h1>My tasks</h1>
+        </div>
+        <button id="btnOpenModal" type="button">New task</button>
       </div>
 
-      <div id="filters" style="margin-bottom: 16px">
+      <div id="filters" aria-label="Filter tasks">
         <select id="filterStatus">
           <option value="">All Status</option>
           <option value="pending">Pending</option>
@@ -69,20 +66,21 @@
       </div>
 
       <div id="tasksList"></div>
-      <!-- <h2 style="margin-top: 32px">Shared With Me</h2> -->
       <div id="sharedTasksList"></div>
     </div>
 
-    <div class="modal-overlay" id="modal">
-      <div class="modal">
-        <h3>Create Task</h3>
+    <div class="modal-overlay" id="modal" role="presentation">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="createTaskTitle">
+        <h3 id="createTaskTitle">Create task</h3>
 
         <form id="createTaskForm">
-          <input type="text" id="title" placeholder="Title" required />
+          <label for="title">Title</label>
+          <input type="text" id="title" placeholder="e.g. Prepare project brief" required />
 
+          <label for="description">Description</label>
           <textarea id="description" placeholder="Description"></textarea>
 
-          <h5>Priority</h5>
+          <label for="priority">Priority</label>
 
           <select id="priority">
             <option value="low">Low</option>
@@ -92,11 +90,11 @@
             <option value="high">High</option>
           </select>
 
-          <h5>Due-date</h5>
+          <label for="due_date">Due date</label>
 
           <input type="datetime-local" id="due_date" />
 
-          <h5>Reminder-date</h5>
+          <label for="reminder_at">Reminder</label>
 
           <input type="datetime-local" id="reminder_at" />
 
@@ -104,38 +102,25 @@
 
           <div
             id="selectedTaskCollaborators"
-            style="
-              display: flex;
-              flex-wrap: wrap;
-              gap: 8px;
-              margin-bottom: 10px;
-            "
+            class="selected-collaborators"
           ></div>
 
           <button
             type="button"
             id="btnAddTaskCollaborator"
-            style="background: #2563eb; margin-bottom: 12px"
+            class="secondary-btn"
           >
             + Add Collaborator
           </button>
 
           <div
             id="taskCollaboratorPicker"
-            style="
-              display: none;
-              border: 1px solid #ddd;
-              border-radius: 8px;
-              padding: 10px;
-              margin-bottom: 12px;
-              max-height: 180px;
-              overflow-y: auto;
-            "
+            class="collaborator-picker"
           ></div>
 
-          <button type="submit">Create</button>
+          <button type="submit">Create task</button>
 
-          <button type="button" id="btnCloseModal" style="background: #666">
+          <button type="button" id="btnCloseModal" class="secondary-btn">
             Cancel
           </button>
         </form>
@@ -143,17 +128,19 @@
     </div>
 
     <div class="modal-overlay" id="editModal">
-      <div class="modal">
-        <h3>Edit Task</h3>
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editTaskTitle">
+        <h3 id="editTaskTitle">Edit task</h3>
 
         <form id="editTaskForm">
           <input type="hidden" id="editId" />
 
-          <input type="text" id="editTitle" placeholder="Title" required />
+          <label for="editTitle">Title</label>
+          <input type="text" id="editTitle" placeholder="Task title" required />
 
+          <label for="editDescription">Description</label>
           <textarea id="editDescription" placeholder="Description"></textarea>
 
-          <h5>Status</h5>
+          <label for="editStatus">Status</label>
 
           <select id="editStatus">
             <option value="pending">Pending</option>
@@ -163,7 +150,7 @@
             <option value="completed">Completed</option>
           </select>
 
-          <h5>Priority</h5>
+          <label for="editPriority">Priority</label>
 
           <select id="editPriority">
             <option value="low">Low</option>
@@ -173,17 +160,17 @@
             <option value="high">High</option>
           </select>
 
-          <h5>Due-date</h5>
+          <label for="editDueDate">Due date</label>
 
           <input type="datetime-local" id="editDueDate" />
 
-          <h5>Reminder-date</h5>
+          <label for="editReminderAt">Reminder</label>
 
           <input type="datetime-local" id="editReminderAt" />
 
           <button type="submit">Update</button>
 
-          <button type="button" id="btnCloseEditModal" style="background: #666">
+          <button type="button" id="btnCloseEditModal" class="secondary-btn">
             Cancel
           </button>
         </form>

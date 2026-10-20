@@ -140,16 +140,7 @@ async function loadCollaborators() {
     const list = document.getElementById("collaborators");
 
     if (taskCollaborators.length === 0) {
-      list.innerHTML = `
-        <p
-          style="
-            color:#666;
-            font-size:14px;
-          "
-        >
-          No collaborators yet.
-        </p>
-      `;
+      list.innerHTML = '<p class="collaboration-empty-state">No collaborators yet.</p>';
 
       return;
     }
@@ -159,82 +150,17 @@ async function loadCollaborators() {
         const name = c.name || c.email || c.id;
 
         return `
-
-            <div
-              style="
-                display:flex;
-                justify-content:space-between;
-                align-items:center;
-                padding:10px 12px;
-                background:#f9f9f9;
-                border-radius:8px;
-                margin-bottom:8px;
-              "
-            >
-
-              <div
-                style="
-                  display:flex;
-                  align-items:center;
-                  gap:10px;
-                "
-              >
-
-                <div
-                  style="
-                    width:32px;
-                    height:32px;
-                    border-radius:50%;
-                    background:#2563eb;
-                    color:white;
-                    display:flex;
-                    align-items:center;
-                    justify-content:center;
-                    font-weight:bold;
-                    font-size:14px;
-                  "
-                >
+            <div class="collaborator-card">
+              <div class="collaborator-info">
+                <div class="collaborator-avatar">
                   ${escapeHtml(name.charAt(0)).toUpperCase()}
                 </div>
-
-
-                <div>
-
-                  <div
-                    style="
-                      font-weight:600;
-                      font-size:14px;
-                    "
-                  >
-                    ${escapeHtml(name)}
-                  </div>
-
-                  <div
-                    style="
-                      font-size:12px;
-                      color:#666;
-                    "
-                  >
-                    ${escapeHtml(c.email || "")}
-                  </div>
-
+                <div class="collaborator-details">
+                  <div class="collaborator-name">${escapeHtml(name)}</div>
+                  <div class="collaborator-email">${escapeHtml(c.email || "")}</div>
                 </div>
-
               </div>
-              <button
-                class="btn-remove-collab"
-                data-userid="${c.id}"class="btn-remove-collab"
-                style="
-                  width:auto;
-                  padding:6px 12px;
-                  font-size:12px;
-                  background:#ef4444;
-                  color:white;
-                  border:none;
-                  border-radius:6px;
-                  cursor:pointer;
-                "
-              >
+              <button class="btn-remove-collab" data-userid="${c.id}" type="button">
                 Remove
               </button>
 
@@ -284,18 +210,7 @@ function renderCollaboratorPicker() {
   );
 
   if (available.length === 0) {
-    picker.innerHTML = `
-      <p
-        style="
-          color:#666;
-          font-size:14px;
-          margin:0;
-        "
-      >
-        All of your collaborators are already
-        added to this task.
-      </p>
-    `;
+    picker.innerHTML = '<p class="collaborator-empty">All collaborators are already on this task.</p>';
 
     return;
   }
@@ -304,16 +219,7 @@ function renderCollaboratorPicker() {
     .map(
       (c) => `
 
-        <label
-          style="
-            display:flex;
-            align-items:center;
-            gap:10px;
-            padding:8px;
-            cursor:pointer;
-            border-radius:6px;
-          "
-        >
+        <label class="task-collaborator-option">
 
           <input
             type="radio"
@@ -323,21 +229,11 @@ function renderCollaboratorPicker() {
 
           <div>
 
-            <div
-              style="
-                font-weight:600;
-                font-size:14px;
-              "
-            >
+            <div class="collaborator-option-name">
               ${escapeHtml(c.name || c.email)}
             </div>
 
-            <div
-              style="
-                color:#666;
-                font-size:12px;
-              "
-            >
+            <div class="collaborator-option-email">
               ${escapeHtml(c.email || "")}
             </div>
 
