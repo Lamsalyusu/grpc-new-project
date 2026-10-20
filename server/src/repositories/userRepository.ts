@@ -25,7 +25,6 @@ async function findByEmail(email: string) {
       type: QueryTypes.SELECT
     }
   );
-  console.log("yo chai repo ko la ",users[0])
   // user variable will always be an array eg [{id:1,name:"John",email:"}]
   // since emails are unique in the database, we can return the first element of the array or null if the array is empty
   return users[0]||null;
@@ -65,6 +64,33 @@ async function findAllUsers(){
   return users;
 }
 
+async function updateUser(user_id: string, data: { name?: string; email?: string; role?: string }) {
+  const currentUser = await findById(user_id);
+
+  if (!currentUser) {
+    return null;
+  }
+
+  const nextName = data.name?.trim() || currentUser.name;
+  const nextEmail = data.email?.trim() || currentUser.email;
+  const nextRole = data.role || "user";
+
+  await sequelize.query(
+    "UPDATE users SET name = ?, email = ?, role = ? WHERE id = ?",
+    {
+      replacements: [nextName, nextEmail, nextRole, user_id],
+      type: QueryTypes.UPDATE,
+    },
+  );
+
+  return {
+    id: user_id,
+    name: nextName,
+    email: nextEmail,
+    role: nextRole,
+  };
+}
+
 async function deleteUsers(user_id: string) {
   const user = await findById(user_id);
 
@@ -83,7 +109,4 @@ async function deleteUsers(user_id: string) {
   return user;
 }
 
-
-
-
-export { findByEmail, createUser, findById, findAllUsers,deleteUsers};
+export { findByEmail, createUser, findById, findAllUsers, updateUser, deleteUsers};
