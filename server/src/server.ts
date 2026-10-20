@@ -1,8 +1,6 @@
 import dotenv from "dotenv";
 import path from 'path';
-// console.log(path.join(__dirname,".env"))
 const envpath = path.join(__dirname,"/config/.env")
-console.log("env ko path",envpath)
 dotenv.config({path:envpath});
 
 // import .env
@@ -81,24 +79,20 @@ async function connectDB() {
   try {
     await sequelize.authenticate();
     logger.info("DB connected successfully");
-    console.log("DB connected Successfully");
   } catch (error: any) {
-    // logger.error(`db connection failed ${error.message}`);
-    console.log("Error while connecting to DB ", error);
+    logger.error({ message: "Database connection failed", error });
   }
 }
 
-const PORT = process.env.GRPC_PORT || "0.0.0.0:50051";
+const PORT = process.env.GRPC_PORT || "127.0.0.1:50051";
 
 server.bindAsync(PORT, grpc.ServerCredentials.createInsecure(), (err, PORT) => {
   if (err) {
     logger.error(`Failed to connect to gRPC server ${err.message}`);
-    console.error("failed to start the server ", err);
     return;
   }
 
   logger.info(`gRPC server running on port ${PORT}`);
-  console.log(`Server running on port ${PORT}`);
   connectDB();
 });
 
