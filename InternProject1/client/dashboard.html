@@ -12,6 +12,7 @@
   </head>
 
   <body>
+    <a class="skip-link" href="#main-content">Skip to tasks</a>
     <nav class="navbar">
           <h2><a href="">TaskFlow</a></h2>
       <div>
@@ -22,7 +23,7 @@
       </div>
     </nav>
 
-    <div class="container">
+    <main id="main-content" class="container" tabindex="-1">
       <!-- Additional task sections -->
       <div class="dashboard-sections" aria-label="Task views">
         <a href="admin-tasks.html" class="dashboard-section-card">
@@ -42,11 +43,16 @@
         <div>
           <p class="page-kicker">Your workspace</p>
           <h1>My tasks</h1>
+          <p class="task-page-subtitle">Keep priorities, deadlines, and shared work in view.</p>
         </div>
-        <button id="btnOpenModal" type="button">New task</button>
+        <button id="btnOpenModal" type="button" aria-haspopup="dialog">+ New task</button>
       </div>
 
       <div id="filters" aria-label="Filter tasks">
+        <label class="visually-hidden" for="taskSearch">Search tasks</label>
+        <input id="taskSearch" type="search" placeholder="Search tasks..." autocomplete="off" />
+
+        <label class="visually-hidden" for="filterStatus">Filter by status</label>
         <select id="filterStatus">
           <option value="">All Status</option>
           <option value="pending">Pending</option>
@@ -55,6 +61,7 @@
           <option value="missing">Missing</option>
         </select>
 
+        <label class="visually-hidden" for="filterPriority">Filter by priority</label>
         <select id="filterPriority">
           <option value="">All Priority</option>
           <option value="low">Low</option>
@@ -62,43 +69,90 @@
           <option value="high">High</option>
         </select>
 
-        <button id="btnFilter">Filter</button>
+        <label class="visually-hidden" for="sortTasks">Sort tasks</label>
+        <select id="sortTasks">
+          <option value="due">Soonest due</option>
+          <option value="priority">Priority</option>
+          <option value="newest">Recently added</option>
+          <option value="title">Title A–Z</option>
+        </select>
+
+        <button id="btnFilter" type="button" class="secondary-btn">Apply</button>
+        <button id="btnClearFilters" type="button" class="secondary-btn">Clear</button>
       </div>
 
-      <div id="tasksList"></div>
+      <div class="task-quick-views" role="group" aria-label="Quick task views">
+        <button type="button" class="quick-view active" data-view="all" aria-pressed="true">All tasks</button>
+        <button type="button" class="quick-view" data-view="open" aria-pressed="false">Open</button>
+        <button type="button" class="quick-view" data-view="due-soon" aria-pressed="false">Due soon</button>
+        <button type="button" class="quick-view" data-view="completed" aria-pressed="false">Completed</button>
+      </div>
+
+      <div class="task-list-toolbar">
+        <p id="taskResults" aria-live="polite">Loading tasks...</p>
+        <div class="task-summary" aria-label="Task summary">
+          <span><strong id="summaryOpen">0</strong> open</span>
+          <span><strong id="summaryDueSoon">0</strong> due soon</span>
+          <span><strong id="summaryCompleted">0</strong> completed</span>
+        </div>
+      </div>
+
+      <div id="taskNotice" class="inline-message" role="status" aria-live="polite"></div>
+      <div id="tasksList" aria-live="polite" aria-busy="true"></div>
+      <nav id="taskPagination" class="task-pagination" aria-label="Task list pages" hidden>
+        <label for="taskPageSize">Show</label>
+        <select id="taskPageSize" aria-label="Tasks per page">
+          <option value="10" selected>10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+        </select>
+        <button id="btnPreviousPage" class="secondary-btn" type="button" aria-label="Previous page">Previous</button>
+        <span id="taskPageLabel" aria-live="polite">Page 1 of 1</span>
+        <button id="btnNextPage" class="secondary-btn" type="button" aria-label="Next page">Next</button>
+      </nav>
       <div id="sharedTasksList"></div>
-    </div>
+    </main>
 
     <div class="modal-overlay" id="modal" role="presentation">
       <div class="modal" role="dialog" aria-modal="true" aria-labelledby="createTaskTitle">
         <h3 id="createTaskTitle">Create task</h3>
 
         <form id="createTaskForm">
-          <label for="title">Title</label>
-          <input type="text" id="title" placeholder="e.g. Prepare project brief" required />
+          <label for="title">Task title <span class="required-mark">*</span></label>
+          <input type="text" id="title" placeholder="e.g. Draft project brief" maxlength="20" required />
+          <p class="field-counter" id="titleCounter" aria-live="polite">0 / 20</p>
 
-          <label for="description">Description</label>
-          <textarea id="description" placeholder="Description"></textarea>
+          <label for="description">Description <span class="optional-mark">Optional</span></label>
+          <textarea id="description" placeholder="Add context, next steps, or useful links" minlength="20" maxlength="100"></textarea>
+          <p class="field-hint">Leave blank, or enter at least 20 characters.</p>
+          <p class="field-counter" id="descriptionCounter" aria-live="polite">0 / 100</p>
 
-          <label for="priority">Priority</label>
+          <div class="task-form-row">
+            <div class="task-form-field">
+              <label for="priority">Priority</label>
 
-          <select id="priority">
-            <option value="low">Low</option>
+              <select id="priority">
+                <option value="low">Low</option>
 
-            <option value="medium" selected>Medium</option>
+                <option value="medium" selected>Medium</option>
 
-            <option value="high">High</option>
-          </select>
+                <option value="high">High</option>
+              </select>
+            </div>
 
-          <label for="due_date">Due date</label>
+            <div class="task-form-field">
+              <label for="due_date">Due date <span class="optional-mark">Optional</span></label>
+              <input type="datetime-local" id="due_date" />
+            </div>
+          </div>
 
-          <input type="datetime-local" id="due_date" />
-
-          <label for="reminder_at">Reminder</label>
-
+          <label for="reminder_at">Reminder <span class="optional-mark">Optional</span></label>
           <input type="datetime-local" id="reminder_at" />
 
-          <h5>Collaborators</h5>
+          <div class="task-collaborator-heading">
+            <h5>Collaborators</h5>
+            <p>Invite accepted collaborators to work on this task.</p>
+          </div>
 
           <div
             id="selectedTaskCollaborators"
@@ -118,11 +172,13 @@
             class="collaborator-picker"
           ></div>
 
-          <button type="submit">Create task</button>
-
-          <button type="button" id="btnCloseModal" class="secondary-btn">
+          <div id="createTaskNotice" class="inline-message" role="status" aria-live="polite"></div>
+          <div class="task-form-actions">
+            <button id="btnCreateTask" type="submit">Create task</button>
+            <button type="button" id="btnCloseModal" class="secondary-btn">
             Cancel
-          </button>
+            </button>
+          </div>
         </form>
       </div>
     </div>
@@ -135,10 +191,10 @@
           <input type="hidden" id="editId" />
 
           <label for="editTitle">Title</label>
-          <input type="text" id="editTitle" placeholder="Task title" required />
+          <input type="text" id="editTitle" placeholder="Task title" maxlength="20" required />
 
           <label for="editDescription">Description</label>
-          <textarea id="editDescription" placeholder="Description"></textarea>
+          <textarea id="editDescription" placeholder="Description" minlength="20" maxlength="100"></textarea>
 
           <label for="editStatus">Status</label>
 
@@ -168,11 +224,14 @@
 
           <input type="datetime-local" id="editReminderAt" />
 
-          <button type="submit">Update</button>
+          <div id="editTaskNotice" class="inline-message" role="status" aria-live="polite"></div>
+          <div class="task-form-actions">
+            <button type="submit">Update task</button>
 
-          <button type="button" id="btnCloseEditModal" class="secondary-btn">
-            Cancel
-          </button>
+            <button type="button" id="btnCloseEditModal" class="secondary-btn">
+              Cancel
+            </button>
+          </div>
         </form>
       </div>
     </div>
@@ -183,8 +242,6 @@
 
     <script>
       redirectIfNotAuth();
-
-      loadTasks();
 
       // loadSharedTasks();
 
