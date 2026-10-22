@@ -9,6 +9,7 @@
     <script src="js/redirect.js"></script>
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Skip to notifications</a>
     <nav class="navbar">
       <h2>
         <a href="dashboard.html">Dashboard</a>
@@ -19,7 +20,7 @@
       <button id="btnLogout">Logout</button>
     </nav>
 
-    <div class="container">
+    <main id="main-content" class="container" tabindex="-1">
       <h2>
         Notifications
         <span
@@ -28,8 +29,9 @@
           >0</span
         >
       </h2>
-      <div id="notificationsList"></div>
-    </div>
+      <div id="notificationStatus" class="inline-message" role="status" aria-live="polite"></div>
+      <div id="notificationsList" aria-busy="true"></div>
+    </main>
 
     <script src="js/api.js"></script>
     <script src="js/notification.js"></script>
