@@ -9,18 +9,19 @@
   <link rel="stylesheet" href="css/ui.css">
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to shared tasks</a>
   <header>
     <h1>Shared With Me</h1>
     <nav>
       <a href="dashboard.html">My Tasks</a>
       <a href="admin-tasks.html">Tasks Created by Admin</a>
-      <a href="shared-tasks.html">Shared With Me</a>
+      <a href="shared-tasks.html" aria-current="page">Shared With Me</a>
     </nav>
     <button id="btnLogout" type="button">Logout</button>
   </header>
 
-  <main>
-    <section id="sharedTasksList"></section>
+  <main id="main-content" tabindex="-1">
+    <section id="sharedTasksList" aria-label="Shared tasks" aria-live="polite" aria-busy="true"></section>
   </main>
 
   <script src="js/api.js"></script>
