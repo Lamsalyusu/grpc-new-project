@@ -15,6 +15,7 @@
   </head>
 
   <body>
+    <a class="skip-link" href="#main-content">Skip to task details</a>
     <nav class="navbar">
       <h2>
         <a href="dashboard.html">Dashboard</a>
@@ -29,7 +30,7 @@
       </div>
     </nav>
 
-    <div class="container">
+    <main id="main-content" class="container" tabindex="-1">
       <div id="taskInfo"></div>
 
       <!-- ================================================================ -->
@@ -76,7 +77,7 @@
         <input type="text" id="chatInput" placeholder="Type a message..."/>
         <button id="btnSendChat">Send</button>
       </div>
-    </div>
+    </main>
 
     <script src="js/api.js"></script>
     <script src="js/task-details.js"></script>
