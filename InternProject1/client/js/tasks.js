@@ -31,134 +31,197 @@ function escapeHtml(text) {
 
 let selectedTaskCollaborators = [];
 let availableTaskCollaborators = [];
+let taskItems = [];
+let modalTrigger = null;
+let activeTaskView = "all";
+let currentTaskPage = 1;
 
 // =========================================================
 // LOAD TASKS
 // =========================================================
 
 async function loadTasks() {
-  const status = document.getElementById("filterStatus")?.value || "";
+  const list = document.getElementById("tasksList");
+  const notice = document.getElementById("taskNotice");
+  if (!list) return;
 
-  const priority = document.getElementById("filterPriority")?.value || "";
-
-  let url = "/tasks?page=1&limit=5";
-
-  if (status) {
-    url += `&status=${encodeURIComponent(status)}`;
-  }
-
-  if (priority) {
-    url += `&priority=${encodeURIComponent(priority)}`;
-  }
+  list.setAttribute("aria-busy", "true");
+  list.innerHTML = '<p class="task-list-state">Loading your tasks...</p>';
+  if (notice) notice.textContent = "";
 
   try {
-    const res = await api(url);
+    const res = await api("/tasks?page=1&limit=100");
+    taskItems = res.data?.tasks || [];
+    updateTaskSummary(taskItems);
+    renderTasks();
+  } catch (err) {
+    console.error("Failed to load tasks:", err);
+    list.innerHTML = '<p class="task-list-state task-list-error">Could not load tasks. Try again.</p>';
+    if (notice) notice.textContent = err.message || "Task loading failed.";
+    const results = document.getElementById("taskResults");
+    if (results) results.textContent = "Tasks unavailable";
+  } finally {
+    list.setAttribute("aria-busy", "false");
+  }
+}
 
-    const tasks = res.data?.tasks || [];
+function updateTaskSummary(tasks) {
+  const openCount = tasks.filter((task) => task.status !== "completed").length;
+  const completedCount = tasks.length - openCount;
+  const soonLimit = Date.now() + 7 * 24 * 60 * 60 * 1000;
+  const dueSoonCount = tasks.filter((task) => {
+    if (!task.due_date || task.status === "completed") return false;
+    const dueTime = new Date(task.due_date).getTime();
+    return dueTime >= Date.now() && dueTime <= soonLimit;
+  }).length;
 
-    const list = document.getElementById("tasksList");
+  document.getElementById("summaryOpen")?.replaceChildren(String(openCount));
+  document.getElementById("summaryDueSoon")?.replaceChildren(String(dueSoonCount));
+  document.getElementById("summaryCompleted")?.replaceChildren(String(completedCount));
+}
 
-    if (!list) return;
+function renderTasks() {
+  const list = document.getElementById("tasksList");
+  if (!list) return;
 
-    list.innerHTML = "";
-
-    if (tasks.length === 0) {
-      list.innerHTML = "<p>No tasks found.</p>";
-      return;
-    }
-
-    tasks.forEach((task) => {
+  const search = (document.getElementById("taskSearch")?.value || "")
+    .trim()
+    .toLocaleLowerCase();
+  const statusFilter = document.getElementById("filterStatus")?.value || "";
+  const priorityFilter = document.getElementById("filterPriority")?.value || "";
+  const sortBy = document.getElementById("sortTasks")?.value || "due";
+  const now = Date.now();
+  const dueSoonLimit = now + 7 * 24 * 60 * 60 * 1000;
+  const priorityRank = { high: 3, medium: 2, low: 1 };
+  const visibleTasks = taskItems
+    .filter((task) => {
       const displayStatus = getDisplayStatus(task);
+      const searchable = `${task.title || ""} ${task.description || ""}`.toLocaleLowerCase();
+      return (!search || searchable.includes(search)) &&
+        (!statusFilter || displayStatus === statusFilter) &&
+        (!priorityFilter || task.priority === priorityFilter) &&
+        (activeTaskView !== "open" || task.status !== "completed") &&
+        (activeTaskView !== "completed" || task.status === "completed") &&
+        (activeTaskView !== "due-soon" || (task.due_date && task.status !== "completed" &&
+          new Date(task.due_date).getTime() >= now && new Date(task.due_date).getTime() <= dueSoonLimit));
+    })
+    .sort((left, right) => {
+      if (sortBy === "priority") {
+        return (priorityRank[right.priority] || 0) - (priorityRank[left.priority] || 0);
+      }
+      if (sortBy === "newest") {
+        return new Date(right.created_at || 0) - new Date(left.created_at || 0);
+      }
+      if (sortBy === "title") {
+        return (left.title || "").localeCompare(right.title || "");
+      }
+      const leftDue = left.due_date ? new Date(left.due_date).getTime() : Infinity;
+      const rightDue = right.due_date ? new Date(right.due_date).getTime() : Infinity;
+      return leftDue - rightDue;
+    });
 
+  const results = document.getElementById("taskResults");
+  if (visibleTasks.length === 0) {
+    const hasFilters = Boolean(search || statusFilter || priorityFilter || activeTaskView !== "all");
+    const pagination = document.getElementById("taskPagination");
+    if (pagination) pagination.hidden = true;
+    if (results) results.textContent = `0 tasks${taskItems.length ? ` of ${taskItems.length}` : ""}`;
+    list.innerHTML = hasFilters
+      ? '<div class="task-list-state"><strong>No matching tasks</strong><span>Try a different search or clear your filters.</span><button id="emptyClearFilters" type="button" class="secondary-btn">Clear filters</button></div>'
+      : '<div class="task-list-state"><strong>Your task list is clear</strong><span>Create a task to plan the next thing that needs doing.</span><button id="emptyCreateTask" type="button">+ Create your first task</button></div>';
+    document.getElementById("emptyClearFilters")?.addEventListener("click", clearTaskFilters);
+    document.getElementById("emptyCreateTask")?.addEventListener("click", openModal);
+    return;
+  }
+
+  const pageSize = Number(document.getElementById("taskPageSize")?.value || 10);
+  const pageCount = Math.ceil(visibleTasks.length / pageSize);
+  currentTaskPage = Math.min(currentTaskPage, pageCount);
+  const startIndex = (currentTaskPage - 1) * pageSize;
+  const pageTasks = visibleTasks.slice(startIndex, startIndex + pageSize);
+  const pagination = document.getElementById("taskPagination");
+  const previousButton = document.getElementById("btnPreviousPage");
+  const nextButton = document.getElementById("btnNextPage");
+  const pageLabel = document.getElementById("taskPageLabel");
+  if (pagination) pagination.hidden = visibleTasks.length <= pageSize;
+  if (previousButton) previousButton.disabled = currentTaskPage <= 1;
+  if (nextButton) nextButton.disabled = currentTaskPage >= pageCount;
+  if (pageLabel) pageLabel.textContent = `Page ${currentTaskPage} of ${pageCount}`;
+  if (results) {
+    results.textContent = `Showing ${startIndex + 1}-${Math.min(startIndex + pageSize, visibleTasks.length)} of ${visibleTasks.length} ${visibleTasks.length === 1 ? "task" : "tasks"}`;
+  }
+
+  list.innerHTML = "";
+  pageTasks.forEach((task) => {
+      const displayStatus = getDisplayStatus(task);
       const card = document.createElement("div");
-
       card.className = "task-card";
-
+      card.tabIndex = 0;
+      card.setAttribute("role", "link");
+      card.setAttribute("aria-label", "Open task");
       card.innerHTML = `
         <div class="task-card-header">
-
           <div class="task-content">
-
-            <h3>${escapeHtml(task.title)}</h3>
-
+            <div class="task-title-row">
+              <h3>${escapeHtml(task.title || "Untitled task")}</h3>
+              <span class="badge badge-${escapeHtml(task.priority || "medium")}">${escapeHtml(task.priority || "medium")} priority</span>
+            </div>
             <p class="task-description">${escapeHtml(
-              task.description || "",
+              task.description || "No description added.",
             )}</p>
-
             <div class="task-meta">
-
               <span class="badge badge-${escapeHtml(displayStatus)}">
-                ${escapeHtml(displayStatus)}
+                ${escapeHtml(displayStatus.replace("_", " "))}
               </span>
-
-              <span class="badge badge-${escapeHtml(task.priority || "")}">
-                ${escapeHtml(task.priority || "")}
-              </span>
-
               <span
                 class="task-due ${
                   isOverdue(task.due_date, task.status) ? "overdue" : ""
                 }"
               >
-                Due:
-                ${
-                  task.due_date ? new Date(task.due_date).toLocaleString() : "—"
-                }
+                ${task.due_date ? `Due ${escapeHtml(new Date(task.due_date).toLocaleString())}` : "No due date"}
               </span>
-
             </div>
-
           </div>
-
           <div class="task-actions">
-
             <button
               type="button"
               class="btn-edit"
-              data-id="${task.id}"
             >
               Edit
             </button>
-
             <button
               type="button"
               class="btn-delete"
-              data-id="${task.id}"
             >
               Delete
             </button>
-
           </div>
-
         </div>
       `;
-
-      // Clicking task content opens task detail
-      card.querySelector(".task-content").addEventListener("click", () => {
-        window.location.href = `task-detail.html?id=${task.id}`;
+      card.setAttribute("aria-label", `Open task: ${task.title || "Untitled task"}`);
+      const openTask = () => {
+        window.location.href = `task-detail.html?id=${encodeURIComponent(task.id)}`;
+      };
+      card.querySelector(".btn-edit").setAttribute("aria-label", `Edit ${task.title || "task"}`);
+      card.querySelector(".btn-delete").setAttribute("aria-label", `Delete ${task.title || "task"}`);
+      card.addEventListener("click", openTask);
+      card.addEventListener("keydown", (event) => {
+        if (event.target !== card) return;
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openTask();
+        }
       });
-
-      // Edit button
       card.querySelector(".btn-edit").addEventListener("click", (e) => {
         e.stopPropagation();
-
         openEditModal(task);
       });
-
-      // Delete button
       card.querySelector(".btn-delete").addEventListener("click", (e) => {
         e.stopPropagation();
-
         deleteTask(task.id);
       });
-
       list.appendChild(card);
-    });
-  } catch (err) {
-    console.error("Failed to load tasks:", err);
-
-    alert(err.message);
-  }
+  });
 }
 
 
@@ -462,6 +525,13 @@ function renderSelectedTaskCollaborators() {
 // =========================================================
 
 function openModal() {
+  modalTrigger = document.activeElement;
+  document.getElementById("createTaskForm")?.reset();
+  document.getElementById("title")?.setCustomValidity("");
+  document.getElementById("description")?.setCustomValidity("");
+  updateTaskFieldCounters();
+  const notice = document.getElementById("createTaskNotice");
+  if (notice) notice.textContent = "";
   selectedTaskCollaborators = [];
 
   renderSelectedTaskCollaborators();
@@ -474,10 +544,27 @@ function openModal() {
   }
 
   document.getElementById("modal")?.classList.add("active");
+  document.getElementById("title")?.focus();
 }
 
 function closeModal() {
   document.getElementById("modal")?.classList.remove("active");
+  modalTrigger?.focus?.();
+}
+
+function clearTaskFilters() {
+  document.getElementById("taskSearch").value = "";
+  document.getElementById("filterStatus").value = "";
+  document.getElementById("filterPriority").value = "";
+  document.getElementById("sortTasks").value = "due";
+  activeTaskView = "all";
+  document.querySelectorAll(".quick-view").forEach((button) => {
+    const active = button.dataset.view === "all";
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+  currentTaskPage = 1;
+  renderTasks();
 }
 
 // =========================================================
@@ -534,15 +621,64 @@ if (editReminderInput) {
 
 const createForm = document.getElementById("createTaskForm");
 
+function updateTaskFieldCounters() {
+  const title = document.getElementById("title");
+  const description = document.getElementById("description");
+  const titleCounter = document.getElementById("titleCounter");
+  const descriptionCounter = document.getElementById("descriptionCounter");
+  if (titleCounter && title) titleCounter.textContent = `${title.value.length} / 20`;
+  if (descriptionCounter && description) {
+    const length = description.value.trim().length;
+    descriptionCounter.textContent = length > 0 && length < 20
+      ? `${length} / 100 (minimum 20)`
+      : `${length} / 100`;
+    descriptionCounter.classList.toggle("is-invalid", length > 0 && length < 20);
+  }
+}
+
+document.getElementById("title")?.addEventListener("input", updateTaskFieldCounters);
+document.getElementById("description")?.addEventListener("input", updateTaskFieldCounters);
+document.getElementById("title")?.addEventListener("input", (event) => {
+  event.target.setCustomValidity(event.target.value.trim() ? "" : "Enter a task title.");
+});
+document.getElementById("description")?.addEventListener("input", (event) => {
+  const length = event.target.value.trim().length;
+  event.target.setCustomValidity(length === 0 || length >= 20
+    ? ""
+    : "Enter at least 20 characters, or leave the description blank.");
+});
+updateTaskFieldCounters();
+
 if (createForm) {
   createForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const dueDateVal = document.getElementById("due_date").value;
     const reminderVal = document.getElementById("reminder_at").value;
+    const notice = document.getElementById("createTaskNotice");
+    const submitButton = document.getElementById("btnCreateTask");
+    const title = document.getElementById("title").value.trim();
+    const description = document.getElementById("description").value.trim();
+
+    if (!title || title.length > 20) {
+      if (notice) notice.textContent = "Enter a task title with 1 to 20 characters.";
+      document.getElementById("title").focus();
+      return;
+    }
+    if (description && (description.length < 20 || description.length > 100)) {
+      if (notice) notice.textContent = "A description must be blank or between 20 and 100 characters.";
+      document.getElementById("description").focus();
+      return;
+    }
+
+    if (dueDateVal && reminderVal && new Date(reminderVal) > new Date(dueDateVal)) {
+      if (notice) notice.textContent = "The reminder must be before the due date.";
+      document.getElementById("reminder_at").focus();
+      return;
+    }
 
     const body = {
-      title: document.getElementById("title").value,
-      description: document.getElementById("description").value,
+      title,
+      description: description || undefined,
       status: "pending",
       priority: document.getElementById("priority").value,
       due_date: dueDateVal ? new Date(dueDateVal).toISOString() : undefined,
@@ -555,6 +691,11 @@ if (createForm) {
     };
 
     try {
+      if (notice) notice.textContent = "Creating your task...";
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = "Creating...";
+      }
       await api("/tasks", {
         method: "POST",
         body: JSON.stringify(body),
@@ -562,11 +703,19 @@ if (createForm) {
       closeModal();
       createForm.reset();
       selectedTaskCollaborators = [];
+      currentTaskPage = 1;
       renderSelectedTaskCollaborators();
       await loadTasks();
       await loadTaskCollaborators();
+      const taskNotice = document.getElementById("taskNotice");
+      if (taskNotice) taskNotice.textContent = "Task created successfully.";
     } catch (err) {
-      alert(err.message);
+      if (notice) notice.textContent = err.message || "Could not create this task.";
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = "Create task";
+      }
     }
   });
 }
@@ -579,6 +728,9 @@ function toLocalInputValue(dateStr) {
 }
 
 function openEditModal(task) {
+  modalTrigger = document.activeElement;
+  const editNotice = document.getElementById("editTaskNotice");
+  if (editNotice) editNotice.textContent = "";
   document.getElementById("editId").value = task.id;
   document.getElementById("editTitle").value = task.title || "";
   document.getElementById("editDescription").value = task.description || "";
@@ -599,10 +751,12 @@ function openEditModal(task) {
   reminderInput.disabled = completed;
 
   document.getElementById("editModal")?.classList.add("active");
+  document.getElementById("editTitle")?.focus();
 }
 
 function closeEditModal() {
   document.getElementById("editModal")?.classList.remove("active");
+  modalTrigger?.focus?.();
 }
 
 document.getElementById("editStatus")?.addEventListener("change", (e) => {
@@ -630,10 +784,33 @@ if (editForm) {
     const id = document.getElementById("editId").value;
     const dueDateVal = document.getElementById("editDueDate").value;
     const reminderVal = document.getElementById("editReminderAt").value;
+    const submitButton = editForm.querySelector('button[type="submit"]');
+    const editTitle = document.getElementById("editTitle").value.trim();
+    const editDescription = document.getElementById("editDescription").value.trim();
+
+    if (!editTitle || editTitle.length > 20) {
+      const notice = document.getElementById("editTaskNotice");
+      if (notice) notice.textContent = "Enter a task title with 1 to 20 characters.";
+      document.getElementById("editTitle").focus();
+      return;
+    }
+    if (editDescription && (editDescription.length < 20 || editDescription.length > 100)) {
+      const notice = document.getElementById("editTaskNotice");
+      if (notice) notice.textContent = "A description must be blank or between 20 and 100 characters.";
+      document.getElementById("editDescription").focus();
+      return;
+    }
+
+    if (dueDateVal && reminderVal && new Date(reminderVal) > new Date(dueDateVal)) {
+      const notice = document.getElementById("editTaskNotice");
+      if (notice) notice.textContent = "The reminder must be before the due date.";
+      document.getElementById("editReminderAt").focus();
+      return;
+    }
 
     const body = {
-      title: document.getElementById("editTitle").value,
-      description: document.getElementById("editDescription").value,
+      title: editTitle,
+      description: editDescription || undefined,
       status: document.getElementById("editStatus").value,
       priority: document.getElementById("editPriority").value,
       due_date: dueDateVal ? new Date(dueDateVal).toISOString() : null,
@@ -641,6 +818,10 @@ if (editForm) {
     };
 
     try {
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = "Saving...";
+      }
       await api(`/tasks/${id}`, {
         method: "PUT",
         body: JSON.stringify(body),
@@ -652,7 +833,13 @@ if (editForm) {
     } catch (err) {
       console.error("Failed to update task:", err);
 
-      alert(err.message);
+      const notice = document.getElementById("editTaskNotice");
+      if (notice) notice.textContent = err.message || "Could not update this task.";
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = "Update task";
+      }
     }
   });
 }
@@ -675,13 +862,74 @@ async function deleteTask(id) {
   }
 }
 
-document.getElementById("btnFilter")?.addEventListener("click", loadTasks);
+document.getElementById("btnFilter")?.addEventListener("click", () => {
+  currentTaskPage = 1;
+  renderTasks();
+});
+document.getElementById("btnClearFilters")?.addEventListener("click", clearTaskFilters);
+document.getElementById("taskSearch")?.addEventListener("input", () => {
+  currentTaskPage = 1;
+  renderTasks();
+});
+document.getElementById("filterStatus")?.addEventListener("change", () => {
+  currentTaskPage = 1;
+  renderTasks();
+});
+document.getElementById("filterPriority")?.addEventListener("change", () => {
+  currentTaskPage = 1;
+  renderTasks();
+});
+document.getElementById("sortTasks")?.addEventListener("change", () => {
+  currentTaskPage = 1;
+  renderTasks();
+});
+document.querySelectorAll(".quick-view").forEach((button) => {
+  button.addEventListener("click", () => {
+    activeTaskView = button.dataset.view || "all";
+    currentTaskPage = 1;
+    document.querySelectorAll(".quick-view").forEach((viewButton) => {
+      const active = viewButton === button;
+      viewButton.classList.toggle("active", active);
+      viewButton.setAttribute("aria-pressed", String(active));
+    });
+    renderTasks();
+  });
+});
+document.getElementById("taskPageSize")?.addEventListener("change", () => {
+  currentTaskPage = 1;
+  renderTasks();
+});
+document.getElementById("btnPreviousPage")?.addEventListener("click", () => {
+  currentTaskPage = Math.max(1, currentTaskPage - 1);
+  renderTasks();
+});
+document.getElementById("btnNextPage")?.addEventListener("click", () => {
+  currentTaskPage += 1;
+  renderTasks();
+});
 document.getElementById("btnOpenModal")?.addEventListener("click", openModal);
 document.getElementById("btnCloseModal")?.addEventListener("click", closeModal);
 
 document
   .getElementById("btnCloseEditModal")
   ?.addEventListener("click", closeEditModal);
+
+document.getElementById("modal")?.addEventListener("click", (event) => {
+  if (event.target.id === "modal") closeModal();
+});
+
+document.getElementById("editModal")?.addEventListener("click", (event) => {
+  if (event.target.id === "editModal") closeEditModal();
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return;
+  if (document.getElementById("editModal")?.classList.contains("active")) {
+    closeEditModal();
+  } else if (document.getElementById("modal")?.classList.contains("active")) {
+    closeModal();
+  }
+});
 
 const currentPage = window.location.pathname.split("/").pop();
 
