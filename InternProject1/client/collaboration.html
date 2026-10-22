@@ -8,16 +8,18 @@
     <link rel="stylesheet" href="css/ui.css" />
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to collaborators</a>
   <nav class="navbar">
       <h2><a href="dashboard.html">TaskFlow</a></h2>
 
       <div>
         <a href = "dashboard.html">Dashboard</a>
+        <a href="collaboration.html" aria-current="page">Collaborators</a>
         <a href="notifications.html">Notifications</a>
         <a href="profile.html">Profile</a>
       </div>
     </nav>
-  <section class="collaboration-container">
+  <main id="main-content" class="collaboration-container" tabindex="-1">
 
     <div class="collaboration-card">
 
@@ -99,7 +101,7 @@
         </div>
       </div>
     </div>
-  </section>
+  </main>
 
   <div
     class="modal-overlay"
