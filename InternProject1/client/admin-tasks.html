@@ -8,19 +8,21 @@
     <link rel="stylesheet" href="css/ui.css" />
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Skip to assigned tasks</a>
     <header>
       <h1>Shared by Admin</h1>
       <nav>
         <a href="dashboard.html">My Tasks</a>
-        <a href="admin-tasks.html">Tasks Assigned by Admin</a>
+        <a href="admin-tasks.html" aria-current="page">Tasks Assigned by Admin</a>
         <a href="shared-tasks.html">Shared With Me</a>
       </nav>
 
       <button id="btnLogout" type="button">Logout</button>
     </header>
 
-    <main>
-      <section id="adminTasksList"></section>
+    <main id="main-content" tabindex="-1">
+      <h2 class="visually-hidden">Tasks assigned by admin</h2>
+      <section id="adminTasksList" aria-live="polite" aria-busy="true"></section>
     </main>
 
     <script src="js/api.js"></script>

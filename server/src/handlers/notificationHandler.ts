@@ -56,7 +56,6 @@ const notificationHandlers = {
       callback(null, { count: result.count, notifications });
     } catch (err: any) {
       logger.error(`getting notification failed ${err.message}`);
-      console.error("Get notifications error:", err);
       callback({
         code: grpc.status.INTERNAL,
         message: err.message || "Get notifications failed",

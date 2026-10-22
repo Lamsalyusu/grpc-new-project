@@ -34,7 +34,6 @@ async function findById(id: string) {
       type: QueryTypes.SELECT
     }
   );
-  console.log("task ko la yo chai" ,tasks);
   return tasks[0]||null;
 }
 

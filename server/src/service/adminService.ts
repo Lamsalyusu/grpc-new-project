@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { findAdminById,createAdmin, findAdminByEmail } from "../repositories/adminRepository";
 import { signInToken } from "../utils/jwt";
 import { RegisterInput,LoginInput } from "../validators/authValidator";
-import { findAllUsers ,findById,deleteUsers} from "../repositories/userRepository";
+import { findAllUsers ,findById,deleteUsers, updateUser } from "../repositories/userRepository";
 
 async function registerAdmin(data:RegisterInput){
     const existingAdmin = await findAdminByEmail(data.email);
@@ -89,5 +89,16 @@ async function deleteUser(user_id: string) {
   };
 }
 
+async function updateUserByAdmin(user_id: string, data: { name?: string; email?: string; role?: string }) {
+  const user = await updateUser(user_id, data);
 
-export {registerAdmin,loginAdmin,seeAllUsers,seeUser,deleteUser};
+  if (!user) {
+    throw { message: "User not found" };
+  }
+
+  return {
+    user,
+  };
+}
+
+export {registerAdmin,loginAdmin,seeAllUsers,seeUser,deleteUser,updateUserByAdmin as updateUser};

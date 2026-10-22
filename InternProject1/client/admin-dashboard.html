@@ -312,6 +312,7 @@
   </head>
 
   <body class="admin-page-shell">
+    <a class="skip-link" href="#main-content">Skip to dashboard</a>
     <div class="admin-layout">
       <aside class="sidebar-panel">
         <div class="brand-block">
@@ -322,8 +323,8 @@
           </div>
         </div>
 
-        <nav class="sidebar-nav">
-          <a href="#overview" class="nav-link active">Overview</a>
+        <nav class="sidebar-nav" aria-label="Admin dashboard sections">
+          <a href="#overview" class="nav-link active" aria-current="location">Overview</a>
           <a href="#users" class="nav-link">Users</a>
           <a href="#assign" class="nav-link">Create task</a>
           <a href="#tracking" class="nav-link">Tracking</a>
@@ -332,7 +333,7 @@
         <button class="logout-button" id="btnLogout" type="button">Logout</button>
       </aside>
 
-      <main class="admin-main">
+      <main id="main-content" class="admin-main" tabindex="-1">
         <header class="topbar">
           <div>
             <p class="eyebrow">Operations center</p>

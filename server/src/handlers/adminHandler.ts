@@ -1,8 +1,9 @@
 import * as grpc from"@grpc/grpc-js";
-import { registerAdmin,loginAdmin, seeAllUsers, seeUser, deleteUser, } from "../service/adminService";
+import { registerAdmin,loginAdmin, seeAllUsers, seeUser, deleteUser, updateUser } from "../service/adminService";
 import { findAdminById } from "../repositories/adminRepository";
 import { createTaskForAdmin,getTasksCreatedByAdmin } from "../service/taskService";
 import getUserFromCall from "../utils/getUser";
+import logger from "../utils/logger";
 
 const adminHandlers = {
     registerAdmin:async(call:any, callback:any) => {
@@ -78,12 +79,23 @@ const adminHandlers = {
         }
     },
 
+    updateUser: async (call: any, callback: any) => {
+        try {
+            const { user_id, name, email, role } = call.request;
+            const result = await updateUser(user_id, { name, email, role });
+            callback(null, result);
+        } catch (err: any) {
+            callback({
+                code: grpc.status.INTERNAL,
+                message: err.message || "failed to update user",
+            });
+        }
+    },
 
     createTaskForUser: async (call: any, callback: any) => {
-         console.log("createTaskForUser handler reached");
         try{
             const admin = getUserFromCall(call);
-            console.log("gRPC authenticated user:", admin);
+            logger.info({ message: "Admin task creation requested", adminId: admin.id });
             if (admin.role !== "admin") {
             return callback({
                 code: grpc.status.PERMISSION_DENIED,

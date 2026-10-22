@@ -6,7 +6,6 @@ import getUserFromCall from "../utils/getUser";
 const taskHandlers = {
   createTask: async (call: any, callback: any) => {
     try {
-      console.log(call.request);
       const user = getUserFromCall(call);
       const {title,description,priority,due_date,reminder_at,collaborator_ids} = call.request;
       const task = await createTask(
