@@ -1,66 +1,171 @@
-# grpc-new-project
+# GRPC Task Management Project
 
-users              --->            id, name, email, password_hash, role
-tasks              --->            id, owner_id, title, description, status, priority,
-                                   due_date, reminder_at, reminder_status
-task_collaborators --->            task_id, user_id  (composite PK)
-messages           --->            id, task_id, sender_id, body, created_at (indexed)
-notifications      --->            id, user_id, type, payload(JSON), read_at
+This project is a task management system with authentication, task collaboration, real-time messaging, notifications, and reminders. It is built in two main parts:
 
----
-Core features to implement
----
-1. Auth
-Register / login / me endpoint
-JWT + bcrypt (cost ≥ 10)
-Bearer token middleware protecting routes
----
-2. Tasks (CRUD)
-Owner-only edit/delete checks
-Filtering (status, priority, due date), pagination, sorting
-Fields: title, description, status, priority, due_date, reminder_at, owner_id
----
-3. Collaborators
-Owner can add other users to a task
-Collaborators can read the task + join its chat room
----
-4. Real-time chat (this is the new part for you)
-Socket.IO namespace /chat
-One room per task: task:{id}
-JWT verified during the socket handshake, not just REST
-Events: join, leave, send, receive
-Messages saved to DB before broadcasting (never broadcast-then-persist)
-Paginated chat history available via REST too
----
-5. Reminders
-node-cron scans every minute for due reminders
-Must be idempotent — if the server restarts mid-run, it must not double-send. Use a reminder_status column (pending/sent) as a guard.
-Emits a Socket.IO event to the task owner when triggered
----
-6. Notifications
-Persisted so users see them even if offline
-Endpoints: list, mark-read, unread-count
----
-7. Non-negotiable technical rules
-i.  API base: /api/v1
-ii. Success responses: { data, meta? } — error responses: { error: { code, message, details? } }
-iii.Security: helmet, explicit CORS (no wildcard * in prod), express-rate-limit on auth routes specifically, never log passwords/tokens
-iv. Socket auth: server must verify room membership on join_task — never trust the client's claim that they own/collaborate on a task
-v. All timestamps UTC, ISO 8601 format
-.env.example shipped, .env never committed (relevant given your recent git history incident — same rule applies here from day one)
-/health endpoint required
-Structured JSON logs with request IDs
----
-8. Tech stack you need to know
-Layer	           Tool
-Language	   TypeScript (strict mode)	
-Framework	   Express 4	
-ORM	           Sequelize 6	
-DB	           MySQL 8 or Postgres 14+	
-Real-time      Socket.IO 4	
-Scheduling	   node-cron (or BullMQ+Redis for bonus)	
-Auth	       jsonwebtoken, bcrypt	
-Validation	   Zod or Joi	
-Docs	       swagger-ui-express	
-Testing	       Jest + Supertest	
-Tooling	       ESLint, Prettier
+- [InternProject1](InternProject1) - Express REST API, static frontend, Socket.IO real-time features, reminder job
+- [server](server) - gRPC backend service that handles business logic and database communication
+
+The project is designed to support team task management, user collaboration, and live updates across connected clients.
+
+## Main features
+
+- User registration and login
+- JWT-based authentication
+- Task creation, update, deletion, and filtering
+- Task collaborator management
+- Real-time chat per task
+- Notification system
+- Reminder scheduling
+- Admin-related routes and access control
+- Health check endpoint
+
+## Project structure
+
+```text
+GRPC-NEW/
+├── .env.example
+├── README.md
+├── proto/
+│   ├── auth.proto
+│   ├── task.proto
+│   ├── ...
+├── InternProject1/
+│   ├── client/
+│   ├── src/
+│   ├── package.json
+│   └── tsconfig.json
+├── server/
+│   ├── src/
+│   ├── package.json
+│   └── tsconfig.json
+└── package.json
+```
+
+## How the app works
+
+### 1) Express app
+The app in [InternProject1/src/app.ts](InternProject1/src/app.ts) sets up:
+
+- Express server
+- CORS and Helmet security
+- JSON parsing
+- Public frontend files from the client folder
+- Route groups for auth, tasks, notifications, collaboration, and admin
+- Socket.IO initialization
+
+The server starts in [InternProject1/src/server.ts](InternProject1/src/server.ts).
+
+### 2) Real-time features
+The app uses Socket.IO for live task communication. The chat and socket logic is handled in the socket folder under [InternProject1/src/sockets](InternProject1/src/sockets).
+
+### 3) gRPC backend
+The backend in [server/src/server.ts](server/src/server.ts) loads the proto files from the [proto](proto) folder and registers all gRPC services. It connects to the database and exposes service handlers for auth, tasks, messages, reminders, notifications, collaboration, and admin functions.
+
+### 4) Database layer
+The project uses Sequelize with a MySQL/PostgreSQL-style setup. The config is defined in [server/src/config/config.js](server/src/config/config.js) and the project keeps its database access in the server-side folders.
+
+## Tech stack
+
+- TypeScript
+- Express.js
+- Socket.IO
+- gRPC
+- Sequelize ORM
+- PostgreSQL / MySQL compatible setup
+- JWT authentication
+- Zod validation
+- Node-cron for reminders
+- Winston logging
+
+## Environment setup
+
+Create a .env file based on [.env.example](.env.example) in the project root.
+
+Example values:
+
+```env
+DB_NAME="your db name"
+DB_HOST="your db host"
+DB_PORT="your db port"
+DB_USER="username"
+DB_PASSWORD="password"
+JWT_SECRET="your jwt secret key"
+GRPC_PORT="50051"
+```
+
+## Install dependencies
+
+From the root project folder:
+
+```bash
+npm install
+```
+
+Then install dependencies for each app separately:
+
+```bash
+cd InternProject1
+npm install
+
+cd ../server
+npm install
+```
+
+## Run the project
+
+### Start the Express app
+
+```bash
+cd InternProject1
+npm run dev
+```
+
+This starts the HTTP server and realtime socket server.
+
+### Start the gRPC backend
+
+```bash
+cd server
+npm run dev
+```
+
+The gRPC service usually runs on the port defined in GRPC_PORT.
+
+## Useful commands
+
+### In [InternProject1](InternProject1):
+
+```bash
+npm run dev
+npm run build
+npm run start
+npm run lint
+```
+
+### In [server](server):
+
+```bash
+npm run dev
+npm run build
+npm run start
+npm run migrate
+npm run migrate:undo
+npm run seed
+npm run lint
+```
+
+## Access points
+
+- Frontend / API: http://localhost:3000
+- Health check: http://localhost:3000/health
+- gRPC server: usually 127.0.0.1:50051
+
+## Notes
+
+- This project is structured as a full-stack task app with both API and realtime logic.
+- The frontend is served as static HTML/CSS/JS files, while the backend handles the application logic.
+- The project is meant to be run with both the Express app and the gRPC server active together.
+
+## Summary
+
+This project combines a traditional web app with a gRPC backend and realtime collaboration features. It is a good base for task management apps where users can work together, receive notifications, and chat on tasks in real time.

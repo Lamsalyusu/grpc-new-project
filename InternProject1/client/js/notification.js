@@ -8,18 +8,24 @@ function notifvisible(n){
 }
   
   async function loadNotifications() {
+  const list = document.getElementById('notificationsList');
+  const status = document.getElementById('notificationStatus');
+  if (!list) return;
+  list.setAttribute('aria-busy', 'true');
+  if (status) status.textContent = 'Loading notifications...';
+
   try {
     const res = await api('/notifications?page=1&limit=5');
-    const list = document.getElementById('notificationsList');
-    const notifs = res.data;
+    const notifs = Array.isArray(res.data) ? res.data : [];
   
     const notification = notifs.filter(notifvisible);
-    if (notifs.length === 0) {
-      list.innerHTML = '<p>No notifications.</p>';
+    if (notification.length === 0) {
+      list.innerHTML = '<p class="task-list-state"><strong>You are all caught up</strong><span>No recent notifications to show.</span></p>';
+      if (status) status.textContent = 'No recent notifications.';
       return;
     }
 
-    list.innerHTML = notifs.map(n => {
+    list.innerHTML = notification.map(n => {
       let payload = {};
 
       try {
@@ -64,7 +70,7 @@ function notifvisible(n){
             ${content}
           </div>
           ${!isRead ? `
-            <button class="btn-mark-read" data-id="${n.id}">Mark read</button>
+            <button class="btn-mark-read" data-id="${escapeHtml(n.id)}" aria-label="Mark notification as read">Mark read</button>
           ` : ''}
         </div>
       `;
@@ -74,8 +80,13 @@ function notifvisible(n){
     list.querySelectorAll('.btn-mark-read').forEach(btn => {
       btn.addEventListener('click', (e) => markRead(e.target.dataset.id));
     });
+    if (status) status.textContent = `${notification.length} recent ${notification.length === 1 ? 'notification' : 'notifications'}.`;
   } catch (err) {
     console.error(err);
+    list.innerHTML = '<p class="task-list-state task-list-error">Could not load notifications.</p>';
+    if (status) status.textContent = err.message || 'Could not load notifications.';
+  } finally {
+    list.setAttribute('aria-busy', 'false');
   }
 }
 
@@ -98,12 +109,13 @@ async function loadUnreadCount() {
 }
 
 async function markRead(id) {
+  const status = document.getElementById('notificationStatus');
   try {
     await api(`/notifications/${id}/read`, { method: 'PUT' });
-    loadNotifications();
-    loadUnreadCount();
+    if (status) status.textContent = 'Notification marked as read.';
+    await Promise.all([loadNotifications(), loadUnreadCount()]);
   } catch (error) {
-    alert(error .message);
+    if (status) status.textContent = error.message || 'Could not mark notification as read.';
   }
 }
 
